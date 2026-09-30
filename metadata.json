@@ -1,0 +1,6 @@
+{
+  "name": "Ngerti - Belajar Statistika & Matematika Kuliah Tanpa Cemas",
+  "description": "Platform belajar mandiri statistika dan matematika tanpa cemas untuk mahasiswa Indonesia dengan dekomposisi logika, refleksi terpandu, dan suasana belajar tenang.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
