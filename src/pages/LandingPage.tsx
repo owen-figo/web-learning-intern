@@ -20,16 +20,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Gentle Supportive Banner */}
-      <aside aria-label="Pengumuman ramah" className="bg-surface-container-low border-b border-outline-variant py-2 px-4 sm:px-6 md:px-8 text-center">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 text-on-surface-variant text-xs sm:text-sm font-medium">
-          <span className="material-symbols-outlined text-primary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-            spa
-          </span>
-          <span>Belajar statistik &amp; matematika kuliah tanpa rasa takut atau dihakimi. Progresmu, waktumu sendiri.</span>
-        </div>
-      </aside>
-
       {/* Main Canvas */}
       <div className="flex-grow">
         {/* Hero Section */}
@@ -37,13 +27,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
             {/* Left Column (7 Columns) */}
             <div className="lg:col-span-7 space-y-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container-low border border-outline-variant text-primary text-xs sm:text-sm font-medium">
-                <span className="material-symbols-outlined text-sm text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  favorite
-                </span>
-                <span>Ruang Belajar Ramah Mahasiswa &amp; Pejuang Skripsi</span>
-              </div>
-
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface leading-[1.18]">
                 Statistika &amp; Matematika Kuliah? <br className="hidden sm:inline" />
                 <span className="text-primary font-semibold">Tenang, Kamu Pasti Ngerti.</span>
@@ -52,22 +35,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
               <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
                 Tidak ada yang terlahir &quot;payah matematika&quot;. Yang ada hanyalah materi yang selama ini dijelaskan dengan cara rumit. Di Ngerti, kita uraikan rumus panjang jadi percakapan masuk akal, tanpa rasa takut dihakimi.
               </p>
-
-              {/* Friendly Pillars */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-surface-container-lowest border border-outline-variant card-gentle">
-                  <span className="material-symbols-outlined text-primary text-xl">sentiment_calm</span>
-                  <span className="text-sm font-medium text-on-surface">Bebas cemas</span>
-                </div>
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-surface-container-lowest border border-outline-variant card-gentle">
-                  <span className="material-symbols-outlined text-primary text-xl">stairs</span>
-                  <span className="text-sm font-medium text-on-surface">Langkah bertahap</span>
-                </div>
-                <div className="flex items-center gap-2.5 p-3 rounded-lg bg-surface-container-lowest border border-outline-variant card-gentle">
-                  <span className="material-symbols-outlined text-primary text-xl">verified_user</span>
-                  <span className="text-sm font-medium text-on-surface">Tanpa kompetisi</span>
-                </div>
-              </div>
 
               {/* Dual CTAs */}
               <div className="flex flex-wrap items-center gap-3.5 pt-2">
@@ -86,35 +53,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
                   <span>Jelajahi Topik</span>
                 </button>
               </div>
-
-              {/* Social proof */}
-              <div className="flex items-center gap-3 pt-2 text-on-surface-variant text-xs sm:text-sm">
-                <div className="flex -space-x-1.5">
-                  <span className="inline-block w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center text-[10px] text-on-primary-fixed font-bold border border-surface-container-lowest">UI</span>
-                  <span className="inline-block w-6 h-6 rounded-full bg-secondary-fixed flex items-center justify-center text-[10px] text-on-secondary-fixed font-bold border border-surface-container-lowest">ITB</span>
-                  <span className="inline-block w-6 h-6 rounded-full bg-tertiary-fixed flex items-center justify-center text-[10px] text-on-tertiary-fixed font-bold border border-surface-container-lowest">UGM</span>
-                </div>
-                <span>Didesain bersama 2.400+ mahasiswa dari berbagai jurusan soshum &amp; saintek</span>
-              </div>
             </div>
 
             {/* Right Column: Interactive Sample Question Preview (5 Columns) */}
             <div className="lg:col-span-5">
               <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 card-float relative overflow-hidden transition-all duration-300">
-                {/* Header Tag */}
-                <div className="flex items-center justify-between pb-4 border-b border-surface-variant">
-                  <div className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-primary animate-pulse"></span>
-                    <span className="text-xs font-semibold text-primary uppercase tracking-wider">Simulasi Interaktif</span>
-                  </div>
-                  <span className="text-xs px-2.5 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant border border-outline-variant">
-                    Statistika Deskriptif
-                  </span>
-                </div>
-
                 {/* Problem Prompt */}
-                <div className="pt-4 space-y-2">
-                  <p className="text-xs text-on-surface-variant font-medium">Konteks Skripsi:</p>
+                <div className="space-y-2">
                   <h2 className="text-base sm:text-lg font-semibold text-on-surface leading-snug">
                     Mencari Rata-rata (Mean) Waktu Belajar Mandiri
                   </h2>

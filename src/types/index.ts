@@ -1,4 +1,4 @@
-export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth';
+export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth' | 'teori';
 
 export type DifficultyTier = 'mudah' | 'sedang' | 'sulit' | 'sangat_sulit';
 
@@ -33,6 +33,28 @@ export interface Question {
   };
 }
 
+export interface TheoryExample {
+  label: string;
+  text: string;
+}
+
+export interface TheorySection {
+  id: string;
+  heading: string;
+  body: string;
+  formula?: string;
+  formulaNote?: string;
+  examples?: TheoryExample[];
+}
+
+export interface TheoryContent {
+  topicId: string;
+  topicTitle: string;
+  estimatedReadMinutes: number;
+  completionXp: number;
+  sections: TheorySection[];
+}
+
 export interface Topic {
   id: string;
   category: 'statistika' | 'kalkulus_aljabar';
@@ -48,6 +70,7 @@ export interface Topic {
   statusAction: 'lanjut' | 'pelajari' | 'mulai' | 'ulang';
   excelSpssAvailable?: boolean;
   thesisTag?: string;
+  contentType?: 'practice' | 'teori';
 }
 
 export interface BadgeItem {

@@ -5,13 +5,14 @@
 
 import { useState } from 'react';
 import { ActivePage, UserProfile } from './types';
-import { initialUserProfile } from './data/mockData';
+import { initialUserProfile, theoryContents } from './data/mockData';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { TopicsPage } from './pages/TopicsPage';
 import { PracticePage } from './pages/PracticePage';
 import { ProfilePage } from './pages/ProfilePage';
+import { TheoryPage } from './pages/TheoryPage';
 import { AuthModal } from './components/AuthModal';
 import { FormulaModal } from './components/FormulaModal';
 import { InfoModal } from './components/InfoModal';
@@ -23,6 +24,8 @@ export default function App() {
   const [isFormulaOpen, setIsFormulaOpen] = useState<boolean>(false);
   const [infoModalType, setInfoModalType] = useState<'privacy' | 'help' | null>(null);
   const [recentXpGained, setRecentXpGained] = useState<number>(25);
+  const [selectedTopicId, setSelectedTopicId] = useState<string>('dasar-dasar-data');
+  const [completedTheoryTopics, setCompletedTheoryTopics] = useState<string[]>([]);
 
   const handleAddXp = (amount: number) => {
     setUser((prev) => ({
@@ -30,6 +33,13 @@ export default function App() {
       xp: prev.xp + amount,
     }));
     setRecentXpGained(amount);
+  };
+
+  const handleCompleteTheory = (xp: number) => {
+    handleAddXp(xp);
+    if (!completedTheoryTopics.includes(selectedTopicId)) {
+      setCompletedTheoryTopics((prev) => [...prev, selectedTopicId]);
+    }
   };
 
   const handleUpdateUser = (updated: Partial<UserProfile>) => {
@@ -58,9 +68,9 @@ export default function App() {
       {/* 
         Standard Top Navigation Bar:
         Shown on Landing, Topics, and Profile views.
-        Practice mode has its own dedicated distraction-free breadcrumb bar as depicted in Image 1.
+        Practice mode and Theory mode have their own dedicated distraction-free navigation bars.
       */}
-      {activePage !== 'practice' && (
+      {activePage !== 'practice' && activePage !== 'teori' && (
         <Navbar
           activePage={activePage}
           setActivePage={setActivePage}
@@ -83,8 +93,8 @@ export default function App() {
           <TopicsPage
             user={user}
             setActivePage={setActivePage}
-            onSelectTopic={(_topicId) => {
-              setActivePage('practice');
+            onSelectTopic={(topicId) => {
+              setSelectedTopicId(topicId);
             }}
           />
         )}
@@ -93,6 +103,18 @@ export default function App() {
           <PracticePage
             setActivePage={setActivePage}
             onAddXp={handleAddXp}
+            selectedTopicId={selectedTopicId}
+          />
+        )}
+
+        {activePage === 'teori' && (
+          <TheoryPage
+            theoryContent={
+              theoryContents.find((t) => t.topicId === selectedTopicId) || theoryContents[0]
+            }
+            onComplete={handleCompleteTheory}
+            setActivePage={setActivePage}
+            isCompleted={completedTheoryTopics.includes(selectedTopicId)}
           />
         )}
 
@@ -104,13 +126,15 @@ export default function App() {
         )}
       </main>
 
-      {/* Shared Footer (Shown on all pages) */}
-      <Footer
-        setActivePage={setActivePage}
-        onOpenFormula={() => setIsFormulaOpen(true)}
-        onOpenPrivacy={() => setInfoModalType('privacy')}
-        onOpenHelp={() => setInfoModalType('help')}
-      />
+      {/* Shared Footer (Shown on landing, topics, profile, practice) */}
+      {activePage !== 'teori' && (
+        <Footer
+          setActivePage={setActivePage}
+          onOpenFormula={() => setIsFormulaOpen(true)}
+          onOpenPrivacy={() => setInfoModalType('privacy')}
+          onOpenHelp={() => setInfoModalType('help')}
+        />
+      )}
 
       {/* Modals */}
       <AuthModal

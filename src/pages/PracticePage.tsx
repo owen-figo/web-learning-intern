@@ -1,22 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ActivePage, DifficultyTier, Question } from '../types';
 import { sampleQuestions } from '../data/mockData';
 
 interface PracticePageProps {
   setActivePage: (page: ActivePage) => void;
   onAddXp?: (amount: number) => void;
+  selectedTopicId?: string;
 }
 
-export const PracticePage: React.FC<PracticePageProps> = ({ setActivePage, onAddXp }) => {
-  const [selectedTier, setSelectedTier] = useState<DifficultyTier>('mudah');
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(2); // Default to Question 3 (index 2) to perfectly match Image 1
-  const [selectedOptionId, setSelectedOptionId] = useState<string>('opt-b'); // Default to Option B as in screenshot
-  const [reflectionConfirmed, setReflectionConfirmed] = useState<boolean>(true);
-  const [showHint, setShowHint] = useState<boolean>(true);
-  const [xpBonusClaimed, setXpBonusClaimed] = useState<boolean>(true);
-  const [completedQuestions, setCompletedQuestions] = useState<number[]>([0, 1]); // Questions 1 and 2 completed
+export const PracticePage: React.FC<PracticePageProps> = ({
+  setActivePage,
+  onAddXp,
+  selectedTopicId = 'statistika-deskriptif',
+}) => {
+  const activeTopicQuestions = sampleQuestions.filter((q) => q.topicId === selectedTopicId);
+  const questionsToUse = activeTopicQuestions.length > 0
+    ? activeTopicQuestions
+    : sampleQuestions.filter((q) => q.topicId === 'statistika-deskriptif');
 
-  const currentQ: Question = sampleQuestions[currentQuestionIndex] || sampleQuestions[2];
+  const isDefaultTopic = selectedTopicId === 'statistika-deskriptif';
+  const [selectedTier, setSelectedTier] = useState<DifficultyTier>('mudah');
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(isDefaultTopic ? 2 : 0); // Default to Question 3 (index 2) on deskriptif to match Image 1
+  const [selectedOptionId, setSelectedOptionId] = useState<string>(
+    isDefaultTopic ? 'opt-b' : (questionsToUse[0]?.options[0]?.id || 'opt-a')
+  );
+  const [reflectionConfirmed, setReflectionConfirmed] = useState<boolean>(isDefaultTopic);
+  const [showHint, setShowHint] = useState<boolean>(true);
+  const [xpBonusClaimed, setXpBonusClaimed] = useState<boolean>(isDefaultTopic);
+  const [completedQuestions, setCompletedQuestions] = useState<number[]>(isDefaultTopic ? [0, 1] : []);
+
+  useEffect(() => {
+    const isDeskriptif = selectedTopicId === 'statistika-deskriptif';
+    const qList = sampleQuestions.filter((q) => q.topicId === selectedTopicId);
+    const targetList = qList.length > 0 ? qList : sampleQuestions;
+    const initialIndex = isDeskriptif ? 2 : 0;
+    setCurrentQuestionIndex(initialIndex);
+    const targetQ = targetList[initialIndex] || targetList[0];
+    if (targetQ) {
+      setSelectedOptionId(isDeskriptif ? 'opt-b' : targetQ.options[0]?.id || 'opt-a');
+    }
+    setReflectionConfirmed(isDeskriptif);
+    setCompletedQuestions(isDeskriptif ? [0, 1] : []);
+    setXpBonusClaimed(isDeskriptif);
+  }, [selectedTopicId]);
+
+  const currentQ: Question = questionsToUse[currentQuestionIndex] || questionsToUse[0];
   const isCorrect = selectedOptionId === currentQ.correctOptionId;
 
   const handleSelectOption = (optId: string) => {
@@ -38,16 +66,15 @@ export const PracticePage: React.FC<PracticePageProps> = ({ setActivePage, onAdd
     if (onAddXp) {
       onAddXp(35);
     }
-    if (currentQuestionIndex < sampleQuestions.length - 1) {
+    if (currentQuestionIndex < questionsToUse.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       setCurrentQuestionIndex(nextIndex);
-      setSelectedOptionId(sampleQuestions[nextIndex].options[0].id);
+      setSelectedOptionId(questionsToUse[nextIndex].options[0].id);
       setReflectionConfirmed(false);
       setXpBonusClaimed(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      // Completed all 5!
-      alert('Selamat! Kamu telah menyelesaikan seluruh 5 soal latihan dengan penuh refleksi.');
+      alert(`Selamat! Kamu telah menyelesaikan seluruh ${questionsToUse.length} soal latihan dengan penuh refleksi.`);
       setActivePage('topics');
     }
   };
@@ -56,7 +83,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({ setActivePage, onAdd
     if (currentQuestionIndex > 0) {
       const prevIndex = currentQuestionIndex - 1;
       setCurrentQuestionIndex(prevIndex);
-      setSelectedOptionId(sampleQuestions[prevIndex].correctOptionId);
+      setSelectedOptionId(questionsToUse[prevIndex].correctOptionId);
       setReflectionConfirmed(true);
       setXpBonusClaimed(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -125,7 +152,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({ setActivePage, onAdd
         <section className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-4 sm:p-5 card-calm-shadow">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
             <span className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
-              Pilih Tingkat Bantuan Pedagosis:
+              Pilih tingkat kesulitan
             </span>
             <span className="text-xs text-primary flex items-center gap-1 font-medium">
               <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>
@@ -241,7 +268,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({ setActivePage, onAdd
           <div className="flex items-center gap-3">
             <span className="text-xs sm:text-sm font-medium text-on-surface-variant">Langkah Soal:</span>
             <div className="flex items-center gap-2">
-              {[0, 1, 2, 3, 4].map((idx) => {
+              {questionsToUse.map((_, idx) => {
                 const isCompleted = completedQuestions.includes(idx);
                 const isActive = currentQuestionIndex === idx;
 
@@ -258,7 +285,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({ setActivePage, onAdd
                       type="button"
                       onClick={() => {
                         setCurrentQuestionIndex(idx);
-                        setSelectedOptionId(sampleQuestions[idx].options[0].id);
+                        setSelectedOptionId(questionsToUse[idx].options[0].id);
                         setReflectionConfirmed(false);
                       }}
                       className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${

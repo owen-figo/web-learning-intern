@@ -22,9 +22,13 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
     return true;
   });
 
-  const handleTopicAction = (topicId: string) => {
-    if (onSelectTopic) onSelectTopic(topicId);
-    setActivePage('practice');
+  const handleTopicAction = (topic: Topic) => {
+    if (onSelectTopic) onSelectTopic(topic.id);
+    if (topic.contentType === 'teori') {
+      setActivePage('teori');
+    } else {
+      setActivePage('practice');
+    }
   };
 
   return (
@@ -111,7 +115,8 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
         {filteredTopics.map((topic) => (
           <article
             key={topic.id}
-            className="bg-surface-container-lowest rounded-xl border border-outline-variant/60 p-5 sm:p-6 flex flex-col justify-between hover:shadow-md hover:border-primary-container transition-all duration-200 card-gentle"
+            onClick={() => handleTopicAction(topic)}
+            className="bg-surface-container-lowest rounded-xl border border-outline-variant/60 p-5 sm:p-6 flex flex-col justify-between hover:shadow-md hover:border-primary-container transition-all duration-200 card-gentle cursor-pointer"
           >
             <div>
               {/* Header Info */}
@@ -212,10 +217,25 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
 
             {/* Action CTA Button */}
             <div className="pt-2">
-              {topic.statusAction === 'lanjut' ? (
+              {topic.contentType === 'teori' ? (
                 <button
                   type="button"
-                  onClick={() => handleTopicAction(topic.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTopicAction(topic);
+                  }}
+                  className="w-full py-2.5 px-4 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-xs sm:text-sm font-medium text-center flex items-center justify-center gap-2 transition-colors shadow-xs active:scale-[0.99]"
+                >
+                  <span>Baca Materi Teori</span>
+                  <span className="material-symbols-outlined text-[18px]">menu_book</span>
+                </button>
+              ) : topic.statusAction === 'lanjut' ? (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTopicAction(topic);
+                  }}
                   className="w-full py-2.5 px-4 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-xs sm:text-sm font-medium text-center flex items-center justify-center gap-2 transition-colors shadow-xs active:scale-[0.99]"
                 >
                   <span>Lanjut Belajar</span>
@@ -224,7 +244,10 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
               ) : topic.statusAction === 'ulang' ? (
                 <button
                   type="button"
-                  onClick={() => handleTopicAction(topic.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTopicAction(topic);
+                  }}
                   className="w-full py-2.5 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary text-xs sm:text-sm font-medium text-center flex items-center justify-center gap-2 transition-colors border border-outline-variant/50"
                 >
                   <span>Ulang Kuis &amp; Refleksi</span>
@@ -233,7 +256,10 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
               ) : topic.statusAction === 'mulai' ? (
                 <button
                   type="button"
-                  onClick={() => handleTopicAction(topic.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTopicAction(topic);
+                  }}
                   className="w-full py-2.5 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary text-xs sm:text-sm font-medium text-center flex items-center justify-center gap-2 transition-colors border border-outline-variant/50"
                 >
                   <span>Mulai Topik Ini</span>
@@ -242,7 +268,10 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
               ) : (
                 <button
                   type="button"
-                  onClick={() => handleTopicAction(topic.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleTopicAction(topic);
+                  }}
                   className="w-full py-2.5 px-4 rounded-lg bg-surface-container-low hover:bg-surface-container text-primary text-xs sm:text-sm font-medium text-center flex items-center justify-center gap-2 transition-colors border border-outline-variant/50"
                 >
                   <span>Pelajari Konsep</span>

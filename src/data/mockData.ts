@@ -1,4 +1,4 @@
-import { UserProfile, Topic, Question, BadgeItem, LearningSession } from '../types';
+import { UserProfile, Topic, Question, BadgeItem, LearningSession, TheoryContent } from '../types';
 
 export const initialUserProfile: UserProfile = {
   name: 'Rian Ardiansyah',
@@ -23,6 +23,102 @@ export const initialUserProfile: UserProfile = {
 };
 
 export const sampleQuestions: Question[] = [
+  {
+    id: 'DATA-DASAR-01',
+    topicId: 'dasar-dasar-data',
+    topicName: 'Dasar-dasar Data',
+    code: 'ID: DATA-DASAR-01',
+    title: 'Soal 1 dari 4 • Variabel Kategorikal vs Numerik',
+    narrative: 'Seorang mahasiswa manajemen sedang mengumpulkan data kuesioner skripsi tentang perilaku belanja online. Salah satu butir pertanyaan mencatat: "Metode pembayaran yang paling sering digunakan" (dengan pilihan: Transfer Bank, E-Wallet, COD, Kartu Kredit). Termasuk jenis variabel apakah data metode pembayaran ini?',
+    options: [
+      { id: 'opt-a', label: 'A', text: 'Variabel Numerik (Kuantitatif)' },
+      { id: 'opt-b', label: 'B', text: 'Variabel Kategorikal (Kualitatif)' },
+      { id: 'opt-c', label: 'C', text: 'Variabel Numerik Kontinu' },
+      { id: 'opt-d', label: 'D', text: 'Variabel Rasio' },
+    ],
+    correctOptionId: 'opt-b',
+    hintStep1: 'Tanyakan ke dirimu: apakah opsi metode pembayaran ini berupa angka yang bisa dioperasikan secara matematika (seperti dihitung rata-ratanya), atau sekadar pengelompokan label/kategori?',
+    reflectionQuestion: 'Sebelum mengunci pilihanmu, apakah nama-nama metode pembayaran (seperti E-Wallet dan COD) memiliki makna matematis yang bisa dijumlahkan atau dirata-ratakan?',
+    reflectionConfirmationText: 'Tidak bisa, ini murni kelompok label non-numerik',
+    reflectionRecalculateText: 'Mau cermati lagi jenis datanya',
+    positiveFeedback: {
+      title: 'Tepat sekali! Ini adalah variabel kategorikal.',
+      description: 'Data metode pembayaran mengelompokkan responden ke dalam kategori/label tanpa nilai matematis. Kita tidak bisa menghitung rata-rata metode pembayaran, melainkan frekuensi atau persentasenya.',
+      bonusXp: 10,
+    },
+  },
+  {
+    id: 'DATA-DASAR-02',
+    topicId: 'dasar-dasar-data',
+    topicName: 'Dasar-dasar Data',
+    code: 'ID: DATA-DASAR-02',
+    title: 'Soal 2 dari 4 • Numerik Diskrit vs Kontinu',
+    narrative: 'Di Bab 3 metodologi penelitian, seorang mahasiswa mencatat dua variabel berikut dari pelanggan kafe: (1) "Jumlah cangkir kopi yang dipesan per hari" (misal: 1, 2, 3 cangkir), dan (2) "Waktu tunggu pesanan hingga disajikan" (misal: 7.5 menit, 12.35 menit). Manakah klasifikasi yang paling tepat untuk kedua variabel numerik ini?',
+    options: [
+      { id: 'opt-a', label: 'A', text: '(1) Kontinu, (2) Diskrit' },
+      { id: 'opt-b', label: 'B', text: '(1) Diskrit (dihitung/cacah), (2) Kontinu (diukur)' },
+      { id: 'opt-c', label: 'C', text: 'Keduanya adalah variabel numerik kontinu' },
+      { id: 'opt-d', label: 'D', text: 'Keduanya adalah variabel kategorikal nominal' },
+    ],
+    correctOptionId: 'opt-b',
+    hintStep1: 'Ingat kata kunci penenang: Data diskrit diperoleh dari hasil "mencacah/menghitung" (bilangan bulat utuh, tidak bisa setengah cangkir), sedangkan data kontinu diperoleh dari hasil "mengukur" (bisa memuat nilai pecahan/desimal tak terhingga).',
+    reflectionQuestion: 'Apakah jumlah cangkir merupakan bilangan bulat dari hasil cacahan (diskrit), sementara waktu tunggu diperoleh dari alat ukur stopwatch yang memiliki desimal (kontinu)?',
+    reflectionConfirmationText: 'Ya, cangkir dicacah sedangkan waktu diukur',
+    reflectionRecalculateText: 'Mau bayangkan perbedaannya lagi',
+    positiveFeedback: {
+      title: 'Luar biasa! Pemahaman diskrit vs kontinu kamu sangat jernih.',
+      description: 'Variabel diskrit berupa hitungan bulat utuh (cacahan), sedangkan variabel kontinu adalah hasil pengukuran yang berada dalam rentang kontinu dan bisa bernilai pecahan/desimal.',
+      bonusXp: 10,
+    },
+  },
+  {
+    id: 'DATA-DASAR-03',
+    topicId: 'dasar-dasar-data',
+    topicName: 'Dasar-dasar Data',
+    code: 'ID: DATA-DASAR-03',
+    title: 'Soal 3 dari 4 • Skala Pengukuran: Nominal vs Ordinal',
+    narrative: 'Pada kuesioner kepuasan layanan perpustakaan kampus, responden diminta menilai: "Tingkat kepuasan terhadap kecepatan Wi-Fi" dengan pilihan: (1) Sangat Tidak Puas, (2) Tidak Puas, (3) Netral, (4) Puas, (5) Sangat Puas. Berada pada skala pengukuran apakah data skala Likert ini?',
+    options: [
+      { id: 'opt-a', label: 'A', text: 'Skala Nominal (hanya label acak tanpa peringkat)' },
+      { id: 'opt-b', label: 'B', text: 'Skala Ordinal (ada tingkatan urutan/ranking yang bermakna)' },
+      { id: 'opt-c', label: 'C', text: 'Skala Rasio (memiliki nilai nol mutlak)' },
+      { id: 'opt-d', label: 'D', text: 'Skala Interval Murni (jarak fisik antar tingkat terukur pasti)' },
+    ],
+    correctOptionId: 'opt-b',
+    hintStep1: 'Perhatikan apakah antar pilihan memiliki urutan logis dari tingkat yang lebih rendah ke lebih tinggi (hierarki/ranking), meskipun selisih pasti antar tingkat rasa puas tidak dapat diukur secara eksak matematis.',
+    reflectionQuestion: 'Sebelum mengonfirmasi, apakah tingkatan "Puas" jelas lebih tinggi posisinya dibandingkan "Tidak Puas", yang menandakan adanya urutan (order)?',
+    reflectionConfirmationText: 'Ya, terdapat tingkatan peringkat (urutan) yang jelas',
+    reflectionRecalculateText: 'Mau tinjau kembali karakteristik skala',
+    positiveFeedback: {
+      title: 'Mantap! Ini adalah data berskala Ordinal.',
+      description: 'Kata kunci ordinal adalah "order" (urutan). Kategori memiliki tingkatan hierarki, namun jarak absolut antara "Puas" dan "Sangat Puas" belum tentu setara angka pasti.',
+      bonusXp: 10,
+    },
+  },
+  {
+    id: 'DATA-DASAR-04',
+    topicId: 'dasar-dasar-data',
+    topicName: 'Dasar-dasar Data',
+    code: 'ID: DATA-DASAR-04',
+    title: 'Soal 4 dari 4 • Skala Pengukuran: Interval vs Rasio',
+    narrative: 'Seorang mahasiswa sains data menguji dua variabel riset: (1) "Suhu ruangan server laboratorium" (dalam derajat Celsius, misal: 0°C, 24°C) dan (2) "Pendapatan bulanan responden" (dalam Rupiah, misal: Rp 0, Rp 5.000.000). Mengapa suhu Celsius masuk ke skala Interval, sedangkan pendapatan masuk ke skala Rasio?',
+    options: [
+      { id: 'opt-a', label: 'A', text: 'Karena suhu Celsius tidak memiliki nol mutlak (0°C bukan berarti ketiadaan suhu), sedangkan pendapatan Rp 0 berarti mutlak ketiadaan uang' },
+      { id: 'opt-b', label: 'B', text: 'Karena suhu tidak memiliki jarak terukur, sedangkan pendapatan tidak bisa dibandingkan' },
+      { id: 'opt-c', label: 'C', text: 'Karena suhu Celsius adalah data kategorikal, sedangkan pendapatan adalah data diskrit' },
+      { id: 'opt-d', label: 'D', text: 'Keduanya sebenarnya sama-sama skala rasio karena keduanya berwujud angka' },
+    ],
+    correctOptionId: 'opt-a',
+    hintStep1: 'Ujilah dengan konsep "Nol Mutlak" (True Zero): Jika nilai = 0, apakah artinya besaran itu benar-benar lenyap/tidak ada sama sekali, atau hanya titik acuan kesepakatan skala?',
+    reflectionQuestion: 'Apakah pada 0°C udara tetap memiliki suhu (masih dingin membeku), sedangkan saldo Rp 0 berarti benar-benar tidak ada uang sama sekali (true zero)?',
+    reflectionConfirmationText: 'Ya, pembeda utamanya ada pada keberadaan nilai nol mutlak',
+    reflectionRecalculateText: 'Mau cek ulang konsep nol mutlak',
+    positiveFeedback: {
+      title: 'Brilian! Konsep paling krusial di skala pengukuran tuntas kamu pahami.',
+      description: 'Skala Interval memiliki selisih bermakna tetapi tidak punya nol mutlak (0°C adalah titik beku air, bukan ketiadaan kalor). Skala Rasio memiliki nol mutlak (Rp 0 = ketiadaan uang), sehingga perbandingan rasio seperti "dua kali lipat" berlaku sah.',
+      bonusXp: 10,
+    },
+  },
   {
     id: 'STAT-DESK-01',
     topicId: 'statistika-deskriptif',
@@ -166,6 +262,21 @@ export const sampleQuestions: Question[] = [
 ];
 
 export const mockTopics: Topic[] = [
+  {
+    id: 'dasar-dasar-data',
+    category: 'statistika',
+    title: 'Dasar-dasar Data',
+    badge: 'Mulai di Sini',
+    badgeType: 'fondasi',
+    description: 'Kenali jenis variabel dan skala pengukuran sebelum masuk ke rumus. Fondasi yang sering dilewati tapi penting untuk Bab 3 metodologi skripsi.',
+    progressPercent: 0,
+    progressLabel: 'Tingkat Mudah siap dibuka',
+    unlockedTiers: ['mudah'],
+    modulesCount: 4,
+    iconName: 'category',
+    statusAction: 'mulai',
+    contentType: 'teori',
+  },
   {
     id: 'statistika-deskriptif',
     category: 'statistika',
@@ -344,5 +455,73 @@ export const mockLearningSessions: LearningSession[] = [
     tag: 'Diulang 1x',
     tagType: 'diulang',
     icon: 'functions',
+  },
+];
+
+export const theoryContents: TheoryContent[] = [
+  {
+    topicId: 'dasar-dasar-data',
+    topicTitle: 'Dasar-dasar Data: Variabel & Skala Pengukuran',
+    estimatedReadMinutes: 4,
+    completionXp: 15,
+    sections: [
+      {
+        id: 'sec-1',
+        heading: 'Mengenal Variabel',
+        body: 'Variabel adalah karakteristik atau informasi yang diamati atau diukur dalam suatu penelitian. Variabel inilah yang menjadi objek pengumpulan data, baik melalui kuesioner, wawancara, maupun observasi. Dalam statistika, variabel secara umum diklasifikasikan menjadi dua jenis utama:',
+        formula: 'Variabel = { Categorical (Kualitatif) | Numerical (Kuantitatif) }',
+        formulaNote: 'Memahami perbedaan ini adalah langkah awal agar tidak salah memilih uji statistik di Bab 3 skripsi.',
+        examples: [
+          {
+            label: 'Categorical (Kualitatif)',
+            text: 'Data berupa kategori, label nama, atau atribut non-angka. Contoh dalam kuesioner mahasiswa: "Jurusan kuliah responden" (seperti Manajemen, Akuntansi, atau Ilmu Komunikasi). Nilai ini tidak dapat dijumlahkan atau dicari nilai rata-ratanya secara matematis.',
+          },
+          {
+            label: 'Numerical (Kuantitatif)',
+            text: 'Data berupa angka yang diperoleh dari hasil penghitungan atau pengukuran. Contoh dalam kuesioner mahasiswa: "Nilai IPK responden" (misal: 3.75, 3.40) atau "Usia responden". Data numerik dapat dihitung nilai rata-rata, median, dan sebarannya.',
+          },
+        ],
+      },
+      {
+        id: 'sec-2',
+        heading: 'Dua Jenis Variabel Numerik',
+        body: 'Setelah mengetahui bahwa suatu data berupa angka (numerik), kita membaginya lebih lanjut menjadi dua jenis: Diskrit dan Kontinu. Perbedaannya terletak pada cara data tersebut diperoleh—apakah melalui proses menghitung atau mengukur.',
+        examples: [
+          {
+            label: 'Variabel Diskrit (Hasil Menghitung)',
+            text: 'Diperoleh melalui proses menghitung (mencacah) bilangan bulat utuh dan tidak memiliki nilai pecahan di antara dua nilai terdekat. Contoh: jumlah produk terjual di toko. Contoh lain dalam konteks skripsi kampus: "Jumlah jurnal referensi yang diunduh mahasiswa per minggu" (misal: 2, 4, atau 7 jurnal, tidak mungkin 4.23 jurnal).',
+          },
+          {
+            label: 'Variabel Kontinu (Hasil Mengukur)',
+            text: 'Diperoleh melalui proses mengukur dengan alat ukur tertentu dan dapat memuat nilai pecahan/desimal tak terhingga dalam rentang tertentu. Contoh: waktu tunggu pesanan di kafe. Contoh lain dalam konteks skripsi kampus: "Durasi waktu belajar mandiri harian mahasiswa" (misal: 1.5 jam atau 2.75 jam) serta "Jarak tempuh dari kos ke kampus" (misal: 3.85 km).',
+          },
+        ],
+      },
+      {
+        id: 'sec-3',
+        heading: 'Empat Skala Pengukuran (NOIR)',
+        body: 'Skala pengukuran menentukan tingkat ketepatan informasi yang terkandung dalam data serta jenis uji statistik yang diperbolehkan. Terdapat empat tingkatan skala pengukuran yang dikenal dengan singkatan NOIR:',
+        formula: 'Tingkatan Skala: Nominal → Ordinal → Interval → Ratio',
+        formulaNote: 'Masing-masing skala memiliki karakteristik khas terkait keberadaan urutan nilai dan nilai nol mutlak (true zero).',
+        examples: [
+          {
+            label: '1. Nominal (Kategori Tanpa Urutan)',
+            text: 'Data kategori yang berfungsi sebagai label identitas belaka tanpa adanya tingkatan urutan atau peringkat. Contoh dalam kuesioner skripsi: "Jenis kelamin" (Pria, Wanita) atau "Domisili asal responden" (Jakarta, Surabaya, Medan). Nilai-nilai ini murni setara.',
+          },
+          {
+            label: '2. Ordinal (Kategori yang Memiliki Urutan/Peringkat)',
+            text: 'Data kategori yang memiliki tingkatan urutan atau ranking yang jelas, meskipun selisih pasti antar peringkat tidak bisa diukur secara eksak. Contoh dalam riset: tingkat kepuasan layanan yang dinyatakan sebagai "rendah, sedang, tinggi", atau skala Likert kuesioner (1 = Sangat Tidak Puas hingga 5 = Sangat Puas). Kita tahu peringkatnya, tapi jarak perasaan antara Puas dan Sangat Puas tidak dapat diukur pasti.',
+          },
+          {
+            label: '3. Interval (Memiliki Perbedaan Nilai, Tanpa True Zero)',
+            text: 'Data numerik yang memiliki perbedaan/selisih terukur yang sama antar nilai, namun TIDAK memiliki nilai nol mutlak (true zero). Contoh: "Suhu dalam derajat Celsius". Angka 0°C bukan berarti tidak ada suhu sama sekali (ketiadaan kalor), melainkan titik beku air berdasarkan konvensi skala. Oleh karena itu, kita tidak bisa mengatakan bahwa 40°C adalah dua kali lebih panas dari 20°C.',
+          },
+          {
+            label: '4. Ratio (Memiliki Perbedaan Nilai dan True Zero)',
+            text: 'Tingkatan skala tertinggi. Memiliki selisih antar nilai yang bermakna dan MEMILIKI nilai nol mutlak (true zero). Nilai 0 pada skala rasio benar-benar merepresentasikan ketiadaan mutlak dari atribut yang diukur. Contoh nyata dalam riset: "Pendapatan bulanan responden" (Rp 0 berarti benar-benar tidak ada uang sama sekali), "Jumlah jam kerja", atau "Berat badan". Karena memiliki true zero, perbandingan rasio berlaku sah: pendapatan Rp 8.000.000 adalah tepat dua kali lipat dari Rp 4.000.000.',
+          },
+        ],
+      },
+    ],
   },
 ];

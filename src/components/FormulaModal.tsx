@@ -70,6 +70,58 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
         <div className="flex-1 overflow-y-auto py-4 space-y-4 pr-1">
           {activeTab === 'deskriptif' && (
             <>
+              {/* Card 0: Dasar-dasar Data */}
+              <div className="p-4 rounded-xl border border-outline-variant/60 bg-surface-container-low/40 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-primary">Dasar-dasar Data: Variabel &amp; Skala Pengukuran</h3>
+                  <span className="text-xs bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant/40 text-on-surface-variant">
+                    Prasyarat Metodologi
+                  </span>
+                </div>
+                <p className="text-xs text-on-surface-variant leading-relaxed">
+                  <strong>Peta Konsep Dasar:</strong> Sebelum mengolah rumus statistik, kenali jenis variabel dan skala pengukuran datamu agar tidak keliru memilih metode analisis di Bab 3 skripsi.
+                </p>
+
+                <div className="space-y-2.5 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/40 text-xs">
+                  <div>
+                    <span className="font-semibold text-on-surface block mb-1 text-[11px] uppercase tracking-wide">
+                      Jenis Variabel:
+                    </span>
+                    <ul className="space-y-1 text-on-surface-variant pl-1">
+                      <li>
+                        <strong className="text-primary font-medium">• Kategorikal (Kualitatif):</strong> Data berupa label kelompok atau nama tanpa nilai numerik matematis (misal: gender, jurusan).
+                      </li>
+                      <li>
+                        <strong className="text-primary font-medium">• Numerik Diskrit:</strong> Angka hasil mencacah/menghitung bilangan bulat utuh (misal: jumlah transaksi, banyak anak).
+                      </li>
+                      <li>
+                        <strong className="text-primary font-medium">• Numerik Kontinu:</strong> Angka hasil pengukuran yang berada dalam rentang kontinu dan bisa bernilai desimal/pecahan (misal: waktu tunggu, berat badan).
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="pt-2 border-t border-surface-container">
+                    <span className="font-semibold text-on-surface block mb-1 text-[11px] uppercase tracking-wide">
+                      4 Skala Pengukuran (NOIR):
+                    </span>
+                    <ul className="space-y-1 text-on-surface-variant pl-1">
+                      <li>
+                        <strong className="text-primary font-medium">• Nominal:</strong> Kategori setara murni tanpa urutan atau tingkatan (misal: jenis kelamin, kota asal).
+                      </li>
+                      <li>
+                        <strong className="text-primary font-medium">• Ordinal:</strong> Kategori yang memiliki tingkatan urutan/ranking, namun jarak pasti antar tingkat tidak terukur (misal: skala Likert, juara lomba).
+                      </li>
+                      <li>
+                        <strong className="text-primary font-medium">• Interval:</strong> Angka dengan selisih jarak bermakna, namun <em>tidak memiliki nilai nol mutlak</em> (0°C bukan berarti ketiadaan suhu).
+                      </li>
+                      <li>
+                        <strong className="text-primary font-medium">• Rasio:</strong> Angka dengan selisih jarak bermakna dan <em>memiliki nilai nol mutlak</em> (Rp 0 = ketiadaan uang; perbandingan kelipatan berlaku sah).
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
               {/* Card 1: Mean */}
               <div className="p-4 rounded-xl border border-outline-variant/60 bg-surface-container-low/40 space-y-2">
                 <div className="flex items-center justify-between">
