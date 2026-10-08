@@ -38,7 +38,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({ type, onClose }) => {
                 Tidak ada algoritma pemeringkat publik atau papan peringkat kompetitif yang mempermalukan siapa pun. Latihan dan refleksi yang kamu lakukan disimpan secara pribadi.
               </p>
               <div className="p-3 bg-surface-container-low rounded-xl text-xs text-outline">
-                Sesuai standar perlindungan data pribadi dan kebebasan akademik mahasiswa Indonesia.
+                Sesuai standar perlindungan data pribadi dan kebebasan akademik mahasiswa BINUS University.
               </div>
             </>
           ) : (

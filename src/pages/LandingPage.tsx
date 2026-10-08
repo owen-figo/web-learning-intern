@@ -1,23 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ActivePage } from '../types';
 
 interface LandingPageProps {
   setActivePage: (page: ActivePage) => void;
-  onAddXp?: (amount: number) => void;
+  onStartActiveTopic?: () => void;
 }
 
-export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp }) => {
-  const [selectedAnswer, setSelectedAnswer] = useState<'a' | 'b' | 'c' | null>('b');
-  const [xpClaimed, setXpClaimed] = useState(false);
-
-  const handleSelectAnswer = (opt: 'a' | 'b' | 'c') => {
-    setSelectedAnswer(opt);
-    if (opt === 'b' && !xpClaimed && onAddXp) {
-      onAddXp(15);
-      setXpClaimed(true);
-    }
-  };
-
+export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStartActiveTopic }) => {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Canvas */}
@@ -28,18 +17,24 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
             {/* Left Column (7 Columns) */}
             <div className="lg:col-span-7 space-y-6">
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface leading-[1.18]">
-                Statistika &amp; Matematika Kuliah? <br className="hidden sm:inline" />
+                Statistika Kuliah di BINUS? <br className="hidden sm:inline" />
                 <span className="text-primary font-semibold">Tenang, Kamu Pasti Ngerti.</span>
               </h1>
 
               <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
-                Tidak ada yang terlahir &quot;payah matematika&quot;. Yang ada hanyalah materi yang selama ini dijelaskan dengan cara rumit. Di Ngerti, kita uraikan rumus panjang jadi percakapan masuk akal, tanpa rasa takut dihakimi.
+                Tidak ada BINUSIAN yang terlahir &quot;payah statistika&quot;. Yang ada hanyalah materi yang selama ini dijelaskan dengan cara rumit. Di Ngerti, kita uraikan rumus dan uji statistik jadi penalaran masuk akal, tanpa rasa takut dihakimi.
               </p>
 
               {/* Dual CTAs */}
               <div className="flex flex-wrap items-center gap-3.5 pt-2">
                 <button
-                  onClick={() => setActivePage('practice')}
+                  onClick={() => {
+                    if (onStartActiveTopic) {
+                      onStartActiveTopic();
+                    } else {
+                      setActivePage('practice');
+                    }
+                  }}
                   className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary hover:bg-primary-container px-6 py-3.5 rounded-lg text-sm sm:text-base font-semibold transition-all card-gentle active:scale-95 shadow-sm"
                 >
                   <span>Mulai Latihan Bebas (Gratis)</span>
@@ -55,142 +50,165 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
               </div>
             </div>
 
-            {/* Right Column: Interactive Sample Question Preview (5 Columns) */}
+            {/* Right Column: Cara Dapat XP (5 Columns) */}
             <div className="lg:col-span-5">
-              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 card-float relative overflow-hidden transition-all duration-300">
-                {/* Problem Prompt */}
-                <div className="space-y-2">
-                  <h2 className="text-base sm:text-lg font-semibold text-on-surface leading-snug">
-                    Mencari Rata-rata (Mean) Waktu Belajar Mandiri
-                  </h2>
-                  <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                    Sampel 5 mahasiswa melaporkan jam belajar mingguan mereka:{' '}
-                    <span className="font-code-formula font-semibold text-primary bg-surface-container-low px-2 py-0.5 rounded">
-                      6, 8, 4, 10, 7
-                    </span>{' '}
-                    jam. Berapakah nilai rata-rata (<span className="font-code-formula italic">x̄</span>)?
-                  </p>
-                </div>
-
-                {/* Formula Breakdown Box */}
-                <div className="mt-4 p-3.5 rounded-xl bg-surface-container-low border border-outline-variant space-y-2">
-                  <div className="flex items-center gap-2 text-primary text-xs font-semibold">
+              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 card-float relative overflow-hidden transition-all duration-300 space-y-5">
+                {/* Header */}
+                <div>
+                  <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
                     <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      lightbulb
+                      stars
                     </span>
-                    <span>Langkah Logika Santai</span>
+                    <span>Sistem Apresiasi Usaha</span>
                   </div>
-                  <div className="font-code-formula text-on-surface-variant text-xs bg-surface-container-lowest p-2 rounded-lg border border-outline-variant">
-                    x̄ = (Σx) / n = (6 + 8 + 4 + 10 + 7) / 5
-                  </div>
-                  <p className="text-xs text-on-surface-variant">
-                    Jumlahkan seluruh nilai data terlebih dahulu, lalu bagi dengan jumlah respondennya (n = 5).
+                  <h2 className="text-lg sm:text-xl font-bold text-on-surface">
+                    Cara Dapat XP
+                  </h2>
+                  <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
+                    Setiap usaha dihitung, bukan cuma jawaban benar.
                   </p>
                 </div>
 
-                {/* Interactive Choice Options */}
-                <div className="mt-5 space-y-2.5">
-                  <p className="text-xs text-on-surface font-medium">Pilih jawabanmu tanpa ragu:</p>
-
-                  {/* Option A */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectAnswer('a')}
-                    className={`w-full text-left p-3 rounded-lg border flex items-center justify-between transition-all duration-150 group ${
-                      selectedAnswer === 'a'
-                        ? 'border-secondary bg-surface-container-low ring-2 ring-secondary/30'
-                        : 'border-outline-variant bg-surface-container-lowest hover:border-primary'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full border border-outline-variant flex items-center justify-center text-xs font-semibold text-on-surface-variant">
-                        A
-                      </span>
-                      <span className="font-code-formula text-sm">6.5 Jam</span>
+                {/* Compact Vertical List of XP Rules */}
+                <div className="space-y-2.5">
+                  {/* Row 1: Mencoba soal */}
+                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
+                        <span className="material-symbols-outlined text-base">edit_note</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-on-surface">Mencoba soal</p>
+                        <p className="text-[11px] text-on-surface-variant truncate">Benar atau salah, usahamu tetap dihargai.</p>
+                      </div>
                     </div>
-                    <span className="material-symbols-outlined text-sm text-outline-variant group-hover:text-primary">
-                      chevron_right
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
+                      +10 XP
                     </span>
-                  </button>
+                  </div>
 
-                  {/* Option B (Correct) */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectAnswer('b')}
-                    className={`w-full text-left p-3 rounded-lg border flex items-center justify-between transition-all duration-150 group ${
-                      selectedAnswer === 'b'
-                        ? 'border-primary bg-primary-fixed/20 ring-2 ring-primary/30'
-                        : 'border-outline-variant bg-surface-container-lowest hover:border-primary'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center text-xs font-semibold">
-                        B
-                      </span>
-                      <span className="font-code-formula text-sm font-semibold text-primary">7.0 Jam</span>
+                  {/* Row 2: Jawaban benar */}
+                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
+                        <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+                          check_circle
+                        </span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-on-surface">Jawaban benar</p>
+                        <p className="text-[11px] text-on-surface-variant truncate">Bonus untuk jawaban yang tepat.</p>
+                      </div>
                     </div>
-                    <span className="material-symbols-outlined text-sm text-primary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      check_circle
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
+                      +15 XP
                     </span>
-                  </button>
+                  </div>
 
-                  {/* Option C */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectAnswer('c')}
-                    className={`w-full text-left p-3 rounded-lg border flex items-center justify-between transition-all duration-150 group ${
-                      selectedAnswer === 'c'
-                        ? 'border-secondary bg-surface-container-low ring-2 ring-secondary/30'
-                        : 'border-outline-variant bg-surface-container-lowest hover:border-primary'
-                    }`}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="w-6 h-6 rounded-full border border-outline-variant flex items-center justify-center text-xs font-semibold text-on-surface-variant">
-                        C
-                      </span>
-                      <span className="font-code-formula text-sm">7.4 Jam</span>
+                  {/* Row 3: Langkah "Cek jawabanmu" */}
+                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
+                        <span className="material-symbols-outlined text-base">fact_check</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-on-surface">Langkah &quot;Cek jawabanmu&quot;</p>
+                        <p className="text-[11px] text-on-surface-variant truncate">Bonus karena kamu memeriksa sebelum lanjut.</p>
+                      </div>
                     </div>
-                    <span className="material-symbols-outlined text-sm text-outline-variant group-hover:text-primary">
-                      chevron_right
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
+                      +10 XP
                     </span>
-                  </button>
+                  </div>
+
+                  {/* Row 4: Bonus kecepatan */}
+                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
+                        <span className="material-symbols-outlined text-base">bolt</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-on-surface">Bonus kecepatan</p>
+                        <p className="text-[11px] text-on-surface-variant truncate">Hanya untuk fase mengerjakan. Timer berhenti saat kamu mengecek jawaban, jadi tidak perlu buru-buru.</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 px-2 py-1 rounded-full bg-primary/10 text-primary font-semibold text-[11px] border border-primary/20">
+                      sampai +10 XP
+                    </span>
+                  </div>
+
+                  {/* Row 5: Baca materi teori */}
+                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
+                        <span className="material-symbols-outlined text-base">menu_book</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-on-surface">Baca materi teori sampai selesai</p>
+                        <p className="text-[11px] text-on-surface-variant truncate">Pahami konsep fondasi tanpa tekanan kuis.</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
+                      +15 XP
+                    </span>
+                  </div>
+
+                  {/* Row 6: Daily Quest harian */}
+                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
+                        <span className="material-symbols-outlined text-base">task_alt</span>
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-xs font-semibold text-on-surface">Daily Quest harian</p>
+                        <p className="text-[11px] text-on-surface-variant truncate">Selesaikan satu set singkat setiap hari.</p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
+                      +20 XP
+                    </span>
+                  </div>
                 </div>
 
-                {/* Positive Feedback Banner */}
-                {selectedAnswer === 'b' ? (
-                  <div className="mt-4 p-3.5 rounded-xl bg-[#FEF6EB] border border-[#FCDCB2] flex items-start gap-3 transition-opacity">
-                    <span
-                      className="material-symbols-outlined text-secondary text-xl mt-0.5"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      sentiment_very_satisfied
+                {/* Apa gunanya XP? Strip */}
+                <div className="pt-3 border-t border-outline-variant space-y-2">
+                  <p className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-base text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      emoji_events
                     </span>
-                    <div className="space-y-0.5 text-xs">
-                      <p className="font-semibold text-on-secondary-container">
-                        Keren! Kamu menganalisis langkahnya dengan teliti.
+                    <span>Apa gunanya XP?</span>
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                    <div className="p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant text-[11px] space-y-1">
+                      <p className="font-semibold text-primary flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">trending_up</span>
+                        <span>Naik Rank</span>
                       </p>
-                      <p className="text-on-secondary-fixed-variant leading-relaxed">
-                        Total = 35, dibagi 5 = 7.0 jam. Langkah sederhana ini adalah pondasi 80% analisis data deskriptif skripsimu nanti!
+                      <p className="text-on-surface-variant leading-snug">
+                        Rank berdasarkan progres pribadimu, bukan perbandingan dengan orang lain.
                       </p>
                     </div>
-                  </div>
-                ) : (
-                  <div className="mt-4 p-3.5 rounded-xl bg-surface-container-low border border-outline-variant flex items-start gap-3">
-                    <span className="material-symbols-outlined text-secondary text-xl mt-0.5">lightbulb</span>
-                    <div className="space-y-0.5 text-xs text-on-surface-variant">
-                      <p className="font-semibold text-on-surface">Mari cek ulang penjumlahannya bersama:</p>
-                      <p>6 + 8 + 4 + 10 + 7 = 35. Lalu 35 dibagi 5 responden hasilnya adalah 7.0 jam. Santai saja, klik opsi B untuk mencoba!</p>
-                    </div>
-                  </div>
-                )}
 
-                {/* Mini Reflective Footer */}
-                <div className="mt-4 pt-3 border-t border-surface-variant flex items-center justify-between text-on-surface-variant text-xs">
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm text-primary">check_circle</span>
-                    <span>Cek Ulang Jawaban: Tuntas</span>
-                  </span>
-                  <span className="text-primary font-medium">+15 XP Refleksi</span>
+                    <div className="p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant text-[11px] space-y-1">
+                      <p className="font-semibold text-primary flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">military_tech</span>
+                        <span>Buka Achievement</span>
+                      </p>
+                      <p className="text-on-surface-variant leading-snug">
+                        Badge membuka bingkai avatar, warna banner, dan gelar untuk profilmu.
+                      </p>
+                    </div>
+
+                    <div className="p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant text-[11px] space-y-1">
+                      <p className="font-semibold text-primary flex items-center gap-1">
+                        <span className="material-symbols-outlined text-xs">local_fire_department</span>
+                        <span>Jaga Streak</span>
+                      </p>
+                      <p className="text-on-surface-variant leading-snug">
+                        Belajar tiap hari menjaga streak tetap menyala.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -295,12 +313,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
         <section className="py-12 md:py-16 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto space-y-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
             <div>
-              <span className="text-primary text-xs font-semibold tracking-wider uppercase">Kurikulum Kampus</span>
+              <span className="text-primary text-xs font-semibold tracking-wider uppercase">Kurikulum Statistika BINUS</span>
               <h2 className="text-2xl sm:text-3xl font-bold text-on-surface">
-                Topik Esensial yang Paling Sering Dicari Mahasiswa
+                Topik Statistika Esensial untuk BINUSIAN
               </h2>
               <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
-                Dari tugas kuliah pengantar statistika sampai olah data skripsi bab 4.
+                Dari mata kuliah Business Statistics / Computational Statistics hingga olah data skripsi &amp; tugas akhir BINUS.
               </p>
             </div>
             <button
@@ -316,7 +334,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Topic 1 */}
             <div
-              onClick={() => setActivePage('practice')}
+              onClick={() => {
+                if (onStartActiveTopic) {
+                  onStartActiveTopic();
+                } else {
+                  setActivePage('topics');
+                }
+              }}
               className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 card-gentle hover:border-primary transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-3">
@@ -339,7 +363,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
 
             {/* Topic 2 */}
             <div
-              onClick={() => setActivePage('topics')}
+              onClick={() => {
+                if (onStartActiveTopic) {
+                  onStartActiveTopic();
+                } else {
+                  setActivePage('topics');
+                }
+              }}
               className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 card-gentle hover:border-primary transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-3">
@@ -362,7 +392,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
 
             {/* Topic 3 */}
             <div
-              onClick={() => setActivePage('topics')}
+              onClick={() => {
+                if (onStartActiveTopic) {
+                  onStartActiveTopic();
+                } else {
+                  setActivePage('topics');
+                }
+              }}
               className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 card-gentle hover:border-primary transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-3">
@@ -385,7 +421,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
 
             {/* Topic 4 */}
             <div
-              onClick={() => setActivePage('topics')}
+              onClick={() => {
+                if (onStartActiveTopic) {
+                  onStartActiveTopic();
+                } else {
+                  setActivePage('topics');
+                }
+              }}
               className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 card-gentle hover:border-primary transition-all cursor-pointer flex flex-col justify-between"
             >
               <div className="space-y-3">
@@ -421,7 +463,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onAddXp
             </div>
             <div className="flex-shrink-0">
               <button
-                onClick={() => setActivePage('practice')}
+                onClick={() => {
+                  if (onStartActiveTopic) {
+                    onStartActiveTopic();
+                  } else {
+                    setActivePage('topics');
+                  }
+                }}
                 className="inline-flex items-center gap-2 bg-surface-container-lowest text-primary hover:bg-surface-container-low px-6 py-3.5 rounded-lg text-xs sm:text-sm font-semibold transition-all shadow-xs active:scale-95"
               >
                 <span>Coba 1 Modul Sekarang</span>

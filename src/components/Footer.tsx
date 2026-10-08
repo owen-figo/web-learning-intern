@@ -29,7 +29,7 @@ export const Footer: React.FC<FooterProps> = ({
           </button>
           <span className="hidden sm:inline text-outline-variant">|</span>
           <p className="text-xs sm:text-sm text-on-surface-variant max-w-md">
-            © 2025 Ngerti. Platform belajar statistika dan matematika tanpa cemas untuk mahasiswa Indonesia.
+            © 2025 Ngerti. Platform belajar statistika tanpa cemas untuk mahasiswa BINUS University.
           </p>
         </div>
 

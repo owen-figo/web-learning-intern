@@ -6,7 +6,7 @@ interface FormulaModalProps {
 }
 
 export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState<'deskriptif' | 'inferensial' | 'aljabar'>('deskriptif');
+  const [activeTab, setActiveTab] = useState<'deskriptif' | 'inferensial' | 'regresi'>('deskriptif');
 
   if (!isOpen) return null;
 
@@ -55,14 +55,14 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
             Peluang & Uji Hipotesis
           </button>
           <button
-            onClick={() => setActiveTab('aljabar')}
+            onClick={() => setActiveTab('regresi')}
             className={`px-3 py-1.5 rounded-lg transition-colors ${
-              activeTab === 'aljabar'
+              activeTab === 'regresi'
                 ? 'bg-primary-container text-on-primary'
                 : 'text-on-surface-variant hover:bg-surface-container'
             }`}
           >
-            Aljabar & Kalkulus
+            Regresi &amp; Korelasi
           </button>
         </div>
 
@@ -75,7 +75,7 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
                 <div className="flex items-center justify-between">
                   <h3 className="text-sm font-semibold text-primary">Dasar-dasar Data: Variabel &amp; Skala Pengukuran</h3>
                   <span className="text-xs bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant/40 text-on-surface-variant">
-                    Prasyarat Metodologi
+                    Prasyarat Metodologi BINUS
                   </span>
                 </div>
                 <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -89,13 +89,13 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
                     </span>
                     <ul className="space-y-1 text-on-surface-variant pl-1">
                       <li>
-                        <strong className="text-primary font-medium">• Kategorikal (Kualitatif):</strong> Data berupa label kelompok atau nama tanpa nilai numerik matematis (misal: gender, jurusan).
+                        <strong className="text-primary font-medium">• Kategorikal (Kualitatif):</strong> Data berupa label kelompok atau nama tanpa nilai numerik matematis (misal: gender, program studi BINUS).
                       </li>
                       <li>
-                        <strong className="text-primary font-medium">• Numerik Diskrit:</strong> Angka hasil mencacah/menghitung bilangan bulat utuh (misal: jumlah transaksi, banyak anak).
+                        <strong className="text-primary font-medium">• Numerik Diskrit:</strong> Angka hasil mencacah/menghitung bilangan bulat utuh (misal: jumlah transaksi, banyak responden).
                       </li>
                       <li>
-                        <strong className="text-primary font-medium">• Numerik Kontinu:</strong> Angka hasil pengukuran yang berada dalam rentang kontinu dan bisa bernilai desimal/pecahan (misal: waktu tunggu, berat badan).
+                        <strong className="text-primary font-medium">• Numerik Kontinu:</strong> Angka hasil pengukuran yang berada dalam rentang kontinu dan bisa bernilai desimal/pecahan (misal: waktu respons sistem, IPK).
                       </li>
                     </ul>
                   </div>
@@ -106,10 +106,10 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
                     </span>
                     <ul className="space-y-1 text-on-surface-variant pl-1">
                       <li>
-                        <strong className="text-primary font-medium">• Nominal:</strong> Kategori setara murni tanpa urutan atau tingkatan (misal: jenis kelamin, kota asal).
+                        <strong className="text-primary font-medium">• Nominal:</strong> Kategori setara murni tanpa urutan atau tingkatan (misal: peminatan jurusan, domisili kampus).
                       </li>
                       <li>
-                        <strong className="text-primary font-medium">• Ordinal:</strong> Kategori yang memiliki tingkatan urutan/ranking, namun jarak pasti antar tingkat tidak terukur (misal: skala Likert, juara lomba).
+                        <strong className="text-primary font-medium">• Ordinal:</strong> Kategori yang memiliki tingkatan urutan/ranking, namun jarak pasti antar tingkat tidak terukur (misal: skala Likert kuesioner).
                       </li>
                       <li>
                         <strong className="text-primary font-medium">• Interval:</strong> Angka dengan selisih jarak bermakna, namun <em>tidak memiliki nilai nol mutlak</em> (0°C bukan berarti ketiadaan suhu).
@@ -208,12 +208,12 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
             </>
           )}
 
-          {activeTab === 'aljabar' && (
+          {activeTab === 'regresi' && (
             <>
               {/* Card 6: Garis Regresi */}
               <div className="p-4 rounded-xl border border-outline-variant/60 bg-surface-container-low/40 space-y-2">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-primary">Persamaan Regresi Linier</h3>
+                  <h3 className="text-sm font-semibold text-primary">Persamaan Regresi Linier (Ŷ = a + bX)</h3>
                   <span className="text-xs bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant/40 text-on-surface-variant">
                     Prediksi
                   </span>
@@ -222,7 +222,23 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
                   Ŷ = a + bX
                 </div>
                 <p className="text-xs text-on-surface-variant leading-relaxed">
-                  <strong>Makna:</strong> a adalah titik potong (intersep saat X=0), b adalah koefisien arah (kenaikan Y setiap penambahan 1 satuan X).
+                  <strong>Makna:</strong> a adalah titik potong (intersep saat X=0), b adalah koefisien arah regresi (besarnya perubahan estimasi Y setiap penambahan 1 satuan nilai variabel independen X).
+                </p>
+              </div>
+
+              {/* Card 7: Korelasi Pearson */}
+              <div className="p-4 rounded-xl border border-outline-variant/60 bg-surface-container-low/40 space-y-2">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-primary">Koefisien Korelasi Pearson (r)</h3>
+                  <span className="text-xs bg-surface-container-lowest px-2 py-0.5 rounded border border-outline-variant/40 text-on-surface-variant">
+                    Kekuatan Hubungan
+                  </span>
+                </div>
+                <div className="font-code-formula text-sm bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/40 text-primary">
+                  r = Σ((x - x̄)(y - ȳ)) / [ √(Σ(x - x̄)²) · √(Σ(y - ȳ)²) ]
+                </div>
+                <p className="text-xs text-on-surface-variant leading-relaxed">
+                  <strong>Makna:</strong> Mengukur arah dan keeratan hubungan linier antara dua variabel numerik (-1 ≤ r ≤ +1). Nilai r mendekati +1 menunjukkan korelasi positif kuat.
                 </p>
               </div>
             </>

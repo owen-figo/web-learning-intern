@@ -2,6 +2,8 @@ export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth' 
 
 export type DifficultyTier = 'mudah' | 'sedang' | 'sulit' | 'sangat_sulit';
 
+export type TopicStatus = 'selesai' | 'aktif' | 'terkunci';
+
 export interface ChoiceOption {
   id: string;
   label: string;
@@ -57,7 +59,9 @@ export interface TheoryContent {
 
 export interface Topic {
   id: string;
-  category: 'statistika' | 'kalkulus_aljabar';
+  order: number;
+  category: 'statistika';
+  subCategory?: 'deskriptif' | 'inferensial';
   title: string;
   badge: string;
   badgeType: 'skripsi' | 'fondasi' | 'praktikum' | 'hubungan' | 'logika' | 'lanjutan';

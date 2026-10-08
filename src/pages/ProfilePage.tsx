@@ -122,7 +122,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               <div className="flex flex-wrap items-center gap-2 pt-1.5">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-xs">
                   <span className="material-symbols-outlined text-[16px] text-primary">verified_user</span>
-                  <span>Akun Terverifikasi Kampus</span>
+                  <span>Akun Terverifikasi BINUS</span>
                 </span>
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-xs">
                   <span className="material-symbols-outlined text-[16px] text-secondary">energy_savings_leaf</span>

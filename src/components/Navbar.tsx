@@ -7,6 +7,7 @@ interface NavbarProps {
   user: UserProfile;
   onOpenAuth: () => void;
   recentXpGained?: number;
+  onOpenActiveTopic?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -15,6 +16,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   user,
   onOpenAuth,
   recentXpGained = 25,
+  onOpenActiveTopic,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(true);
@@ -49,7 +51,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               Topik Belajar
             </button>
             <button
-              onClick={() => setActivePage('practice')}
+              onClick={() => {
+                if (onOpenActiveTopic) {
+                  onOpenActiveTopic();
+                } else {
+                  setActivePage('practice');
+                }
+              }}
               className={`pb-1 transition-colors duration-200 border-b-2 ${
                 activePage === 'practice'
                   ? 'text-primary border-primary font-semibold'
@@ -164,7 +172,13 @@ export const Navbar: React.FC<NavbarProps> = ({
               Masuk
             </button>
             <button
-              onClick={() => setActivePage('practice')}
+              onClick={() => {
+                if (onOpenActiveTopic) {
+                  onOpenActiveTopic();
+                } else {
+                  setActivePage('practice');
+                }
+              }}
               className="hidden sm:inline-flex bg-primary text-on-primary hover:bg-primary-container px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all shadow-xs active:scale-95"
             >
               Mulai Belajar Santai

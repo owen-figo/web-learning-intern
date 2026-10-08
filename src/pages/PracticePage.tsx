@@ -6,42 +6,41 @@ interface PracticePageProps {
   setActivePage: (page: ActivePage) => void;
   onAddXp?: (amount: number) => void;
   selectedTopicId?: string;
+  onCompleteTopic?: (topicId: string) => void;
 }
 
 export const PracticePage: React.FC<PracticePageProps> = ({
   setActivePage,
   onAddXp,
-  selectedTopicId = 'statistika-deskriptif',
+  selectedTopicId = 'dasar-dasar-data',
+  onCompleteTopic,
 }) => {
   const activeTopicQuestions = sampleQuestions.filter((q) => q.topicId === selectedTopicId);
   const questionsToUse = activeTopicQuestions.length > 0
     ? activeTopicQuestions
     : sampleQuestions.filter((q) => q.topicId === 'statistika-deskriptif');
 
-  const isDefaultTopic = selectedTopicId === 'statistika-deskriptif';
   const [selectedTier, setSelectedTier] = useState<DifficultyTier>('mudah');
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(isDefaultTopic ? 2 : 0); // Default to Question 3 (index 2) on deskriptif to match Image 1
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedOptionId, setSelectedOptionId] = useState<string>(
-    isDefaultTopic ? 'opt-b' : (questionsToUse[0]?.options[0]?.id || 'opt-a')
+    questionsToUse[0]?.options[0]?.id || 'opt-a'
   );
-  const [reflectionConfirmed, setReflectionConfirmed] = useState<boolean>(isDefaultTopic);
+  const [reflectionConfirmed, setReflectionConfirmed] = useState<boolean>(false);
   const [showHint, setShowHint] = useState<boolean>(true);
-  const [xpBonusClaimed, setXpBonusClaimed] = useState<boolean>(isDefaultTopic);
-  const [completedQuestions, setCompletedQuestions] = useState<number[]>(isDefaultTopic ? [0, 1] : []);
+  const [xpBonusClaimed, setXpBonusClaimed] = useState<boolean>(false);
+  const [completedQuestions, setCompletedQuestions] = useState<number[]>([]);
 
   useEffect(() => {
-    const isDeskriptif = selectedTopicId === 'statistika-deskriptif';
     const qList = sampleQuestions.filter((q) => q.topicId === selectedTopicId);
     const targetList = qList.length > 0 ? qList : sampleQuestions;
-    const initialIndex = isDeskriptif ? 2 : 0;
-    setCurrentQuestionIndex(initialIndex);
-    const targetQ = targetList[initialIndex] || targetList[0];
+    setCurrentQuestionIndex(0);
+    const targetQ = targetList[0];
     if (targetQ) {
-      setSelectedOptionId(isDeskriptif ? 'opt-b' : targetQ.options[0]?.id || 'opt-a');
+      setSelectedOptionId(targetQ.options[0]?.id || 'opt-a');
     }
-    setReflectionConfirmed(isDeskriptif);
-    setCompletedQuestions(isDeskriptif ? [0, 1] : []);
-    setXpBonusClaimed(isDeskriptif);
+    setReflectionConfirmed(false);
+    setCompletedQuestions([]);
+    setXpBonusClaimed(false);
   }, [selectedTopicId]);
 
   const currentQ: Question = questionsToUse[currentQuestionIndex] || questionsToUse[0];
@@ -74,7 +73,9 @@ export const PracticePage: React.FC<PracticePageProps> = ({
       setXpBonusClaimed(false);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
-      alert(`Selamat! Kamu telah menyelesaikan seluruh ${questionsToUse.length} soal latihan dengan penuh refleksi.`);
+      if (onCompleteTopic && selectedTopicId) {
+        onCompleteTopic(selectedTopicId);
+      }
       setActivePage('topics');
     }
   };
