@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { ActivePage, UserProfile } from '../types';
 
 interface NavbarProps {
@@ -7,6 +7,7 @@ interface NavbarProps {
   user: UserProfile;
   onOpenAuth: () => void;
   recentXpGained?: number;
+  recentXpKey?: number;
   onOpenActiveTopic?: () => void;
 }
 
@@ -15,11 +16,34 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActivePage,
   user,
   onOpenAuth,
-  recentXpGained = 25,
+  recentXpGained = 0,
+  recentXpKey = 0,
   onOpenActiveTopic,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(true);
+
+  // Transient XP popup state
+  const [visibleXp, setVisibleXp] = useState<number | null>(null);
+  const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
+  const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    if (recentXpGained && recentXpGained > 0) {
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+      setVisibleXp(recentXpGained);
+      setIsFadingOut(false);
+      fadeTimerRef.current = setTimeout(() => {
+        setIsFadingOut(true);
+      }, 1500);
+    } else {
+      setVisibleXp(null);
+      setIsFadingOut(false);
+    }
+    return () => {
+      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    };
+  }, [recentXpGained, recentXpKey]);
 
   return (
     <header className="bg-surface-container-lowest border-b border-outline-variant/60 sticky top-0 z-40 shadow-xs">
@@ -67,14 +91,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               Latihan Mandiri
             </button>
             <button
-              onClick={() => setActivePage('profile')}
+              onClick={() => setActivePage('leaderboard')}
               className={`pb-1 transition-colors duration-200 border-b-2 ${
-                activePage === 'profile'
+                activePage === 'leaderboard'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
               }`}
             >
-              Profil
+              Leaderboard
             </button>
             <button
               onClick={() => setActivePage('landing')}
@@ -90,31 +114,49 @@ export const Navbar: React.FC<NavbarProps> = ({
         </div>
 
         {/* Right Section: Streak, XP, Notifications, User */}
-        <div className="flex items-center gap-2.5 sm:gap-4">
-          {/* Streak Indicator Pill */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-xs sm:text-sm font-medium">
-            <span className="text-base select-none">🔥</span>
-            <span className="font-semibold">Streak {user.streakDays} Hari</span>
+        <div className="flex items-center gap-2 sm:gap-3.5">
+          {/* Streak Indicator Pill: Only flame and number */}
+          <div
+            aria-label={`Streak ${user.streakDays} hari`}
+            className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+          >
+            <span className="text-lg sm:text-xl leading-none">🔥</span>
+            <span className="leading-none">{user.streakDays}</span>
           </div>
 
-          {/* XP Indicator Pill */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-fixed/40 text-primary text-xs sm:text-sm font-medium transition-all duration-300">
-            <span
-              className="material-symbols-outlined text-primary text-[18px]"
-              style={{ fontVariationSettings: "'FILL' 1" }}
+          {/* XP Indicator Pill & Popup */}
+          <div className="relative shrink-0">
+            <div
+              aria-label={`Total ${user.xp} XP`}
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold transition-all duration-300"
             >
-              stars
-            </span>
-            <span className="font-semibold">{user.xp} XP</span>
-            {recentXpGained > 0 && (
-              <span className="text-[11px] bg-primary-container text-on-primary px-1.5 py-0.5 rounded-full animate-gentle-pulse font-code-formula">
-                +{recentXpGained} XP
+              <span
+                className="material-symbols-outlined text-primary text-[20px] sm:text-[24px]"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
+                stars
               </span>
+              <span className="leading-none">{user.xp} XP</span>
+            </div>
+
+            {/* XP-Gain Popup */}
+            {visibleXp !== null && (
+              <div
+                role="status"
+                aria-live="polite"
+                className={`pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-1 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow-md shadow-primary/25 whitespace-nowrap transition-opacity duration-300 ${
+                  isFadingOut
+                    ? 'opacity-0'
+                    : 'opacity-100 animate-in fade-in motion-safe:slide-in-from-bottom-2 duration-200'
+                }`}
+              >
+                +{visibleXp} XP
+              </div>
             )}
           </div>
 
           {/* Notification Button */}
-          <div className="relative">
+          <div className="relative shrink-0">
             <button
               aria-label="Notifikasi"
               onClick={() => {
@@ -154,12 +196,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </div>
 
-          {/* User Profile Mini Avatar or Login Button */}
-          <div className="flex items-center gap-2">
+          {/* User Profile Mini Avatar & Login Button */}
+          <div className="flex items-center gap-2 shrink-0">
             <button
               onClick={() => setActivePage('profile')}
               title={`Profil: ${user.name}`}
-              className="w-9 h-9 rounded-full text-on-primary flex items-center justify-center font-semibold text-xs tracking-wider ring-2 ring-primary-fixed-dim/40 hover:ring-primary transition-all shadow-xs"
+              aria-label="Buka profil"
+              className={`w-9 h-9 rounded-full text-on-primary flex items-center justify-center font-semibold text-xs tracking-wider transition-all shadow-xs ${
+                activePage === 'profile'
+                  ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest'
+                  : 'ring-2 ring-primary-fixed-dim/40 hover:ring-primary'
+              }`}
               style={{ backgroundColor: user.avatarColor }}
             >
               <span>{user.initials}</span>
@@ -170,18 +217,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               className="hidden lg:inline-flex text-xs md:text-sm font-medium text-on-surface-variant hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors"
             >
               Masuk
-            </button>
-            <button
-              onClick={() => {
-                if (onOpenActiveTopic) {
-                  onOpenActiveTopic();
-                } else {
-                  setActivePage('practice');
-                }
-              }}
-              className="hidden sm:inline-flex bg-primary text-on-primary hover:bg-primary-container px-3.5 py-1.5 rounded-lg text-xs md:text-sm font-medium transition-all shadow-xs active:scale-95"
-            >
-              Mulai Belajar Santai
             </button>
           </div>
         </div>

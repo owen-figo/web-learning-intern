@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ActivePage, Topic, TopicStatus, UserProfile } from './types';
-import { initialUserProfile, mockTopics, theoryContents } from './data/mockData';
+import { initialUserProfile, mockTopics, theoryContents, mockLeaderboardEntries } from './data/mockData';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
@@ -13,6 +13,7 @@ import { TopicsPage } from './pages/TopicsPage';
 import { PracticePage } from './pages/PracticePage';
 import { ProfilePage } from './pages/ProfilePage';
 import { TheoryPage } from './pages/TheoryPage';
+import { LeaderboardPage } from './pages/LeaderboardPage';
 import { AuthModal } from './components/AuthModal';
 import { FormulaModal } from './components/FormulaModal';
 import { InfoModal } from './components/InfoModal';
@@ -23,7 +24,9 @@ export default function App() {
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
   const [isFormulaOpen, setIsFormulaOpen] = useState<boolean>(false);
   const [infoModalType, setInfoModalType] = useState<'privacy' | 'help' | null>(null);
-  const [recentXpGained, setRecentXpGained] = useState<number>(25);
+  const [recentXpGained, setRecentXpGained] = useState<number>(0);
+  const [recentXpKey, setRecentXpKey] = useState<number>(0);
+  const recentXpTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Sequential learning path states
   const [completedTopicIds, setCompletedTopicIds] = useState<string[]>([]);
@@ -34,6 +37,14 @@ export default function App() {
 
   const sortedTopics = [...mockTopics].sort((a, b) => a.order - b.order);
   const activeTopic = sortedTopics.find((t) => !completedTopicIds.includes(t.id)) || sortedTopics[0];
+
+  useEffect(() => {
+    return () => {
+      if (recentXpTimerRef.current) {
+        clearTimeout(recentXpTimerRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (toastMessage) {
@@ -86,8 +97,17 @@ export default function App() {
     setUser((prev) => ({
       ...prev,
       xp: prev.xp + amount,
+      weeklyXp: (prev.weeklyXp ?? 50) + amount,
     }));
+
+    if (recentXpTimerRef.current) {
+      clearTimeout(recentXpTimerRef.current);
+    }
     setRecentXpGained(amount);
+    setRecentXpKey((prev) => prev + 1);
+    recentXpTimerRef.current = setTimeout(() => {
+      setRecentXpGained(0);
+    }, 2000);
   };
 
   const handleCompleteTheory = (xp: number) => {
@@ -148,6 +168,7 @@ export default function App() {
           user={user}
           onOpenAuth={() => setIsAuthOpen(true)}
           recentXpGained={recentXpGained}
+          recentXpKey={recentXpKey}
           onOpenActiveTopic={handleOpenActiveTopic}
         />
       )}
@@ -179,6 +200,7 @@ export default function App() {
             onAddXp={handleAddXp}
             selectedTopicId={selectedTopicId || activeTopic.id}
             onCompleteTopic={handleCompletePractice}
+            user={user}
           />
         )}
 
@@ -197,6 +219,13 @@ export default function App() {
           <ProfilePage
             user={user}
             onUpdateUser={handleUpdateUser}
+          />
+        )}
+
+        {activePage === 'leaderboard' && (
+          <LeaderboardPage
+            user={user}
+            mockEntries={mockLeaderboardEntries}
           />
         )}
       </main>

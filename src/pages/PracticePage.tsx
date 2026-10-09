@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ActivePage, DifficultyTier, Question, Concept } from '../types';
+import { ActivePage, DifficultyTier, Question, Concept, UserProfile } from '../types';
 import { sampleQuestions } from '../data/mockData';
 import { getConceptById, getAllConcepts } from '../data/concepts';
 import { ConceptModal } from '../components/ConceptModal';
@@ -9,6 +9,7 @@ interface PracticePageProps {
   onAddXp?: (amount: number) => void;
   selectedTopicId?: string;
   onCompleteTopic?: (topicId: string) => void;
+  user?: UserProfile;
 }
 
 export const PracticePage: React.FC<PracticePageProps> = ({
@@ -16,6 +17,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   onAddXp,
   selectedTopicId = 'mendefinisikan-mengumpulkan-data',
   onCompleteTopic,
+  user,
 }) => {
   const activeTopicQuestions = sampleQuestions.filter((q) => q.topicId === selectedTopicId);
   const questionsToUse = activeTopicQuestions.length > 0
@@ -185,18 +187,27 @@ export const PracticePage: React.FC<PracticePageProps> = ({
               <span>Glosarium Istilah</span>
             </button>
 
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-xs sm:text-sm font-medium">
-              <span className="text-base select-none">🔥</span>
-              <span className="font-semibold">Streak 5 Hari</span>
+            {/* Streak Indicator Pill */}
+            <div
+              aria-label={`Streak ${user?.streakDays ?? 5} hari`}
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+            >
+              <span className="text-lg sm:text-xl leading-none">🔥</span>
+              <span className="leading-none">{user?.streakDays ?? 5}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary-fixed/40 text-primary text-xs sm:text-sm font-medium">
-              <span className="material-symbols-outlined text-primary text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+
+            {/* XP Indicator Pill */}
+            <div
+              aria-label={`Total ${user?.xp ?? 120} XP`}
+              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold select-none shrink-0"
+            >
+              <span
+                className="material-symbols-outlined text-primary text-[20px] sm:text-[24px]"
+                style={{ fontVariationSettings: "'FILL' 1" }}
+              >
                 stars
               </span>
-              <span className="font-semibold">120 XP</span>
-              <span className="text-xs bg-primary-container text-on-primary px-1.5 py-0.5 rounded-full font-code-formula">
-                +25 XP
-              </span>
+              <span className="leading-none">{user?.xp ?? 120} XP</span>
             </div>
             <button
               onClick={() => setActivePage('topics')}

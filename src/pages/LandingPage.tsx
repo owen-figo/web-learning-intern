@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ActivePage } from '../types';
 
 interface LandingPageProps {
@@ -6,27 +6,104 @@ interface LandingPageProps {
   onStartActiveTopic?: () => void;
 }
 
+const xpRewardSlides = [
+  {
+    title: 'Mencoba soal',
+    xp: '+10 XP',
+    desc: 'Benar atau salah, tetap dihargai.',
+    icon: 'edit_note',
+  },
+  {
+    title: 'Jawaban benar',
+    xp: '+15 XP',
+    desc: 'Bonus untuk jawaban tepat.',
+    icon: 'check_circle',
+  },
+  {
+    title: 'Cek jawabanmu',
+    xp: '+10 XP',
+    desc: 'Bonus karena kamu memeriksa dulu.',
+    icon: 'fact_check',
+  },
+  {
+    title: 'Bonus kecepatan',
+    xp: 'sampai +10 XP',
+    desc: 'Hanya saat mengerjakan, bukan saat mengecek.',
+    icon: 'bolt',
+  },
+  {
+    title: 'Baca materi sampai selesai',
+    xp: '+15 XP',
+    desc: 'Selesaikan satu materi.',
+    icon: 'menu_book',
+  },
+  {
+    title: 'Daily Quest',
+    xp: '+20 XP',
+    desc: 'Satu set singkat tiap hari.',
+    icon: 'task_alt',
+  },
+];
+
 export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStartActiveTopic }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [touchStartX, setTouchStartX] = useState<number | null>(null);
+
+  const goToPrev = () => {
+    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : xpRewardSlides.length - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentSlide((prev) => (prev < xpRewardSlides.length - 1 ? prev + 1 : 0));
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStartX(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const diff = touchStartX - touchEndX;
+    if (diff > 40) {
+      goToNext();
+    } else if (diff < -40) {
+      goToPrev();
+    }
+    setTouchStartX(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      goToPrev();
+    } else if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      goToNext();
+    }
+  };
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Canvas */}
       <div className="flex-grow">
         {/* Hero Section */}
         <section className="py-8 md:py-14 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left Column (7 Columns) */}
-            <div className="lg:col-span-7 space-y-6">
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface leading-[1.18]">
-                Statistika Kuliah di BINUS? <br className="hidden sm:inline" />
-                <span className="text-primary font-semibold">Tenang, Kamu Pasti Ngerti.</span>
-              </h1>
+            <div className="lg:col-span-7 flex flex-col justify-between">
+              <div className="space-y-6">
+                <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface leading-[1.18]">
+                  Statistika sulit? <br className="hidden sm:inline" />
+                  <span className="text-primary font-semibold">Tenang, Kamu Pasti Ngerti.</span>
+                </h1>
 
-              <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
-                Tidak ada BINUSIAN yang terlahir &quot;payah statistika&quot;. Yang ada hanyalah materi yang selama ini dijelaskan dengan cara rumit. Di Ngerti, kita uraikan rumus dan uji statistik jadi penalaran masuk akal, tanpa rasa takut dihakimi.
-              </p>
+                <p className="text-base sm:text-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                  Tidak ada BINUSIAN yang terlahir &quot;payah statistika&quot;. Yang ada hanyalah materi yang selama ini dijelaskan dengan cara rumit. Di Ngerti, kita uraikan rumus dan uji statistik jadi penalaran masuk akal, tanpa rasa takut dihakimi.
+                </p>
+              </div>
 
               {/* Dual CTAs */}
-              <div className="flex flex-wrap items-center gap-3.5 pt-2">
+              <div className="flex flex-wrap items-center gap-3.5 pt-6 lg:pt-8">
                 <button
                   onClick={() => {
                     if (onStartActiveTopic) {
@@ -52,163 +129,175 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
 
             {/* Right Column: Cara Dapat XP (5 Columns) */}
             <div className="lg:col-span-5">
-              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 card-float relative overflow-hidden transition-all duration-300 space-y-5">
+              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-4 sm:p-5 card-float relative overflow-hidden transition-all duration-300">
                 {/* Header */}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-0.5">
+                      <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        stars
+                      </span>
+                      <span>Sistem Apresiasi Usaha</span>
+                    </div>
+                    <h2 className="text-lg sm:text-xl font-bold text-on-surface">
+                      Cara Dapat XP
+                    </h2>
+                    <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
+                      Setiap usaha dihitung.
+                    </p>
+                  </div>
+                  {/* Counter e.g. "1 / 6" */}
+                  <div className="shrink-0">
+                    <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold">
+                      {currentSlide + 1} / {xpRewardSlides.length}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Carousel Viewport (One Reward at a Time) */}
+                <div
+                  className="w-full overflow-hidden my-3 focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-xl cursor-grab active:cursor-grabbing"
+                  tabIndex={0}
+                  role="region"
+                  aria-roledescription="carousel"
+                  aria-label="Karusel Cara Dapat XP"
+                  onKeyDown={handleKeyDown}
+                  onTouchStart={handleTouchStart}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  <div
+                    className="flex w-full transition-transform duration-300 ease-out motion-reduce:transition-none"
+                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                  >
+                    {xpRewardSlides.map((slide, idx) => (
+                      <div
+                        key={idx}
+                        className="w-full shrink-0"
+                        aria-hidden={idx !== currentSlide}
+                      >
+                        {/* Compact single row on desktop, stacked on mobile */}
+                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-xl bg-surface-container-low/70 border border-outline-variant/60">
+                          <div className="flex items-center gap-3 min-w-0">
+                            {/* Small icon */}
+                            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
+                              <span
+                                className="material-symbols-outlined text-xl"
+                                style={{ fontVariationSettings: "'FILL' 1" }}
+                              >
+                                {slide.icon}
+                              </span>
+                            </div>
+
+                            {/* Title & 1-line Description */}
+                            <div className="min-w-0 flex-1">
+                              <h3 className="text-sm sm:text-base font-bold text-on-surface leading-tight truncate">
+                                {slide.title}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-on-surface-variant truncate whitespace-nowrap mt-0.5">
+                                {slide.desc}
+                              </p>
+                            </div>
+                          </div>
+
+                          {/* XP Chip */}
+                          <div className="shrink-0 self-end sm:self-center">
+                            <span className="inline-block px-3 py-1 rounded-xl bg-primary/15 text-primary text-xs sm:text-sm font-extrabold border border-primary/25 font-code-formula whitespace-nowrap">
+                              {slide.xp}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Controls: Prev / Dots / Next */}
+                <div className="pt-3 border-t border-outline-variant/60 flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={goToPrev}
+                    aria-label="Hadiah sebelumnya"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container border border-outline-variant text-on-surface flex items-center justify-center transition-all active:scale-95 shadow-xs"
+                  >
+                    <span className="material-symbols-outlined text-xl">arrow_back</span>
+                  </button>
+
+                  {/* Dot Indicators */}
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    {xpRewardSlides.map((_, idx) => (
+                      <button
+                        type="button"
+                        key={idx}
+                        onClick={() => setCurrentSlide(idx)}
+                        aria-label={`Pindah ke slide ${idx + 1}: ${xpRewardSlides[idx].title}`}
+                        className={`h-2 sm:h-2.5 rounded-full transition-all duration-300 ${
+                          idx === currentSlide
+                            ? 'w-6 sm:w-7 bg-primary'
+                            : 'w-2 sm:w-2.5 bg-outline-variant/80 hover:bg-primary/50'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={goToNext}
+                    aria-label="Hadiah berikutnya"
+                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container border border-outline-variant text-on-surface flex items-center justify-center transition-all active:scale-95 shadow-xs"
+                  >
+                    <span className="material-symbols-outlined text-xl">arrow_forward</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Full-width "Apa gunanya XP?" Bar */}
+          <div className="mt-8 lg:mt-10 bg-surface-container-lowest rounded-2xl border border-outline-variant p-4 sm:p-5 card-gentle">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
+              {/* Title / Badge */}
+              <div className="flex items-center gap-2.5 shrink-0 lg:pr-6 lg:border-r lg:border-outline-variant">
+                <span className="w-9 h-9 rounded-xl bg-secondary/15 flex items-center justify-center text-secondary shrink-0">
+                  <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    emoji_events
+                  </span>
+                </span>
                 <div>
-                  <div className="flex items-center gap-2 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
-                    <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      stars
-                    </span>
-                    <span>Sistem Apresiasi Usaha</span>
-                  </div>
-                  <h2 className="text-lg sm:text-xl font-bold text-on-surface">
-                    Cara Dapat XP
-                  </h2>
-                  <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
-                    Setiap usaha dihitung, bukan cuma jawaban benar.
+                  <h3 className="text-xs sm:text-sm font-bold text-on-surface">Apa gunanya XP?</h3>
+                  <p className="text-[11px] text-on-surface-variant hidden sm:block">Apresiasi konsistensimu</p>
+                </div>
+              </div>
+
+              {/* 3 items in grid / flex */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-[11px] sm:text-xs space-y-1">
+                  <p className="font-semibold text-primary flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm">trending_up</span>
+                    <span>Naik Rank</span>
+                  </p>
+                  <p className="text-on-surface-variant leading-relaxed">
+                    Rank berdasarkan progres pribadimu, bukan perbandingan dengan orang lain.
                   </p>
                 </div>
 
-                {/* Compact Vertical List of XP Rules */}
-                <div className="space-y-2.5">
-                  {/* Row 1: Mencoba soal */}
-                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
-                        <span className="material-symbols-outlined text-base">edit_note</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-on-surface">Mencoba soal</p>
-                        <p className="text-[11px] text-on-surface-variant truncate">Benar atau salah, usahamu tetap dihargai.</p>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
-                      +10 XP
-                    </span>
-                  </div>
-
-                  {/* Row 2: Jawaban benar */}
-                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
-                        <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-                          check_circle
-                        </span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-on-surface">Jawaban benar</p>
-                        <p className="text-[11px] text-on-surface-variant truncate">Bonus untuk jawaban yang tepat.</p>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
-                      +15 XP
-                    </span>
-                  </div>
-
-                  {/* Row 3: Langkah "Cek jawabanmu" */}
-                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
-                        <span className="material-symbols-outlined text-base">fact_check</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-on-surface">Langkah &quot;Cek jawabanmu&quot;</p>
-                        <p className="text-[11px] text-on-surface-variant truncate">Bonus karena kamu memeriksa sebelum lanjut.</p>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
-                      +10 XP
-                    </span>
-                  </div>
-
-                  {/* Row 4: Bonus kecepatan */}
-                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
-                        <span className="material-symbols-outlined text-base">bolt</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-on-surface">Bonus kecepatan</p>
-                        <p className="text-[11px] text-on-surface-variant truncate">Hanya untuk fase mengerjakan. Timer berhenti saat kamu mengecek jawaban, jadi tidak perlu buru-buru.</p>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2 py-1 rounded-full bg-primary/10 text-primary font-semibold text-[11px] border border-primary/20">
-                      sampai +10 XP
-                    </span>
-                  </div>
-
-                  {/* Row 5: Baca materi teori */}
-                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
-                        <span className="material-symbols-outlined text-base">menu_book</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-on-surface">Baca materi teori sampai selesai</p>
-                        <p className="text-[11px] text-on-surface-variant truncate">Pahami konsep fondasi tanpa tekanan kuis.</p>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
-                      +15 XP
-                    </span>
-                  </div>
-
-                  {/* Row 6: Daily Quest harian */}
-                  <div className="p-2.5 rounded-xl bg-surface-container-low/70 border border-outline-variant flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div className="w-8 h-8 rounded-lg bg-surface flex items-center justify-center text-primary shrink-0 border border-outline-variant">
-                        <span className="material-symbols-outlined text-base">task_alt</span>
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-xs font-semibold text-on-surface">Daily Quest harian</p>
-                        <p className="text-[11px] text-on-surface-variant truncate">Selesaikan satu set singkat setiap hari.</p>
-                      </div>
-                    </div>
-                    <span className="shrink-0 px-2.5 py-1 rounded-full bg-primary/10 text-primary font-semibold text-xs border border-primary/20">
-                      +20 XP
-                    </span>
-                  </div>
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-[11px] sm:text-xs space-y-1">
+                  <p className="font-semibold text-primary flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm">military_tech</span>
+                    <span>Buka Achievement</span>
+                  </p>
+                  <p className="text-on-surface-variant leading-relaxed">
+                    Badge membuka bingkai avatar, warna banner, dan gelar untuk profilmu.
+                  </p>
                 </div>
 
-                {/* Apa gunanya XP? Strip */}
-                <div className="pt-3 border-t border-outline-variant space-y-2">
-                  <p className="text-xs font-bold text-on-surface flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-base text-secondary" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      emoji_events
-                    </span>
-                    <span>Apa gunanya XP?</span>
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-[11px] sm:text-xs space-y-1">
+                  <p className="font-semibold text-primary flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm">local_fire_department</span>
+                    <span>Jaga Streak</span>
                   </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                    <div className="p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant text-[11px] space-y-1">
-                      <p className="font-semibold text-primary flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">trending_up</span>
-                        <span>Naik Rank</span>
-                      </p>
-                      <p className="text-on-surface-variant leading-snug">
-                        Rank berdasarkan progres pribadimu, bukan perbandingan dengan orang lain.
-                      </p>
-                    </div>
-
-                    <div className="p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant text-[11px] space-y-1">
-                      <p className="font-semibold text-primary flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">military_tech</span>
-                        <span>Buka Achievement</span>
-                      </p>
-                      <p className="text-on-surface-variant leading-snug">
-                        Badge membuka bingkai avatar, warna banner, dan gelar untuk profilmu.
-                      </p>
-                    </div>
-
-                    <div className="p-2.5 rounded-lg bg-surface-container-low/60 border border-outline-variant text-[11px] space-y-1">
-                      <p className="font-semibold text-primary flex items-center gap-1">
-                        <span className="material-symbols-outlined text-xs">local_fire_department</span>
-                        <span>Jaga Streak</span>
-                      </p>
-                      <p className="text-on-surface-variant leading-snug">
-                        Belajar tiap hari menjaga streak tetap menyala.
-                      </p>
-                    </div>
-                  </div>
+                  <p className="text-on-surface-variant leading-relaxed">
+                    Belajar tiap hari menjaga streak tetap menyala.
+                  </p>
                 </div>
               </div>
             </div>

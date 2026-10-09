@@ -1,4 +1,13 @@
-export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth' | 'teori';
+export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth' | 'teori' | 'leaderboard';
+
+export interface LeaderboardEntry {
+  id: string;
+  name: string;
+  initials: string;
+  avatarColor: string;
+  xp: number;
+  weeklyXp: number;
+}
 
 export type DifficultyTier = 'mudah' | 'sedang' | 'sulit' | 'sangat_sulit';
 
@@ -126,6 +135,7 @@ export interface UserProfile {
   streakDays: number;
   personalRecordStreak: number;
   xp: number;
+  weeklyXp?: number;
   level: number;
   maxLevel: number;
   levelTitle: string;

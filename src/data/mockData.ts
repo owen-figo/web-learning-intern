@@ -1,4 +1,4 @@
-import { UserProfile, Topic, Question, BadgeItem, LearningSession, TheoryContent } from '../types';
+import { UserProfile, Topic, Question, BadgeItem, LearningSession, TheoryContent, LeaderboardEntry } from '../types';
 
 export const initialUserProfile: UserProfile = {
   name: 'Rian Ardiansyah',
@@ -10,6 +10,7 @@ export const initialUserProfile: UserProfile = {
   streakDays: 5,
   personalRecordStreak: 12,
   xp: 120,
+  weeklyXp: 50,
   level: 2,
   maxLevel: 5,
   levelTitle: 'Penjelajah Konsep',
@@ -698,5 +699,104 @@ export const theoryContents: TheoryContent[] = [
         ],
       },
     ],
+  },
+];
+
+export const mockLeaderboardEntries: LeaderboardEntry[] = [
+  {
+    id: 'lb-1',
+    name: 'Dimas Pratama',
+    initials: 'DP',
+    avatarColor: '#0d9488',
+    xp: 420,
+    weeklyXp: 180,
+  },
+  {
+    id: 'lb-2',
+    name: 'Aulia Rahma',
+    initials: 'AR',
+    avatarColor: '#6366f1',
+    xp: 380,
+    weeklyXp: 165,
+  },
+  {
+    id: 'lb-3',
+    name: 'Budi Santoso',
+    initials: 'BS',
+    avatarColor: '#f59e0b',
+    xp: 340,
+    weeklyXp: 150,
+  },
+  {
+    id: 'lb-4',
+    name: 'Siti Nurhaliza',
+    initials: 'SN',
+    avatarColor: '#8b5cf6',
+    xp: 290,
+    weeklyXp: 130,
+  },
+  {
+    id: 'lb-5',
+    name: 'Farhan Maulana',
+    initials: 'FM',
+    avatarColor: '#06b6d4',
+    xp: 260,
+    weeklyXp: 115,
+  },
+  {
+    id: 'lb-6',
+    name: 'Nabila Putri',
+    initials: 'NP',
+    avatarColor: '#ec4899',
+    xp: 220,
+    weeklyXp: 95,
+  },
+  {
+    id: 'lb-7',
+    name: 'Rizky Ramadhan',
+    initials: 'RR',
+    avatarColor: '#0ea5e9',
+    xp: 190,
+    weeklyXp: 85,
+  },
+  {
+    id: 'lb-8',
+    name: 'Tiara Lestari',
+    initials: 'TL',
+    avatarColor: '#f97316',
+    xp: 160,
+    weeklyXp: 75,
+  },
+  {
+    id: 'lb-9',
+    name: 'Hendra Wijaya',
+    initials: 'HW',
+    avatarColor: '#64748b',
+    xp: 140,
+    weeklyXp: 65,
+  },
+  {
+    id: 'lb-10',
+    name: 'Maya Kusuma',
+    initials: 'MK',
+    avatarColor: '#d946ef',
+    xp: 130,
+    weeklyXp: 55,
+  },
+  {
+    id: 'lb-11',
+    name: 'Jonathan Adityo',
+    initials: 'JA',
+    avatarColor: '#10b981',
+    xp: 110,
+    weeklyXp: 45,
+  },
+  {
+    id: 'lb-12',
+    name: 'Jessica Tan',
+    initials: 'JT',
+    avatarColor: '#e11d48',
+    xp: 95,
+    weeklyXp: 40,
   },
 ];
