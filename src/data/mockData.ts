@@ -25,11 +25,12 @@ export const initialUserProfile: UserProfile = {
 export const sampleQuestions: Question[] = [
   {
     id: 'DATA-DASAR-01',
-    topicId: 'dasar-dasar-data',
-    topicName: 'Dasar-dasar Data',
+    topicId: 'mendefinisikan-mengumpulkan-data',
+    topicName: 'Mendefinisikan dan Mengumpulkan Data',
     code: 'ID: DATA-DASAR-01',
     title: 'Soal 1 dari 4 • Variabel Kategorikal vs Numerik',
     narrative: 'Seorang mahasiswa manajemen sedang mengumpulkan data kuesioner skripsi tentang perilaku belanja online. Salah satu butir pertanyaan mencatat: "Metode pembayaran yang paling sering digunakan" (dengan pilihan: Transfer Bank, E-Wallet, COD, Kartu Kredit). Termasuk jenis variabel apakah data metode pembayaran ini?',
+    conceptId: 'variabel-kategorikal-numerik',
     options: [
       { id: 'opt-a', label: 'A', text: 'Variabel Numerik (Kuantitatif)' },
       { id: 'opt-b', label: 'B', text: 'Variabel Kategorikal (Kualitatif)' },
@@ -49,11 +50,12 @@ export const sampleQuestions: Question[] = [
   },
   {
     id: 'DATA-DASAR-02',
-    topicId: 'dasar-dasar-data',
-    topicName: 'Dasar-dasar Data',
+    topicId: 'mendefinisikan-mengumpulkan-data',
+    topicName: 'Mendefinisikan dan Mengumpulkan Data',
     code: 'ID: DATA-DASAR-02',
     title: 'Soal 2 dari 4 • Numerik Diskrit vs Kontinu',
     narrative: 'Di Bab 3 metodologi penelitian, seorang mahasiswa mencatat dua variabel berikut dari pelanggan kafe: (1) "Jumlah cangkir kopi yang dipesan per hari" (misal: 1, 2, 3 cangkir), dan (2) "Waktu tunggu pesanan hingga disajikan" (misal: 7.5 menit, 12.35 menit). Manakah klasifikasi yang paling tepat untuk kedua variabel numerik ini?',
+    conceptId: 'variabel-diskrit-kontinu',
     options: [
       { id: 'opt-a', label: 'A', text: '(1) Kontinu, (2) Diskrit' },
       { id: 'opt-b', label: 'B', text: '(1) Diskrit (dihitung/cacah), (2) Kontinu (diukur)' },
@@ -73,11 +75,12 @@ export const sampleQuestions: Question[] = [
   },
   {
     id: 'DATA-DASAR-03',
-    topicId: 'dasar-dasar-data',
-    topicName: 'Dasar-dasar Data',
+    topicId: 'mendefinisikan-mengumpulkan-data',
+    topicName: 'Mendefinisikan dan Mengumpulkan Data',
     code: 'ID: DATA-DASAR-03',
     title: 'Soal 3 dari 4 • Skala Pengukuran: Nominal vs Ordinal',
     narrative: 'Pada kuesioner kepuasan layanan perpustakaan kampus BINUS, responden diminta menilai: "Tingkat kepuasan terhadap fasilitas belajar di kampus Anggrek" dengan pilihan: (1) Sangat Tidak Puas, (2) Tidak Puas, (3) Netral, (4) Puas, (5) Sangat Puas. Berada pada skala pengukuran apakah data skala Likert ini?',
+    conceptId: 'skala-pengukuran',
     options: [
       { id: 'opt-a', label: 'A', text: 'Skala Nominal (hanya label acak tanpa peringkat)' },
       { id: 'opt-b', label: 'B', text: 'Skala Ordinal (ada tingkatan urutan/ranking yang bermakna)' },
@@ -97,11 +100,12 @@ export const sampleQuestions: Question[] = [
   },
   {
     id: 'DATA-DASAR-04',
-    topicId: 'dasar-dasar-data',
-    topicName: 'Dasar-dasar Data',
+    topicId: 'mendefinisikan-mengumpulkan-data',
+    topicName: 'Mendefinisikan dan Mengumpulkan Data',
     code: 'ID: DATA-DASAR-04',
     title: 'Soal 4 dari 4 • Skala Pengukuran: Interval vs Rasio',
     narrative: 'Seorang mahasiswa BINUS School of Computer Science menguji dua variabel riset: (1) "Suhu ruangan laboratorium komputer" (dalam derajat Celsius, misal: 0°C, 24°C) dan (2) "Biaya langganan API bulanan" (dalam Rupiah, misal: Rp 0, Rp 5.000.000). Mengapa suhu Celsius masuk ke skala Interval, sedangkan biaya masuk ke skala Rasio?',
+    conceptId: 'skala-pengukuran',
     options: [
       { id: 'opt-a', label: 'A', text: 'Karena suhu Celsius tidak memiliki nol mutlak (0°C bukan berarti ketiadaan suhu), sedangkan pendapatan Rp 0 berarti mutlak ketiadaan uang' },
       { id: 'opt-b', label: 'B', text: 'Karena suhu tidak memiliki jarak terukur, sedangkan pendapatan tidak bisa dibandingkan' },
@@ -126,6 +130,7 @@ export const sampleQuestions: Question[] = [
     code: 'ID: STAT-DESK-01',
     title: 'Soal 1 dari 5 • Rata-rata Sampel (Mean x̄)',
     narrative: 'Dalam pengamatan awal survei tugas akhir statistika di BINUS, 5 responden mencatat waktu membaca jurnal harian (jam): 2, 4, 4, 6, 9. Berapakah nilai rata-rata sampel (x̄)?',
+    conceptId: 'mean',
     formulaGuide: {
       formula: 'x̄ = (Σxᵢ) / n = (2 + 4 + 4 + 6 + 9) / 5',
       note: 'Jumlahkan semua nilai amatan, kemudian bagi dengan jumlah data n = 5.',
@@ -154,6 +159,7 @@ export const sampleQuestions: Question[] = [
     code: 'ID: STAT-DESK-02',
     title: 'Soal 2 dari 5 • Nilai Tengah (Median) Data Terurut',
     narrative: 'Diketahui data waktu belajar: 2, 4, 4, 6, 9 (sudah terurut dari kecil ke besar). Manakah nilai tengah (median) dari kelima amatan tersebut?',
+    conceptId: 'median',
     formulaGuide: {
       formula: 'Posisi Median = (n + 1) / 2 = (5 + 1) / 2 = posisi ke-3',
       note: 'Untuk n ganjil, median berada tepat pada data urutan ke-(n+1)/2.',
@@ -182,6 +188,7 @@ export const sampleQuestions: Question[] = [
     code: 'ID: STAT-DESK-03',
     title: 'Soal 3 dari 5 • Konsep Standar Deviasi & Varians Sampel (s²)',
     narrative: 'Seorang mahasiswa mengumpulkan 5 data waktu belajar harian (dalam jam): 2, 4, 4, 6, 9. Rata-rata sampel (x̄) sudah dihitung yaitu 5. Berapakah nilai varians sampel (s²)?',
+    conceptId: 'varians-sampel',
     formulaGuide: {
       formula: 's² = Σ (xᵢ - x̄)² / (n - 1)',
       note: 'Catatan Penenang: Ingat membagi dengan (n - 1) untuk sampel, bukan n (yang digunakan hanya untuk populasi).',
@@ -210,6 +217,7 @@ export const sampleQuestions: Question[] = [
     code: 'ID: STAT-DESK-04',
     title: 'Soal 4 dari 5 • Standar Deviasi Sampel (s)',
     narrative: 'Dari hasil perhitungan sebelumnya, diperoleh varians sampel s² = 6.5. Berapakah nilai standar deviasi sampelnya (s)? (Gunakan pembulatan dua desimal).',
+    conceptId: 'standar-deviasi',
     formulaGuide: {
       formula: 's = √(s²) = √(6.5)',
       note: 'Standar deviasi adalah akar kuadrat dari varians, mengembalikan satuan kembali ke satuan asal (jam).',
@@ -238,6 +246,7 @@ export const sampleQuestions: Question[] = [
     code: 'ID: STAT-DESK-05',
     title: 'Soal 5 dari 5 • Modus & Interpretasi Sebaran Data',
     narrative: 'Pada data belajar: 2, 4, 4, 6, 9 jam, angka manakah yang merupakan modus (nilai paling sering muncul), dan bagaimana kecenderungan sebarannya?',
+    conceptId: 'modus',
     formulaGuide: {
       formula: 'Modus = Nilai dengan frekuensi kemunculan tertinggi',
       note: 'Data ini berfrekuensi tunggal kecuali angka 4 yang muncul 2 kali (unimodal).',
@@ -263,19 +272,19 @@ export const sampleQuestions: Question[] = [
 
 export const mockTopics: Topic[] = [
   {
-    id: 'dasar-dasar-data',
+    id: 'mendefinisikan-mengumpulkan-data',
     order: 1,
     category: 'statistika',
     subCategory: 'deskriptif',
-    title: 'Dasar-dasar Data',
-    badge: 'Mulai di Sini',
+    title: 'Mendefinisikan dan Mengumpulkan Data',
+    badge: 'Materi Wajib',
     badgeType: 'fondasi',
-    description: 'Kenali jenis variabel dan skala pengukuran sebelum masuk ke rumus. Fondasi yang sering dilewati tapi penting untuk Bab 3 metodologi skripsi BINUS.',
+    description:
+      'Kenali jenis variabel, populasi dan sampel, metode sampling, serta jenis error sebelum mulai menghitung.',
     progressPercent: 0,
-    progressLabel: 'Tingkat Mudah siap dibuka',
-    unlockedTiers: ['mudah'],
-    modulesCount: 4,
-    iconName: 'category',
+    progressLabel: 'Belum dibaca',
+    modulesCount: 8,
+    iconName: 'menu_book',
     statusAction: 'mulai',
     contentType: 'teori',
   },
@@ -290,7 +299,6 @@ export const mockTopics: Topic[] = [
     description: 'Mean, median, modus, dan standar deviasi. Kunci utama merangkum kumpulan data risetmu dengan lugas.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
-    unlockedTiers: [],
     modulesCount: 6,
     iconName: 'bar_chart',
     statusAction: 'mulai',
@@ -307,7 +315,6 @@ export const mockTopics: Topic[] = [
     description: 'Pahami kurva lonceng Gauss, z-score, dan hukum peluang tanpa pusing menghafal rumus mentah.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
-    unlockedTiers: [],
     modulesCount: 7,
     iconName: 'ssid_chart',
     statusAction: 'mulai',
@@ -323,7 +330,6 @@ export const mockTopics: Topic[] = [
     description: 'Membongkar misteri p-value, signifikansi statistik, hipotesis nol (H0) vs alternatif (H1) secara runtut.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
-    unlockedTiers: [],
     modulesCount: 8,
     iconName: 'rule',
     statusAction: 'mulai',
@@ -340,7 +346,6 @@ export const mockTopics: Topic[] = [
     description: 'Mencari tahu seberapa kuat hubungan antar variabel dan memprediksi tren masa depan dengan model garis lurus.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
-    unlockedTiers: [],
     modulesCount: 5,
     iconName: 'linear_scale',
     statusAction: 'mulai',
@@ -356,7 +361,6 @@ export const mockTopics: Topic[] = [
     description: 'Bandingkan rata-rata lebih dari 2 kelompok sampel sekaligus. Kunci penting riset A/B testing dan eksperimen bisnis mahasiswa BINUS.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
-    unlockedTiers: [],
     modulesCount: 6,
     iconName: 'stacked_bar_chart',
     statusAction: 'mulai',
@@ -373,7 +377,6 @@ export const mockTopics: Topic[] = [
     description: 'Analisis uji independensi data kategorik dan tabel kontingensi saat data tidak memenuhi asumsi normalitas.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
-    unlockedTiers: [],
     modulesCount: 5,
     iconName: 'table_chart',
     statusAction: 'mulai',
@@ -475,65 +478,222 @@ export const mockLearningSessions: LearningSession[] = [
 
 export const theoryContents: TheoryContent[] = [
   {
-    topicId: 'dasar-dasar-data',
-    topicTitle: 'Dasar-dasar Data: Variabel & Skala Pengukuran',
-    estimatedReadMinutes: 4,
+    topicId: 'mendefinisikan-mengumpulkan-data',
+    topicTitle: 'Mendefinisikan dan Mengumpulkan Data',
+    estimatedReadMinutes: 10,
     completionXp: 15,
     sections: [
       {
         id: 'sec-1',
-        heading: 'Mengenal Variabel',
-        body: 'Variabel adalah karakteristik atau informasi yang diamati atau diukur dalam suatu penelitian. Variabel inilah yang menjadi objek pengumpulan data, baik melalui kuesioner, wawancara, maupun observasi. Dalam statistika, variabel secara umum diklasifikasikan menjadi dua jenis utama:',
-        formula: 'Variabel = { Categorical (Kualitatif) | Numerical (Kuantitatif) }',
-        formulaNote: 'Memahami perbedaan ini adalah langkah awal agar tidak salah memilih uji statistik di Bab 3 skripsi.',
-        examples: [
+        heading: 'Mendefinisikan Variabel (Defining Variables)',
+        body: 'Variable (variabel) adalah karakteristik atau informasi yang diamati atau diukur dalam suatu penelitian. Variabel inilah yang menjadi objek utama pengumpulan data, baik melalui kuesioner, pengamatan langsung, maupun data arsip sistem. Dalam statistika, variabel secara umum dibagi menjadi dua jenis utama:',
+        terms: [
           {
-            label: 'Categorical (Kualitatif)',
-            text: 'Data berupa kategori, label nama, atau atribut non-angka. Contoh dalam kuesioner mahasiswa BINUS: "Jurusan kuliah responden" (seperti Computer Science, Information Systems, atau Business Creation). Nilai ini tidak dapat dijumlahkan atau dicari nilai rata-ratanya secara perhitungan statistik.',
+            term: 'Categorical Variable (Qualitative)',
+            definition: 'Data yang berupa kategori atau label penamaan tanpa nilai kuantitatif.',
+            example: 'Jurusan kuliah mahasiswa (Computer Science, Information Systems, Business Creation) atau jenis kelamin responden.',
           },
           {
-            label: 'Numerical (Kuantitatif)',
-            text: 'Data berupa angka yang diperoleh dari hasil penghitungan atau pengukuran. Contoh dalam kuesioner mahasiswa: "Nilai IPK responden" (misal: 3.75, 3.40) atau "Usia responden". Data numerik dapat dihitung nilai rata-rata, median, dan sebarannya.',
+            term: 'Numerical Variable (Quantitative)',
+            definition: 'Data yang berupa angka yang menunjukkan hasil penghitungan atau pengukuran.',
+            example: 'Nilai IPK semester, usia, atau jumlah produk terjual.',
           },
         ],
+        examples: [
+          {
+            label: 'Categorical (Qualitative)',
+            text: 'Data berupa kategori/label penamaan non-angka. Contoh: "Metode pembayaran yang dipilih pembeli" (Transfer, E-Wallet, COD, Kartu Kredit). Nilai ini tidak dapat dihitung rata-ratanya.',
+          },
+          {
+            label: 'Numerical (Quantitative)',
+            text: 'Data berupa angka yang menunjukkan hasil hitungan atau ukuran. Contoh: "Nilai IPK mahasiswa" atau "Jumlah unit produk terjual". Nilai ini dapat dicari rata-rata dan nilai sebarannya.',
+          },
+        ],
+        visualType: 'jenis-variabel',
       },
       {
         id: 'sec-2',
         heading: 'Dua Jenis Variabel Numerik',
-        body: 'Setelah mengetahui bahwa suatu data berupa angka (numerik), kita membaginya lebih lanjut menjadi dua jenis: Diskrit dan Kontinu. Perbedaannya terletak pada cara data tersebut diperoleh—apakah melalui proses menghitung atau mengukur.',
-        examples: [
+        body: 'Setelah mengetahui bahwa suatu data berupa angka (numerical), kita membaginya lebih lanjut menjadi dua kategori penting berdasarkan cara perolehannya:',
+        terms: [
           {
-            label: 'Variabel Diskrit (Hasil Menghitung)',
-            text: 'Diperoleh melalui proses menghitung (mencacah) bilangan bulat utuh dan tidak memiliki nilai pecahan di antara dua nilai terdekat. Contoh: jumlah produk terjual di toko. Contoh lain dalam konteks skripsi kampus BINUS: "Jumlah jurnal referensi IEEE/Scopus yang diunduh mahasiswa per minggu" (misal: 2, 4, atau 7 jurnal, tidak mungkin 4.23 jurnal).',
+            term: 'Discrete (Diskrit)',
+            definition: 'Diperoleh melalui proses menghitung (mencacah), berupa bilangan bulat utuh.',
+            example: 'Jumlah produk yang terjual di toko (misal 5 atau 12 unit, tidak mungkin 5.3 unit).',
           },
           {
-            label: 'Variabel Kontinu (Hasil Mengukur)',
-            text: 'Diperoleh melalui proses mengukur dengan alat ukur tertentu dan dapat memuat nilai pecahan/desimal tak terhingga dalam rentang tertentu. Contoh: waktu tunggu pesanan di kafe. Contoh lain dalam konteks riset BINUS: "Durasi waktu belajar mandiri harian mahasiswa" (misal: 1.5 jam atau 2.75 jam) serta "Jarak tempuh dari hunian ke kampus BINUS Anggrek/Syahdan" (misal: 3.85 km).',
+            term: 'Continuous (Kontinu)',
+            definition: 'Diperoleh melalui proses mengukur, dapat bernilai pecahan atau desimal tak terhingga dalam suatu rentang.',
+            example: 'Waktu tunggu pesanan kasir (misal 7.45 menit) atau jarak tempuh ke kampus.',
+          },
+        ],
+        formula: 'Jembatan Ingatan: Menghitung = Discrete • Mengukur = Continuous',
+        formulaNote: 'Jika nilainya dicacah satu per satu dalam bilangan bulat utuh, itu discrete. Jika dihasilkan dari alat ukur (stopwatch, timbangan, meteran) yang punya desimal, itu continuous.',
+        examples: [
+          {
+            label: 'Discrete (Menghitung)',
+            text: 'Jumlah produk terjual (1, 2, 3 unit), jumlah transaksi kasir per hari, atau jumlah peserta di ruang kuliah.',
+          },
+          {
+            label: 'Continuous (Mengukur)',
+            text: 'Waktu tunggu pesanan (7.5 menit), berat paket pengiriman (2.35 kg), atau temperatur ruangan.',
           },
         ],
       },
       {
         id: 'sec-3',
-        heading: 'Empat Skala Pengukuran (NOIR)',
-        body: 'Skala pengukuran menentukan tingkat ketepatan informasi yang terkandung dalam data serta jenis uji statistik yang diperbolehkan. Terdapat empat tingkatan skala pengukuran yang dikenal dengan singkatan NOIR:',
-        formula: 'Tingkatan Skala: Nominal → Ordinal → Interval → Ratio',
-        formulaNote: 'Masing-masing skala memiliki karakteristik khas terkait keberadaan urutan nilai dan nilai nol mutlak (true zero).',
+        heading: 'Skala Pengukuran',
+        body: 'Skala pengukuran menentukan tingkat ketepatan informasi yang terkandung dalam data serta menentukan metode dan uji statistik yang sah untuk digunakan. Terdapat empat tingkatan skala pengukuran (dikenal dengan singkatan NOIR):',
+        terms: [
+          {
+            term: 'Nominal',
+            definition: 'Kategori tanpa urutan atau peringkat.',
+            example: 'Jenis kelamin, domisili kota (Jakarta, Surabaya, Medan).',
+          },
+          {
+            term: 'Ordinal',
+            definition: 'Kategori yang memiliki urutan atau tingkatan peringkat.',
+            example: 'Tingkat kepuasan pelanggan (rendah, sedang, tinggi) atau skala Likert 1–5.',
+          },
+          {
+            term: 'Interval',
+            definition: 'Memiliki perbedaan yang sama antar nilai, tetapi tidak memiliki true zero (nol mutlak).',
+            example: 'Suhu dalam derajat Celsius (0°C bukan berarti "tidak ada suhu sama sekali", melainkan titik beku air).',
+          },
+          {
+            term: 'Ratio',
+            definition: 'Memiliki perbedaan antar nilai yang bermakna dan memiliki true zero (nol mutlak).',
+            example: 'Pendapatan bulanan (Rp 0 berarti benar-benar tidak ada pendapatan sama sekali; Rp 20 juta adalah dua kali lipat dari Rp 10 juta).',
+          },
+        ],
+        formula: 'Tingkatan Skala: Nominal → Ordinal → Interval → Ratio (NOIR)',
+        formulaNote: 'Pada skala Ratio berlaku rasio kelipatan (Rp 20 juta adalah tepat dua kali lipat dari Rp 10 juta) karena memiliki true zero yang mutlak.',
+        visualType: 'skala-pengukuran',
+      },
+      {
+        id: 'sec-4',
+        heading: 'Populasi dan Sampel (Population & Sample)',
+        body: 'Dalam setiap riset kuantitatif, peneliti harus membedakan dengan tegas antara keseluruhan subjek yang ingin disimpulkan dengan sebagian kelompok yang benar-benar dikumpulkan datanya:',
+        terms: [
+          {
+            term: 'Population (Populasi)',
+            definition: 'Seluruh objek atau individu yang menjadi perhatian dalam penelitian.',
+            example: 'Seluruh orang dewasa di Indonesia yang menggunakan dompet digital.',
+          },
+          {
+            term: 'Sample (Sampel)',
+            definition: 'Sebagian dari population yang dipilih untuk diteliti secara langsung.',
+            example: '1.200 pengguna dompet digital yang terpilih mengisi kuesioner.',
+          },
+          {
+            term: 'Parameter',
+            definition: 'Ukuran numerik yang menggambarkan karakteristik populasi (biasanya tidak diketahui nilainya secara pasti).',
+            example: 'Persentase sebenarnya dari seluruh pengguna dompet digital di Indonesia yang puas dengan fitur keamanan.',
+          },
+          {
+            term: 'Statistic (Statistik)',
+            definition: 'Ukuran numerik yang dihitung dari sample untuk memperkirakan parameter populasi.',
+            example: 'Persentase 82% kepuasan yang diperoleh dari 1.200 responden sampel yang disurvei.',
+          },
+        ],
+        formula: 'Sample digunakan untuk memperoleh informasi mengenai population tanpa harus meneliti seluruh population.',
+        formulaNote: 'Parameter adalah milik populasi (simbol Yunani seperti μ atau p). Statistik adalah milik sampel (simbol Latin seperti x̄ atau p̂).',
+        visualType: 'populasi-sampel',
+      },
+      {
+        id: 'sec-5',
+        heading: 'Sumber Data (Collecting Data)',
+        body: 'Data mentah tidak muncul dengan sendirinya, melainkan diperoleh melalui berbagai sumber dan metode pengumpulan berikut:',
+        terms: [
+          {
+            term: 'Aktivitas bisnis yang sedang berlangsung',
+            definition: 'Data yang otomatis tercatat dari kegiatan operasional harian perusahaan.',
+            example: 'Data transaksi kasir (point of sales), catatan log login server kampus, atau riwayat transaksi e-commerce.',
+          },
+          {
+            term: 'Data yang dikompilasi organisasi atau individu',
+            definition: 'Kumpulan data sekunder yang telah dihimpun dan dipublikasikan oleh lembaga resmi.',
+            example: 'Laporan sensus Badan Pusat Statistik (BPS), laporan tahunan Bank Indonesia, atau publikasi data World Bank.',
+          },
+          {
+            term: 'Survey',
+            definition: 'Pengumpulan data primer langsung dari responden dengan instrumen pertanyaan terstruktur.',
+            example: 'Kuesioner online Google Forms yang dibagikan kepada pelanggan untuk mengevaluasi fitur baru.',
+          },
+          {
+            term: 'Designed experiment',
+            definition: 'Peneliti secara sengaja menerapkan perlakuan (treatment) pada kelompok uji dan membandingkan hasilnya dengan kelompok kontrol.',
+            example: 'Uji A/B testing: kelompok A melihat desain iklan berlatar hijau, sedangkan kelompok B melihat desain berlatar biru untuk mengukur perbedaan rasio konversi.',
+          },
+          {
+            term: 'Observational study',
+            definition: 'Peneliti mengamati dan mencatat perilaku atau kejadian secara natural tanpa melakukan intervensi atau mengubah apa pun.',
+            example: 'Mencatat jumlah pengunjung kafe dan waktu tinggal mereka di akhir pekan tanpa memengaruhi kebiasaan mereka.',
+          },
+        ],
+      },
+      {
+        id: 'sec-6',
+        heading: 'Jenis Metode Sampling (Types of Sampling Method)',
+        body: 'Cara kita memilih anggota sampel dari populasi sangat menentukan apakah kesimpulan penelitian dapat dipercaya atau tidak. Terdapat dua kelompok besar metode sampling:',
+        terms: [
+          {
+            term: 'Probability Sample',
+            definition: 'Metode sampling dengan pemilihan objek berdasarkan probabilitas (peluang) yang diketahui. Setiap anggota populasi memiliki peluang terpilih yang pasti dan bukan nol. Hasil sample dapat digunakan untuk melakukan inference terhadap population.',
+            example: 'Undian acak sederhana dari daftar seluruh nomor induk mahasiswa BINUS.',
+          },
+          {
+            term: 'Nonprobability Sample',
+            definition: 'Metode sampling ketika probabilitas setiap objek untuk terpilih tidak diketahui. Pemilihan sampel sering didasarkan pada kemudahan akses (convenience) atau pertimbangan subjektif peneliti.',
+            example: 'Hanya menyebarkan kuesioner kepada teman-teman satu kelompok atau orang-orang yang kebetulan sedang duduk di kantin kampus.',
+          },
+        ],
+        formula: 'Penting: Dalam penelitian, probability sample lebih memungkinkan peneliti membuat kesimpulan (inference) mengenai karakteristik population.',
+        formulaNote: 'Nonprobability sample memang lebih cepat dan murah, namun hasilnya tidak dapat digeneralisasi secara statistik untuk mewakili keseluruhan populasi.',
+        visualType: 'metode-sampling',
+      },
+      {
+        id: 'sec-7',
+        heading: 'Jenis Sampling Error (Types of Sampling Error)',
+        body: 'Saat mengumpulkan data, berbagai jenis kesalahan dapat memengaruhi keakuratan hasil penelitian. Mengenali sumber kesalahan ini membantu peneliti meminimalkan bias dalam penelitian:',
+        terms: [
+          {
+            term: 'Coverage Error',
+            definition: 'Terjadi ketika kelompok tertentu dalam population tidak tercakup dalam sampling frame sehingga tidak memiliki kesempatan sama sekali untuk dipilih.',
+            example: 'Survei diadakan lewat daftar email kampus, padahal sebagian mahasiswa baru belum selesai didaftarkan akun emailnya.',
+          },
+          {
+            term: 'Nonresponse Error',
+            definition: 'Terjadi ketika individu yang sudah terpilih sebagai sample tidak memberikan respons atau menolak mengisi instrumen penelitian.',
+            example: 'Dari 200 mahasiswa terpilih yang dikirimi tautan kuesioner, hanya 80 orang yang meluangkan waktu mengisi.',
+          },
+          {
+            term: 'Sampling Error',
+            definition: 'Terjadi karena adanya variasi atau perbedaan alami antar sample yang dipilih secara kebetulan dari population. Kesalahan ini dapat dikurangi dengan meningkatkan ukuran sample (n).',
+            example: 'Dua sampel acak berbeda dari populasi yang sama menghasilkan rata-rata yang sedikit berbeda murni karena faktor peluang acak.',
+          },
+          {
+            term: 'Measurement Error',
+            definition: 'Terjadi ketika data yang dikumpulkan tidak secara akurat menggambarkan informasi yang sebenarnya ingin diketahui. Penyebabnya dapat berasal dari responden, metode pengumpulan data, atau perumusan pertanyaan survey yang kurang tepat.',
+            example: 'Pertanyaan survey yang ambigu: "Seberapa sering kamu belajar?" tanpa batasan waktu atau satuan hitungan jam yang spesifik.',
+          },
+        ],
+        visualType: 'jenis-error-sampling',
+      },
+      {
+        id: 'sec-8',
+        heading: 'Contoh Soal dengan Pembahasan',
+        body: 'Berikut adalah contoh soal textbook lengkap beserta pembahasan terstruktur. Pelajari cara mengidentifikasi populasi, sampel, parameter, dan statistik dari narasi penelitian:',
+        formula: 'Pedoman Menjawab: Populasi = seluruh kelompok yang ingin disimpulkan • Sampel = yang benar-benar disurvei • Parameter = angka tentang populasi (biasanya tidak diketahui) • Statistik = angka yang dihitung dari sampel.',
+        formulaNote: 'Gunakan 4 definisi ini untuk membedah studi kasus di bawah secara runtut dan presisi.',
         examples: [
           {
-            label: '1. Nominal (Kategori Tanpa Urutan)',
-            text: 'Data kategori yang berfungsi sebagai label identitas belaka tanpa adanya tingkatan urutan atau peringkat. Contoh dalam kuesioner skripsi: "Jenis kelamin" (Pria, Wanita) atau "Domisili asal responden" (Jakarta, Surabaya, Medan). Nilai-nilai ini murni setara.',
+            label: 'Contoh 1 (Soal 1.45: Belanja Lewat Aplikasi Mobile)',
+            text: 'Skenario: Studi Contact Solutions (2015) tentang persepsi dan sikap terhadap belanja lewat aplikasi mobile. Sebanyak 23% konsumen mengatakan rekomendasi di dalam aplikasi akan membuat mereka menambah barang ke keranjang, dan 33% akan menghabiskan lebih banyak waktu di aplikasi. Jika harus keluar dari aplikasi untuk mendapat bantuan, 1 dari 4 pembeli kemungkinan tidak jadi membeli dari merek tersebut. Penelitian memakai survei online terhadap sampel 1.600 orang dewasa di Amerika Serikat yang pernah berbelanja lewat perangkat mobile.\n\nPembahasan Lengkap:\na. Populasi: Seluruh orang dewasa di Amerika Serikat yang pernah berbelanja lewat perangkat mobile.\nb. Sampel: 1.600 orang dewasa AS yang pernah berbelanja lewat perangkat mobile dan mengikuti survei online.\nc. Parameter: Proporsi seluruh orang dewasa AS pembeli mobile yang menyatakan rekomendasi di dalam aplikasi akan membuat mereka menambah barang ke keranjang. (Catatan: Parameter lain juga dapat diterima, misalnya proporsi yang akan menghabiskan lebih banyak waktu di aplikasi).\nd. Statistik: Proporsi sampel, yaitu 23% dari 1.600 responden, sebagai perkiraan (estimasi) parameter di (c).',
           },
           {
-            label: '2. Ordinal (Kategori yang Memiliki Urutan/Peringkat)',
-            text: 'Data kategori yang memiliki tingkatan urutan atau ranking yang jelas, meskipun selisih pasti antar peringkat tidak bisa diukur secara eksak. Contoh dalam riset: tingkat kepuasan layanan yang dinyatakan sebagai "rendah, sedang, tinggi", atau skala Likert kuesioner (1 = Sangat Tidak Puas hingga 5 = Sangat Puas). Kita tahu peringkatnya, tapi jarak perasaan antara Puas dan Sangat Puas tidak dapat diukur pasti.',
-          },
-          {
-            label: '3. Interval (Memiliki Perbedaan Nilai, Tanpa True Zero)',
-            text: 'Data numerik yang memiliki perbedaan/selisih terukur yang sama antar nilai, namun TIDAK memiliki nilai nol mutlak (true zero). Contoh: "Suhu dalam derajat Celsius". Angka 0°C bukan berarti tidak ada suhu sama sekali (ketiadaan kalor), melainkan titik beku air berdasarkan konvensi skala. Oleh karena itu, kita tidak bisa mengatakan bahwa 40°C adalah dua kali lebih panas dari 20°C.',
-          },
-          {
-            label: '4. Ratio (Memiliki Perbedaan Nilai dan True Zero)',
-            text: 'Tingkatan skala tertinggi. Memiliki selisih antar nilai yang bermakna dan MEMILIKI nilai nol mutlak (true zero). Nilai 0 pada skala rasio benar-benar merepresentasikan ketiadaan mutlak dari atribut yang diukur. Contoh nyata dalam riset: "Pendapatan bulanan responden" (Rp 0 berarti benar-benar tidak ada uang sama sekali), "Jumlah jam kerja", atau "Berat badan". Karena memiliki true zero, perbandingan rasio berlaku sah: pendapatan Rp 8.000.000 adalah tepat dua kali lipat dari Rp 4.000.000.',
+            label: 'Contoh 2 (Soal 1.47: Survei Kepemimpinan & Investasi Digital PwC)',
+            text: 'Skenario: Survei PwC terhadap 1.322 CEO dari berbagai industri dan ukuran perusahaan di Asia, Eropa, dan Amerika. Delapan puluh persen (80%) CEO melihat data mining dan analisis sebagai hal yang penting secara strategis bagi organisasi mereka. Sebanyak 88% menilai investasi digital menciptakan nilai di bidang efisiensi operasional.\n\nPembahasan Lengkap:\na. Populasi: Seluruh CEO perusahaan dari berbagai industri dan ukuran di Asia, Eropa, dan Amerika.\nb. Sampel: 1.322 CEO yang disurvei oleh PwC.\nc. Parameter: Proporsi seluruh CEO dalam populasi yang memandang data mining dan analisis sebagai hal yang penting secara strategis bagi organisasinya.\nd. Statistik: Proporsi sampel, yaitu 80% dari 1.322 CEO.',
           },
         ],
       },

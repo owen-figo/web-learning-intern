@@ -181,6 +181,12 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
                           <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-low text-on-surface-variant border border-outline-variant/40">
                             {topic.badge}
                           </span>
+                          {topic.contentType === 'teori' && (
+                            <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-primary-fixed/30 text-primary border border-primary/20 flex items-center gap-1">
+                              <span className="material-symbols-outlined text-[13px]">schedule</span>
+                              <span>~10 menit baca</span>
+                            </span>
+                          )}
                         </div>
                         <h2 className="text-base sm:text-lg font-bold text-on-surface">
                           {topic.order}. {topic.title}
@@ -220,15 +226,23 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
                   {status === 'selesai' && (
                     <div className="mb-4 bg-surface-container-low/70 rounded-xl p-3 border border-outline-variant/30">
                       <div className="flex justify-between items-center text-xs mb-1.5 font-medium">
-                        <span className="text-on-surface-variant">Progres Pemahaman</span>
-                        <span className="text-primary font-semibold">100% (Tuntas)</span>
+                        <span className="text-on-surface-variant">
+                          {topic.contentType === 'teori' ? 'Status Bacaan' : 'Progres Pemahaman'}
+                        </span>
+                        <span className="text-primary font-semibold">
+                          {topic.contentType === 'teori' ? 'Selesai dibaca' : '100% (Tuntas)'}
+                        </span>
                       </div>
                       <div className="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
                         <div className="h-full rounded-full bg-primary w-full"></div>
                       </div>
                       <div className="text-xs text-primary mt-2 flex items-center gap-1 font-medium">
                         <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                        <span>Materi tuntas dipahami • Bebas diulang kapan saja</span>
+                        <span>
+                          {topic.contentType === 'teori'
+                            ? 'Materi selesai dibaca • Bebas dibaca ulang kapan saja'
+                            : 'Materi tuntas dipahami • Bebas diulang kapan saja'}
+                        </span>
                       </div>
                     </div>
                   )}
@@ -236,15 +250,25 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
                   {status === 'aktif' && (
                     <div className="mb-4 bg-surface-container-low/80 rounded-xl p-3 border border-primary/25">
                       <div className="flex justify-between items-center text-xs mb-1.5 font-medium">
-                        <span className="text-on-surface-variant">Fokus Belajar Saat Ini</span>
-                        <span className="text-primary font-semibold">Siap dikerjakan</span>
+                        <span className="text-on-surface-variant">
+                          {topic.contentType === 'teori' ? 'Status Bacaan' : 'Fokus Belajar Saat Ini'}
+                        </span>
+                        <span className="text-primary font-semibold">
+                          {topic.contentType === 'teori' ? 'Belum dibaca' : 'Siap dikerjakan'}
+                        </span>
                       </div>
                       <div className="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
                         <div className="h-full rounded-full bg-primary w-2.5 animate-pulse"></div>
                       </div>
                       <div className="text-xs text-on-surface-variant mt-2 flex items-center gap-1 font-medium">
-                        <span className="material-symbols-outlined text-[16px] text-primary">play_circle</span>
-                        <span>Selesaikan topik ini untuk membuka langkah selanjutnya</span>
+                        <span className="material-symbols-outlined text-[16px] text-primary">
+                          {topic.contentType === 'teori' ? 'menu_book' : 'play_circle'}
+                        </span>
+                        <span>
+                          {topic.contentType === 'teori'
+                            ? 'Baca seluruh materi santai tanpa kuis untuk membuka langkah berikutnya'
+                            : 'Selesaikan topik ini untuk membuka langkah selanjutnya'}
+                        </span>
                       </div>
                     </div>
                   )}

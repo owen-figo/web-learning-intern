@@ -35,18 +35,6 @@ export const Footer: React.FC<FooterProps> = ({
 
         <nav aria-label="Navigasi Footer" className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs sm:text-sm">
           <button
-            onClick={() => setActivePage('topics')}
-            className="text-on-surface-variant hover:text-primary transition-colors duration-200"
-          >
-            Topik Belajar
-          </button>
-          <button
-            onClick={() => setActivePage('practice')}
-            className="text-on-surface-variant hover:text-primary transition-colors duration-200"
-          >
-            Latihan Mandiri
-          </button>
-          <button
             onClick={onOpenFormula}
             className="text-primary font-medium hover:underline transition-colors duration-200 flex items-center gap-1"
           >

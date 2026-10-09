@@ -4,6 +4,15 @@ export type DifficultyTier = 'mudah' | 'sedang' | 'sulit' | 'sangat_sulit';
 
 export type TopicStatus = 'selesai' | 'aktif' | 'terkunci';
 
+export interface Concept {
+  id: string;
+  title: string;
+  summary: string;
+  formula?: string;
+  example?: string;
+  binusContext?: string;
+}
+
 export interface ChoiceOption {
   id: string;
   label: string;
@@ -18,6 +27,8 @@ export interface Question {
   title: string;
   narrative: string;
   dataHighlight?: string;
+  conceptId?: string;
+  conceptIds?: string[];
   formulaGuide?: {
     formula: string;
     note: string;
@@ -47,6 +58,14 @@ export interface TheorySection {
   formula?: string;
   formulaNote?: string;
   examples?: TheoryExample[];
+  terms?: { term: string; definition: string; example?: string }[];
+  scenario?: string;
+  visualType?:
+    | 'jenis-variabel'
+    | 'skala-pengukuran'
+    | 'populasi-sampel'
+    | 'metode-sampling'
+    | 'jenis-error-sampling';
 }
 
 export interface TheoryContent {
@@ -68,7 +87,7 @@ export interface Topic {
   description: string;
   progressPercent: number;
   progressLabel: string;
-  unlockedTiers: DifficultyTier[];
+  unlockedTiers?: DifficultyTier[];
   modulesCount: number;
   iconName: string;
   statusAction: 'lanjut' | 'pelajari' | 'mulai' | 'ulang';

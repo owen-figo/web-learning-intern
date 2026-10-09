@@ -27,7 +27,9 @@ export default function App() {
 
   // Sequential learning path states
   const [completedTopicIds, setCompletedTopicIds] = useState<string[]>([]);
-  const [selectedTopicId, setSelectedTopicId] = useState<string | null>('dasar-dasar-data');
+  const [selectedTopicId, setSelectedTopicId] = useState<string | null>(
+    'mendefinisikan-mengumpulkan-data'
+  );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const sortedTopics = [...mockTopics].sort((a, b) => a.order - b.order);
