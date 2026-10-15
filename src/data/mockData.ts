@@ -19,7 +19,7 @@ export const initialUserProfile: UserProfile = {
   questionsDone: 64,
   selfCheckPercentage: 88,
   masteredTopics: 0,
-  totalTopics: 7,
+  totalTopics: 8,
   understandingScore: 78,
 };
 
@@ -290,8 +290,25 @@ export const mockTopics: Topic[] = [
     contentType: 'teori',
   },
   {
-    id: 'statistika-deskriptif',
+    id: 'mengorganisasi-memvisualisasikan-variabel',
     order: 2,
+    category: 'statistika',
+    subCategory: 'deskriptif',
+    title: 'Mengorganisasi dan Memvisualisasikan Variabel',
+    badge: 'Materi Wajib',
+    badgeType: 'fondasi',
+    description:
+      'Susun data jadi tabel dan distribusi, lalu ubah menjadi grafik yang tepat, lengkap dengan cara membuatnya.',
+    progressPercent: 0,
+    progressLabel: 'Terkunci',
+    modulesCount: 10,
+    iconName: 'leaderboard',
+    statusAction: 'mulai',
+    contentType: 'teori',
+  },
+  {
+    id: 'statistika-deskriptif',
+    order: 3,
     category: 'statistika',
     subCategory: 'deskriptif',
     title: 'Statistika Deskriptif',
@@ -307,7 +324,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'probabilitas-distribusi',
-    order: 3,
+    order: 4,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Probabilitas & Distribusi Normal',
@@ -322,7 +339,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'uji-hipotesis',
-    order: 4,
+    order: 5,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Uji Hipotesis & T-Test',
@@ -338,7 +355,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'regresi-korelasi',
-    order: 5,
+    order: 6,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Regresi & Korelasi Linier',
@@ -353,7 +370,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'analisis-varian-anova',
-    order: 6,
+    order: 7,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Analisis Varians (ANOVA)',
@@ -369,7 +386,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'chi-square-nonparametrik',
-    order: 7,
+    order: 8,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Uji Chi-Square & Non-Parametrik',
@@ -697,6 +714,524 @@ export const theoryContents: TheoryContent[] = [
             text: 'Skenario: Survei PwC terhadap 1.322 CEO dari berbagai industri dan ukuran perusahaan di Asia, Eropa, dan Amerika. Delapan puluh persen (80%) CEO melihat data mining dan analisis sebagai hal yang penting secara strategis bagi organisasi mereka. Sebanyak 88% menilai investasi digital menciptakan nilai di bidang efisiensi operasional.\n\nPembahasan Lengkap:\na. Populasi: Seluruh CEO perusahaan dari berbagai industri dan ukuran di Asia, Eropa, dan Amerika.\nb. Sampel: 1.322 CEO yang disurvei oleh PwC.\nc. Parameter: Proporsi seluruh CEO dalam populasi yang memandang data mining dan analisis sebagai hal yang penting secara strategis bagi organisasinya.\nd. Statistik: Proporsi sampel, yaitu 80% dari 1.322 CEO.',
           },
         ],
+      },
+    ],
+  },
+  {
+    topicId: 'mengorganisasi-memvisualisasikan-variabel',
+    topicTitle: 'Mengorganisasi dan Memvisualisasikan Variabel',
+    estimatedReadMinutes: 12,
+    completionXp: 15,
+    sections: [
+      {
+        id: 'sec-org-1',
+        heading: 'Tabel Ringkasan & Tabel Kontingensi',
+        body: 'Untuk data kategorikal, langkah awal pengorganisasian adalah menyusun kategori amatan ke dalam tabel frekuensi dan persentase. Tabel ringkasan merangkum 1 variabel kategorikal, sedangkan tabel kontingensi (tabulasi silang) memetakan hubungan antara 2 variabel kategorikal secara simultan.',
+        terms: [
+          {
+            term: 'Tabel Ringkasan (Summary Table)',
+            definition: 'Menghitung frekuensi kemunculan (f) atau persentase amatan dalam tiap kategori satu variabel.',
+            example: 'Jumlah transaksi menurut metode pembayaran: 80 E-Wallet, 50 Transfer, 40 Kartu, 30 COD.',
+          },
+          {
+            term: 'Tabel Kontingensi (Contingency Table)',
+            definition: 'Tabel dua arah (baris × kolom) yang menyajikan frekuensi bersama (joint frequency) dari dua variabel kategorikal.',
+            example: 'Tabulasi silang antara Status Pelanggan (Baru vs Setia) dengan Metode Pembayaran yang dipilih.',
+          },
+          {
+            term: 'Frekuensi Relatif & Persentase',
+            definition: 'Proporsi amatan pada suatu kategori terhadap jumlah total data (f / n), dinyatakan dalam desimal atau persen.',
+            example: 'Persentase E-Wallet = (80 / 200) × 100% = 40.0%.',
+          },
+        ],
+        formula: 'Persentase Kategori = (Frekuensi Kategori f / Total Sampel n) × 100%',
+        formulaNote: 'Pada tabel kontingensi, persentase dapat dihitung terhadap Total Grand, Total Baris, atau Total Kolom tergantung fokus pertanyaan analisis.',
+        howToMake: {
+          title: 'Cara Membuat Tabel Ringkasan & Kontingensi',
+          steps: [
+            {
+              step: 1,
+              title: 'Tentukan Kategori Mutually Exclusive',
+              instruction: 'Daftarkan semua kategori unik dari variabel amatan, pastikan setiap data hanya masuk ke tepat satu kategori.',
+            },
+            {
+              step: 2,
+              title: 'Hitung Turus (Tally) & Frekuensi',
+              instruction: 'Hitung frekuensi (f) amatan yang berada pada tiap kategori atau persilangan baris dan kolom.',
+            },
+            {
+              step: 3,
+              title: 'Hitung Total Marjinal & Grand Total',
+              instruction: 'Jumlahkan setiap baris untuk mendapat total baris, jumlahkan setiap kolom untuk total kolom, lalu pastikan keduanya menghasilkan grand total n yang sama.',
+            },
+            {
+              step: 4,
+              title: 'Konversikan ke Persentase',
+              instruction: 'Bagi nilai tiap sel dengan total yang sesuai (total baris, kolom, atau grand total) lalu kalikan 100%.',
+            },
+          ],
+        },
+        visualType: 'tabel-ringkasan-kontingensi',
+      },
+      {
+        id: 'sec-org-2',
+        heading: 'Diagram Batang (Bar Chart) & Diagram Lingkaran (Pie Chart)',
+        body: 'Setelah variabel kategorikal diringkas dalam tabel, kita dapat memvisualisasikannya menjadi grafik. Diagram batang menampilkan frekuensi atau persentase tiap kategori dengan batang terpisah berjarak, sedangkan diagram lingkaran membagi luas lingkaran menjadi irisan-irisan yang proporsional dengan persentase tiap kategori.',
+        terms: [
+          {
+            term: 'Diagram Batang (Bar Chart)',
+            definition: 'Grafik batang dengan panjang batang sebanding dengan frekuensi/persentase kategori, dengan celah (gap) antarbatang yang menegaskan kategori diskrit.',
+            example: 'Diagram preferensi merek laptop: Asus 30%, Lenovo 26.7%, Apple 23.3%, HP 13.3%, Lainnya 6.7%.',
+          },
+          {
+            term: 'Diagram Lingkaran (Pie Chart)',
+            definition: 'Lingkaran penuh 360° yang diiris menjadi juring-juring sudut sesuai proporsi persentase tiap kategori.',
+            example: 'Irisan Asus menempati 30% dari luas lingkaran (sudut = 108°).',
+          },
+        ],
+        formula: 'Sudut Irisan Lingkaran = (Persentase Kategori / 100) × 360°',
+        formulaNote: 'Diagram batang lebih dianjurkan daripada diagram lingkaran jika kategori berjumlah lebih dari 4 atau perbedaan persentasenya tipis.',
+        howToMake: {
+          title: 'Cara Membuat Bar Chart & Pie Chart',
+          steps: [
+            {
+              step: 1,
+              title: 'Siapkan Tabel Ringkasan',
+              instruction: 'Pastikan nama kategori dan frekuensi atau persentasenya sudah dihitung lengkap.',
+            },
+            {
+              step: 2,
+              title: 'Gambar Sumbu Koordinat (Bar Chart)',
+              instruction: 'Buat sumbu X untuk nama kategori dan sumbu Y untuk frekuensi/persentase (selalu mulai dari 0). Beri jeda spasi antarbatang.',
+            },
+            {
+              step: 3,
+              title: 'Hitung Derajat Sudut (Pie Chart)',
+              instruction: 'Kalikan persentase tiap kategori dengan 360° untuk menentukan besar sudut masing-masing irisan juring lingkaran.',
+            },
+            {
+              step: 4,
+              title: 'Beri Label Nilai & Legenda',
+              instruction: 'Cantumkan nilai persentase atau frekuensi di atas batang atau di dekat irisan kue agar mudah dibaca.',
+            },
+          ],
+        },
+        visualType: 'bar-pie-chart',
+      },
+      {
+        id: 'sec-org-3',
+        heading: 'Diagram Pareto (Pareto Chart)',
+        body: 'Diagram Pareto adalah diagram batang khusus untuk data kategorikal di mana kategori diurutkan dari frekuensi tertinggi ke terendah, dipadukan dengan kurva garis persentase kumulatif. Digunakan untuk menerapkan Prinsip Pareto ("vital few vs. trivial many"), yaitu sekitar 80% masalah bersumber dari 20% penyebab utama.',
+        terms: [
+          {
+            term: 'Prinsip Pareto (Aturan 80/20)',
+            definition: 'Kaidah manajemen dan kualitas bahwa sebagian besar dampak atau masalah (sekitar 80%) diakibatkan oleh sedikit penyebab utama (sekitar 20%).',
+            example: 'Dari 5 jenis keluhan pengiriman, 2 keluhan teratas menyumbang 72% dari seluruh komplain pelanggan.',
+          },
+          {
+            term: 'Persentase Kumulatif',
+            definition: 'Penjumlahan berjalan (running total) dari persentase kategori pertama hingga kategori saat ini, mencapai tepat 100% di akhir.',
+            example: 'Kategori 1 (42%) + Kategori 2 (30%) = Kumulatif 72%.',
+          },
+          {
+            term: 'Vital Few vs. Trivial Many',
+            definition: 'Istilah Joseph Juran untuk memisahkan sedikit masalah penentu yang vital dari banyak masalah sampingan yang efeknya kecil.',
+            example: 'Fokus perbaikan pada kemasan dan keterlambatan kurir sebelum menangani kesalahan format invoice.',
+          },
+        ],
+        formula: 'Persentase Kumulatif Kategori ke-k = Σ (Persentase Kategori 1 s/d k)',
+        formulaNote: 'Sumbu Y kiri untuk frekuensi jumlah amatan, sumbu Y kanan untuk persentase kumulatif 0% s/d 100%.',
+        howToMake: {
+          title: 'Cara Membuat Diagram Pareto',
+          steps: [
+            {
+              step: 1,
+              title: 'Hitung Frekuensi Tiap Masalah',
+              instruction: 'Kumpulkan data keluhan atau kecacatan dan hitung total kemunculannya.',
+            },
+            {
+              step: 2,
+              title: 'Urutkan Kategori Secara Menurun',
+              instruction: 'Susun kategori dari frekuensi terbesar di sebelah kiri hingga frekuensi terkecil di sebelah kanan.',
+            },
+            {
+              step: 3,
+              title: 'Hitung Persentase & Persentase Kumulatif',
+              instruction: 'Hitung % tiap kategori terhadap total data, lalu jumlahkan secara akumulatif baris demi baris.',
+            },
+            {
+              step: 4,
+              title: 'Plot Batang & Garis Kumulatif',
+              instruction: 'Gambar diagram batang pada sumbu kiri, lalu plot titik persentase kumulatif di atas tiap batang pada sumbu kanan dan hubungkan dengan garis.',
+            },
+          ],
+        },
+        visualType: 'pareto-chart',
+      },
+      {
+        id: 'sec-org-4',
+        heading: 'Diagram Batang Berdampingan (Side-by-Side Bar Chart)',
+        body: 'Ketika kita ingin membandingkan dua variabel kategorikal sekaligus (yang berasal dari tabel kontingensi), diagram batang berdampingan menyajikan kelompok batang bersebelahan dalam tiap kategori utama. Ini memperjelas apakah pola distribusi suatu variabel berbeda antarkelompok variabel lainnya.',
+        terms: [
+          {
+            term: 'Diagram Batang Berdampingan',
+            definition: 'Visualisasi dua variabel kategorikal dengan mengelompokkan sub-kategori bersebelahan pada setiap level variabel primer.',
+            example: 'Membandingkan preferensi media belajar (Video vs E-Book vs Forum) antara Mahasiswa Tahun 1 dan Mahasiswa Tahun 4.',
+          },
+          {
+            term: 'Persentase Bersyarat (Conditional Percentage)',
+            definition: 'Menghitung persentase amatan di dalam kelompoknya masing-masing agar perbandingannya adil meski ukuran sub-populasi tidak sama besar.',
+            example: 'Persentase minat video dihitung dari total mahasiswa tahun 1 saja (60%), bukan dari total seluruh mahasiswa gabungan.',
+          },
+        ],
+        formula: 'Persentase Sub-Kelompok = (Frekuensi Sel / Total Kelompok Baris atau Kolom) × 100%',
+        formulaNote: 'Gunakan warna legenda yang seragam dan konsisten untuk sub-kategori di seluruh kelompok sumbu horizontal.',
+        howToMake: {
+          title: 'Cara Membuat Side-by-Side Bar Chart',
+          steps: [
+            {
+              step: 1,
+              title: 'Siapkan Tabel Kontingensi',
+              instruction: 'Pastikan data persilangan dua variabel kategorikal sudah tersusun lengkap.',
+            },
+            {
+              step: 2,
+              title: 'Pilih Variabel Sumbu X',
+              instruction: 'Pilih variabel pengelompokan utama untuk ditempatkan pada sumbu horizontal.',
+            },
+            {
+              step: 3,
+              title: 'Plot Batang Bersebelahan',
+              instruction: 'Di dalam tiap kategori pada sumbu X, gambarkan batang-batang kategori variabel kedua saling menempel atau berdekatan.',
+            },
+            {
+              step: 4,
+              title: 'Sertakan Legenda Warna',
+              instruction: 'Beri warna yang kontras untuk membedakan sub-kategori dan cantumkan legenda yang jelas.',
+            },
+          ],
+        },
+        visualType: 'side-by-side-bar',
+      },
+      {
+        id: 'sec-org-5',
+        heading: 'Susunan Terurut & Diagram Batang dan Daun (Stem-and-Leaf)',
+        body: 'Untuk variabel numerik mentah, mengurutkan data (Ordered Array) membantu kita melihat rentang (range), nilai minimum, maksimum, serta konsentrasi data. Diagram Batang dan Daun (Stem-and-Leaf Display) melangkah lebih jauh: menyusun data numerik ke dalam kelompok batang (digit depan) dan daun (digit terakhir) tanpa kehilangan nilai data aslinya.',
+        terms: [
+          {
+            term: 'Ordered Array',
+            definition: 'Daftar angka numerik mentah yang telah disusun berurutan dari nilai terendah hingga nilai tertinggi.',
+            example: 'Nilai ujian terurut: 48, 52, 57, ..., 98.',
+          },
+          {
+            term: 'Batang (Stem)',
+            definition: 'Digit terdepan dari angka amatan (misalnya digit puluhan atau ratusan) yang menjadi pengelompok baris.',
+            example: 'Pada nilai 75, batangnya adalah angka 7.',
+          },
+          {
+            term: 'Daun (Leaf)',
+            definition: 'Digit terakhir dari angka amatan (biasanya digit satuan) yang ditulis mendatar di baris batangnya.',
+            example: 'Pada nilai 75, daunnya adalah angka 5.',
+          },
+          {
+            term: 'Kunci Pembacaan (Key)',
+            definition: 'Catatan instruksi cara membaca kombinasi stem dan leaf.',
+            example: 'Kunci: 7 | 5 = 75 nilai ujian.',
+          },
+        ],
+        formula: 'Rentang Data (Range) = Nilai Maksimum - Nilai Minimum',
+        formulaNote: 'Kelebihan utama Stem-and-Leaf dibanding histogram adalah angka individual asli data amatan tetap terbaca secara utuh.',
+        howToMake: {
+          title: 'Cara Membuat Stem-and-Leaf Display',
+          steps: [
+            {
+              step: 1,
+              title: 'Tentukan Batang dan Daun',
+              instruction: 'Pisahkan setiap angka amatan menjadi digit batang (misal puluhan) dan digit daun (digit satuan terakhir).',
+            },
+            {
+              step: 2,
+              title: 'Tulis Batang Secara Vertikal',
+              instruction: 'Tuliskan deretan angka batang berurutan dari yang terkecil di atas hingga terbesar di bawah di sebelah kiri garis vertikal.',
+            },
+            {
+              step: 3,
+              title: 'Tuliskan Daun di Baris yang Sesuai',
+              instruction: 'Untuk setiap data amatan, tuliskan digit daunnya di baris batang yang tepat di sebelah kanan garis.',
+            },
+            {
+              step: 4,
+              title: 'Urutkan Daun & Tulis Kunci',
+              instruction: 'Urutkan angka daun pada tiap baris dari terkecil ke terbesar, lalu cantumkan format kunci pembacaan.',
+            },
+          ],
+        },
+        visualType: 'stem-and-leaf',
+      },
+      {
+        id: 'sec-org-6',
+        heading: 'Distribusi Frekuensi & Penentuan Interval Kelas',
+        body: 'Jika ukuran data numerik sangat besar, kita mengelompokkan data ke dalam interval kelas yang berurutan. Setiap interval kelas harus saling lepas (mutually exclusive) dan tuntas (collectively exhaustive), sehingga setiap angka amatan hanya masuk ke tepat satu kelas.',
+        terms: [
+          {
+            term: 'Interval Kelas (Class Interval)',
+            definition: 'Rentang nilai numerik berurutan yang mengelompokkan sebagian amatan data.',
+            example: 'Interval waktu: 120 detik s/d kurang dari 160 detik.',
+          },
+          {
+            term: 'Lebar Kelas (Class Interval Width, w)',
+            definition: 'Jarak rentang antara batas bawah kelas dan batas atas kelas.',
+            example: 'Lebar kelas w = 160 - 120 = 40 detik.',
+          },
+          {
+            term: 'Aturan 2^k (Jumlah Kelas Ideal)',
+            definition: 'Pedoman memilih jumlah kelas terkecil k sehingga 2 pangkat k lebih besar atau sama dengan ukuran sampel n (2^k ≥ n).',
+            example: 'Untuk n = 50 amatan, 2^5 = 32 < 50, maka kita memilih k = 6 kelas (karena 2^6 = 64 ≥ 50).',
+          },
+          {
+            term: 'Titik Tengah Kelas (Class Midpoint, Xi)',
+            definition: 'Nilai yang berada tepat di tengah interval kelas, dihitung dari (Batas Bawah + Batas Atas) / 2.',
+            example: 'Titik tengah interval 120 s/d 160 adalah (120 + 160) / 2 = 140.',
+          },
+        ],
+        formula: 'Lebar Kelas (w) = (Nilai Maksimum - Nilai Minimum) / Jumlah Kelas (k)',
+        formulaNote: 'Hasil pembagian lebar kelas w selalu dibulatkan ke atas ke angka praktis yang nyaman (misal kelipatan 5 atau 10).',
+        howToMake: {
+          title: 'Cara Membuat Distribusi Frekuensi',
+          steps: [
+            {
+              step: 1,
+              title: 'Hitung Rentang Data (Range)',
+              instruction: 'Cari nilai maksimum dan minimum data mentah, lalu hitung Range = Maks - Min.',
+            },
+            {
+              step: 2,
+              title: 'Tentukan Jumlah Kelas (k)',
+              instruction: 'Gunakan aturan 2^k ≥ n atau kesepakatan penelitian (biasanya antara 5 sampai 15 kelas).',
+            },
+            {
+              step: 3,
+              title: 'Hitung & Bulatkan Lebar Kelas (w)',
+              instruction: 'Bagi Range dengan k, lalu bulatkan ke atas ke bilangan bulat yang nyaman.',
+            },
+            {
+              step: 4,
+              title: 'Bentuk Batas Interval Kelas',
+              instruction: 'Mulai batas bawah kelas pertama dari nilai sedikit di bawah nilai minimum, lalu tambahkan lebar w secara konsisten.',
+            },
+            {
+              step: 5,
+              title: 'Hitung Frekuensi & Persentase',
+              instruction: 'Hitung berapa amatan yang jatuh ke tiap interval, lalu hitung frekuensi relatif dan kumulatifnya.',
+            },
+          ],
+        },
+        visualType: 'distribusi-frekuensi',
+      },
+      {
+        id: 'sec-org-7',
+        heading: 'Histogram & Poligon Frekuensi',
+        body: 'Histogram adalah grafik batang vertikal untuk variabel numerik kontinu dari tabel distribusi frekuensi. Berbeda dengan diagram batang untuk data kategorikal, batang-batang pada histogram saling menempel rapat tanpa celah karena variabel numerik kontinu tidak memiliki jeda pemisah. Poligon frekuensi menghubungkan titik tengah tiap puncak kelas dengan garis lurus kontinu.',
+        terms: [
+          {
+            term: 'Histogram',
+            definition: 'Grafik batang tanpa celah antarbatang, dengan sumbu horizontal batas interval kelas dan sumbu vertikal frekuensi atau persentase.',
+            example: 'Histogram waktu layanan tiket dengan batang-batang kelas yang menempel rapat.',
+          },
+          {
+            term: 'Poligon Frekuensi (Frequency Polygon)',
+            definition: 'Grafik garis yang menghubungkan titik-titik koordinat titik tengah kelas dan frekuensinya (Xi, fi).',
+            example: 'Kurva garis biru yang menghubungkan puncak midpoint tiap kelas interval.',
+          },
+          {
+            term: 'Titik Tutup Poligon',
+            definition: 'Garis poligon ditutup ke sumbu horizontal di kedua ujungnya pada frekuensi nol di titik tengah kelas bayangan.',
+            example: 'Titik awal di midpoint 100 dengan f = 0 dan titik akhir di midpoint 340 dengan f = 0.',
+          },
+        ],
+        formula: 'Titik Tengah Kelas Xi = (Batas Bawah Kelas + Batas Atas Kelas) / 2',
+        formulaNote: 'Ketiadaan celah antarkolom pada histogram menandakan bahwa data bersifat kontinu di sepanjang sumbu horizontal.',
+        howToMake: {
+          title: 'Cara Membuat Histogram & Poligon',
+          steps: [
+            {
+              step: 1,
+              title: 'Tandai Sumbu Horizontal (X)',
+              instruction: 'Beri label batas-batas interval kelas atau titik tengah kelas pada sumbu horizontal.',
+            },
+            {
+              step: 2,
+              title: 'Tandai Sumbu Vertikal (Y)',
+              instruction: 'Buat skala frekuensi atau persentase yang dimulai dari angka nol.',
+            },
+            {
+              step: 3,
+              title: 'Gambar Kolom Histogram',
+              instruction: 'Gambar kolom tegak dengan lebar sama untuk tiap kelas dan tinggi sebanding frekuensi. Pastikan kolom saling menempel rapat.',
+            },
+            {
+              step: 4,
+              title: 'Tarik Garis Poligon Frekuensi',
+              instruction: 'Tandai titik tepat di tengah puncak tiap kolom histogram, hubungkan dengan garis lurus, dan tutup kedua ujungnya ke sumbu horizontal pada f = 0.',
+            },
+          ],
+        },
+        visualType: 'histogram-polygon',
+      },
+      {
+        id: 'sec-org-8',
+        heading: 'Poligon Kumulatif (Kurva Ogive)',
+        body: 'Kurva Ogive (poligon persentase kumulatif) menyajikan akumulasi persentase data amatan yang bernilai kurang dari batas atas kelas tertentu. Kurva ini selalu mendaki dari 0% hingga mencapai tepat 100%, dan sangat bermanfaat untuk mencari nilai kuartil, desil, median, serta persentase data di bawah ambang batas tertentu.',
+        terms: [
+          {
+            term: 'Kurva Ogive ("Kurang Dari")',
+            definition: 'Grafik garis yang menggambarkan persentase kumulatif amatan yang bernilai di bawah batas atas tiap interval kelas.',
+            example: 'Kurva mendaki dari 0% pada nilai 120 detik hingga 100% pada nilai 320 detik.',
+          },
+          {
+            term: 'Kuartil Pertama (Q1 / 25%)',
+            definition: 'Nilai batas di mana 25% data amatan berada di bawah nilai tersebut.',
+            example: 'Q1 pada kurva ogive waktu layanan bernilai sekitar 172 detik.',
+          },
+          {
+            term: 'Median (Q2 / 50%)',
+            definition: 'Nilai tengah amatan di mana tepat 50% data berada di bawah nilai tersebut.',
+            example: 'Tepat 50% tiket layanan terselesaikan dalam waktu kurang dari 200 detik.',
+          },
+          {
+            term: 'Kuartil Ketiga (Q3 / 75%)',
+            definition: 'Nilai batas di mana 75% data amatan berada di bawah nilai tersebut.',
+            example: 'Q3 bernilai sekitar 236 detik.',
+          },
+        ],
+        formula: 'Persentase Kumulatif = (Frekuensi Kumulatif Sampai Kelas Tersebut / Total n) × 100%',
+        formulaNote: 'Kurva Ogive selalu dimulai pada batas bawah kelas pertama dengan persentase kumulatif 0% dan berakhir pada batas atas kelas terakhir dengan 100%.',
+        howToMake: {
+          title: 'Cara Membuat Kurva Ogive',
+          steps: [
+            {
+              step: 1,
+              title: 'Hitung Persentase Kumulatif',
+              instruction: 'Susun kolom persentase kumulatif dari tabel distribusi frekuensi.',
+            },
+            {
+              step: 2,
+              title: 'Tandai Sumbu Koordinat',
+              instruction: 'Gunakan batas atas interval kelas pada sumbu X dan skala 0% s/d 100% pada sumbu Y.',
+            },
+            {
+              step: 3,
+              title: 'Plot Titik Batas Awal (0%)',
+              instruction: 'Plot titik pertama pada (Batas Bawah Kelas Pertama, 0%).',
+            },
+            {
+              step: 4,
+              title: 'Plot Titik Kumulatif & Hubungkan',
+              instruction: 'Plot titik-titik koordinat (Batas Atas Kelas, Persentase Kumulatif) lalu hubungkan dengan garis lurus kontinu hingga mencapai 100%.',
+            },
+          ],
+        },
+        visualType: 'ogive-curve',
+      },
+      {
+        id: 'sec-org-9',
+        heading: 'Diagram Pencar (Scatter Plot) & Grafik Runtun Waktu (Time Series Plot)',
+        body: 'Ketika menganalisis dua variabel numerik secara bersamaan, kita menggunakan Diagram Pencar (Scatter Plot) untuk mengeksplorasi pola hubungan (apakah linear positif, negatif, atau tidak berpola). Sedangkan jika satu variabel numerik diamati secara periodik dari waktu ke waktu, Grafik Runtun Waktu (Time Series Plot) digunakan untuk mengidentifikasi tren jangka panjang dan pola fluktuasi siklus/musiman.',
+        terms: [
+          {
+            term: 'Diagram Pencar (Scatter Plot)',
+            definition: 'Menampilkan pasangan amatan (Xi, Yi) sebagai titik-titik koordinat pada bidang Kartesius untuk melihat asosiasi atau korelasi.',
+            example: 'Memetakan Jam Belajar Mandiri (X) dengan Nilai Ujian Statistik (Y).',
+          },
+          {
+            term: 'Korelasi Positif vs Negatif',
+            definition: 'Korelasi positif: X naik diikuti Y naik. Korelasi negatif: X naik diikuti Y turun.',
+            example: 'Jam belajar vs nilai (positif); waktu bermain game larut malam vs nilai (negatif).',
+          },
+          {
+            term: 'Grafik Runtun Waktu (Time Series Plot)',
+            definition: 'Grafik garis di mana sumbu horizontal adalah satuan waktu berurutan dan sumbu vertikal adalah nilai variabel numerik.',
+            example: 'Jumlah pengguna aktif aplikasi dari bulan Januari hingga Desember.',
+          },
+        ],
+        formula: 'Scatter Plot: Koordinat (X, Y) • Time Series Plot: Koordinat (Waktu, Nilai)',
+        formulaNote: 'Ingat prinsip fundamental riset: Korelasi antarvariabel pada diagram pencar tidak membuktikan hubungan sebab-akibat (kausalitas)!',
+        howToMake: {
+          title: 'Cara Membuat Scatter Plot & Time Series Plot',
+          steps: [
+            {
+              step: 1,
+              title: 'Tentukan Sumbu Variabel',
+              instruction: 'Untuk Scatter Plot, tetapkan variabel independen pada sumbu X dan variabel dependen pada sumbu Y. Untuk Time Series, letakkan waktu pada sumbu X.',
+            },
+            {
+              step: 2,
+              title: 'Gunakan Skala Proporsional',
+              instruction: 'Buat rentang skala linear yang seragam pada kedua sumbu tanpa memotong data amatan.',
+            },
+            {
+              step: 3,
+              title: 'Plot Titik Pasangan Data',
+              instruction: 'Gambarkan titik koordinat (xi, yi) untuk setiap pasangan data amatan.',
+            },
+            {
+              step: 4,
+              title: 'Tarik Garis Tren atau Garis Waktu',
+              instruction: 'Pada Time Series hubungkan titik berurutan dengan garis lurus; pada Scatter Plot gambar garis tren linear jika terdapat pola.',
+            },
+          ],
+        },
+        visualType: 'scatter-timeseries',
+      },
+      {
+        id: 'sec-org-10',
+        heading: 'Etika Visualisasi & Menghindari Grafik Menyesatkan',
+        body: 'Visualisasi data bertujuan menyajikan fakta secara jujur, objektif, dan transparan. Sayangnya, grafik sering kali dibuat secara manipulatif (baik disengaja untuk kepentingan tertentu maupun karena ketidaktahuan pembuatnya), sehingga menimbulkan ilusi visual yang menyesatkan pembaca.',
+        terms: [
+          {
+            term: 'Sumbu Terpotong (Truncated Y-Axis)',
+            definition: 'Memulai sumbu vertikal dari angka bukan nol pada diagram batang sehingga perbedaan kecil tampak seperti selisih raksasa.',
+            example: 'Memulai sumbu dari 98 membuat penjualan 105 unit tampak 4 kali lipat dari 100 unit padahal bedanya hanya 5%.',
+          },
+          {
+            term: 'Distorsi Area 3D (Area Distortion)',
+            definition: 'Menggunakan diagram 3D atau ikon bergambar yang membesar secara area dua dimensi padahal data yang diwakili hanya berdimensi tunggal.',
+            example: 'Diagram lingkaran 3D di mana irisan depan tampak membesar karena perspektif kedalaman.',
+          },
+          {
+            term: 'Chartjunk',
+            definition: 'Hiasan grafis berlebihan, bayangan gelap, atau pola visual tidak perlu yang mengaburkan pembacaan pesan data esensial.',
+            example: 'Gradien warna mencolok dan grid tebal yang mengalihkan perhatian dari nilai data.',
+          },
+        ],
+        formula: 'Prinsip Integritas Visual: Mulai sumbu kuantitas dari 0 pada diagram batang & gunakan skala proporsional linear seragam.',
+        formulaNote: 'Grafik yang baik adalah grafik yang menyampaikan pesan data secara instan tanpa mendistorsi proporsi matematis aslinya.',
+        howToMake: {
+          title: 'Checklist Pembuatan Grafik yang Etis & Objektif',
+          steps: [
+            {
+              step: 1,
+              title: 'Selalu Mulai Sumbu Vertikal dari Nol',
+              instruction: 'Pada diagram batang (bar chart), jangan memotong sumbu vertikal agar perbandingan panjang batang proporsional dengan nilai data.',
+            },
+            {
+              step: 2,
+              title: 'Gunakan Skala Linier yang Seragam',
+              instruction: 'Pertahankan jarak interval yang sama untuk perubahan nilai yang sama di sepanjang sumbu koordinat.',
+            },
+            {
+              step: 3,
+              title: 'Hindari Efek 3D yang Menipu',
+              instruction: 'Gunakan diagram 2D bersih agar sudut dan luas tidak terdistorsi ilusi optik kedalaman.',
+            },
+            {
+              step: 4,
+              title: 'Cantumkan Judul, Label Sumbu, dan Sumber',
+              instruction: 'Sertakan satuan ukur yang jelas (Rupiah, Jam, Persen), ukuran sampel n, dan sumber kutipan data.',
+            },
+          ],
+        },
+        visualType: 'misleading-graphs',
       },
     ],
   },

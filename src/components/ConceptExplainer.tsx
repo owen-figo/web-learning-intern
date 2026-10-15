@@ -1,12 +1,19 @@
 import React, { useState } from 'react';
+import {
+  TabelRingkasanKontingensiVisual,
+  BarPieChartVisual,
+  ParetoChartVisual,
+  SideBySideBarVisual,
+  StemAndLeafVisual,
+  DistribusiFrekuensiVisual,
+  HistogramPolygonVisual,
+  OgiveCurveVisual,
+  ScatterTimeSeriesVisual,
+  MisleadingGraphsVisual,
+} from './OrganizingVisuals';
 
 interface ConceptExplainerProps {
-  type:
-    | 'jenis-variabel'
-    | 'skala-pengukuran'
-    | 'populasi-sampel'
-    | 'metode-sampling'
-    | 'jenis-error-sampling';
+  type: string;
 }
 
 export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ type }) => {
@@ -17,6 +24,16 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ type }) => {
       {type === 'populasi-sampel' && <PopulasiSampelVisual />}
       {type === 'metode-sampling' && <MetodeSamplingVisual />}
       {type === 'jenis-error-sampling' && <JenisErrorSamplingVisual />}
+      {type === 'tabel-ringkasan-kontingensi' && <TabelRingkasanKontingensiVisual />}
+      {type === 'bar-pie-chart' && <BarPieChartVisual />}
+      {type === 'pareto-chart' && <ParetoChartVisual />}
+      {type === 'side-by-side-bar' && <SideBySideBarVisual />}
+      {type === 'stem-and-leaf' && <StemAndLeafVisual />}
+      {type === 'distribusi-frekuensi' && <DistribusiFrekuensiVisual />}
+      {type === 'histogram-polygon' && <HistogramPolygonVisual />}
+      {type === 'ogive-curve' && <OgiveCurveVisual />}
+      {type === 'scatter-timeseries' && <ScatterTimeSeriesVisual />}
+      {type === 'misleading-graphs' && <MisleadingGraphsVisual />}
     </div>
   );
 };

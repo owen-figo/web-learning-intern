@@ -68,7 +68,10 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
           </div>
 
           {/* Segmented Progress Bar */}
-          <div className="grid grid-cols-7 gap-1.5 sm:gap-2 w-full pt-1">
+          <div
+            className="grid gap-1.5 sm:gap-2 w-full pt-1"
+            style={{ gridTemplateColumns: `repeat(${totalTopics}, minmax(0, 1fr))` }}
+          >
             {sortedTopics.map((t, idx) => {
               const isFinished = completedTopicIds.includes(t.id);
               const isCurrent = idx === completedCount;

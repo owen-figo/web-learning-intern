@@ -375,6 +375,36 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                     </div>
                   )}
 
+                  {/* HOW TO MAKE / CARA MEMBUAT STEP LIST */}
+                  {section.howToMake && section.howToMake.steps && section.howToMake.steps.length > 0 && (
+                    <div className="space-y-3 pt-2">
+                      <div className="text-xs font-bold text-secondary uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[17px]">format_list_numbered</span>
+                        <span>{section.howToMake.title || 'Cara Membuat'}</span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2.5">
+                        {section.howToMake.steps.map((st) => (
+                          <div
+                            key={st.step}
+                            className="p-3.5 sm:p-4 rounded-xl bg-surface-container-low/90 border border-outline-variant/60 flex items-start gap-3 hover:border-primary/40 transition-colors"
+                          >
+                            <div className="w-6 h-6 rounded-lg bg-primary text-on-primary text-xs font-bold flex items-center justify-center shrink-0 mt-0.5 shadow-2xs">
+                              {st.step}
+                            </div>
+                            <div className="space-y-1">
+                              <h4 className="text-xs sm:text-sm font-bold text-on-surface">
+                                {st.title}
+                              </h4>
+                              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                                {st.instruction}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                   {/* INTERACTIVE VISUAL INLINE (At Full Column Width) */}
                   {section.visualType && (
                     <div className="pt-2">
@@ -469,6 +499,26 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                   </div>
                   <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 text-xs text-on-surface leading-relaxed font-medium">
                     {activeSection.formula}
+                  </div>
+                </div>
+              )}
+
+              {/* Steps summary if activeSection has howToMake */}
+              {activeSection.howToMake && (
+                <div className="space-y-2 pt-2 border-t border-surface-container">
+                  <div className="text-[11px] font-bold text-secondary uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">checklist</span>
+                    <span>Langkah Pembuatan</span>
+                  </div>
+                  <div className="p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-1.5">
+                    {activeSection.howToMake.steps.map((st) => (
+                      <div key={st.step} className="flex items-start gap-1.5 text-[11px]">
+                        <span className="w-4 h-4 rounded-full bg-primary/20 text-primary font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
+                          {st.step}
+                        </span>
+                        <span className="text-on-surface font-medium truncate">{st.title}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
               )}

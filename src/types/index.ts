@@ -60,6 +60,12 @@ export interface TheoryExample {
   text: string;
 }
 
+export interface HowToMakeStep {
+  step: number;
+  title: string;
+  instruction: string;
+}
+
 export interface TheorySection {
   id: string;
   heading: string;
@@ -69,12 +75,27 @@ export interface TheorySection {
   examples?: TheoryExample[];
   terms?: { term: string; definition: string; example?: string }[];
   scenario?: string;
+  howToMake?: {
+    title?: string;
+    steps: HowToMakeStep[];
+  };
   visualType?:
     | 'jenis-variabel'
     | 'skala-pengukuran'
     | 'populasi-sampel'
     | 'metode-sampling'
-    | 'jenis-error-sampling';
+    | 'jenis-error-sampling'
+    | 'tabel-ringkasan-kontingensi'
+    | 'bar-pie-chart'
+    | 'pareto-chart'
+    | 'side-by-side-bar'
+    | 'stem-and-leaf'
+    | 'distribusi-frekuensi'
+    | 'histogram-polygon'
+    | 'ogive-curve'
+    | 'scatter-timeseries'
+    | 'misleading-graphs'
+    | string;
 }
 
 export interface TheoryContent {
