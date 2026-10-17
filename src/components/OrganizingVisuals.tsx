@@ -1840,7 +1840,7 @@ export const MisleadingGraphsVisual: React.FC = () => {
           <button
             onClick={() => setActiveTab('comparison')}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'comparison' ? 'bg-surface-container-lowest text-primary shadow-2xs' : 'text-on-surface-variant'
+              activeTab === 'comparison' ? 'bg-surface-container-lowest text-black shadow-2xs font-bold' : 'text-black/70 hover:text-black'
             }`}
           >
             Bandingkan Sumbu Terpotong (Truncated Axis)
@@ -1855,81 +1855,91 @@ export const MisleadingGraphsVisual: React.FC = () => {
           </button>
         </div>
 
-        <span className="text-[11px] text-on-surface-variant font-medium hidden sm:inline">
+        <span className="text-[11px] text-black font-semibold hidden sm:inline">
           Kaidah Integritas Visual Data
         </span>
       </div>
 
       {activeTab === 'comparison' && (
-        <div className="space-y-4">
+        <div className="space-y-4 text-black">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {/* BAD: Truncated Y-Axis */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-rose-50/70 dark:bg-rose-950/30 border-2 border-rose-300 dark:border-rose-800 space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-rose-200 dark:border-rose-800">
-                <div className="flex items-center gap-1.5 text-rose-700 dark:text-rose-300 font-bold text-xs uppercase tracking-wide">
-                  <span className="material-symbols-outlined text-[18px]">cancel</span>
-                  <span>Grafik Menyesatkan (Manipulatif)</span>
+            <div className="p-4 sm:p-5 rounded-2xl bg-rose-50 border-2 border-rose-300 space-y-3 text-black">
+              <div className="flex items-center justify-between pb-2 border-b border-rose-200">
+                <div className="flex items-center gap-1.5 text-black font-bold text-xs uppercase tracking-wide">
+                  <span className="material-symbols-outlined text-[18px] text-rose-600">cancel</span>
+                  <span className="text-black">Grafik Menyesatkan (Manipulatif)</span>
                 </div>
-                <span className="text-[10px] bg-rose-200 text-rose-900 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-rose-200 text-black px-2 py-0.5 rounded font-mono font-bold">
                   Sumbu Mulai 98
                 </span>
               </div>
 
               {/* Chart */}
-              <div className="h-44 flex items-end justify-center gap-8 pt-4 pb-2 border-b-2 border-rose-300 dark:border-rose-800 relative">
+              <div className="h-44 flex items-end justify-center gap-8 pt-4 pb-2 border-b-2 border-rose-300 relative text-black">
+                {/* Y-axis indicator */}
+                <div className="absolute left-2 bottom-2 text-[10px] font-mono font-bold text-black bg-rose-200/90 px-1.5 py-0.5 rounded border border-rose-300">
+                  Sumbu Y: Mulai 98
+                </div>
+
                 {/* Product A */}
                 <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-on-surface mb-1">100 unit</span>
-                  <div className="w-14 bg-rose-400 rounded-t h-10" />
-                  <span className="text-xs font-bold text-on-surface-variant mt-2">Produk A</span>
+                  <span className="text-xs font-bold font-mono text-black mb-1">100 unit</span>
+                  <div className="w-14 bg-rose-400 rounded-t h-10 shadow-xs" />
+                  <span className="text-xs font-bold text-black mt-2">Produk A</span>
                 </div>
                 {/* Product B */}
                 <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-rose-700 dark:text-rose-300 mb-1">
+                  <span className="text-xs font-bold font-mono text-black mb-1">
                     105 unit
                   </span>
-                  <div className="w-14 bg-rose-600 rounded-t h-36" />
-                  <span className="text-xs font-bold text-on-surface-variant mt-2">Produk B</span>
+                  <div className="w-14 bg-rose-600 rounded-t h-36 shadow-xs" />
+                  <span className="text-xs font-bold text-black mt-2">Produk B</span>
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-rose-100/60 dark:bg-rose-900/40 text-[11px] text-rose-900 dark:text-rose-200 leading-relaxed">
-                ⚠️ <strong>Ilusi Palsu:</strong> Memotong sumbu Y di angka 98 membuat Produk B tampak <strong>3.5 kali lebih tinggi</strong> dari Produk A, padahal selisih aslinya hanya 5%!
+              <div className="p-2.5 rounded-xl bg-rose-100/90 border border-rose-200 text-[11px] text-black leading-relaxed">
+                ⚠️ <strong className="text-black font-bold">Ilusi Palsu:</strong> Memotong sumbu Y di angka 98 membuat Produk B tampak <strong className="text-black font-bold">3.5 kali lebih tinggi</strong> dari Produk A, padahal selisih aslinya hanya 5%!
               </div>
             </div>
 
             {/* GOOD: Full Axis from 0 */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-teal-50/70 dark:bg-teal-950/30 border-2 border-teal-300 dark:border-teal-800 space-y-3">
-              <div className="flex items-center justify-between pb-2 border-b border-teal-200 dark:border-teal-800">
-                <div className="flex items-center gap-1.5 text-teal-800 dark:text-teal-200 font-bold text-xs uppercase tracking-wide">
-                  <span className="material-symbols-outlined text-[18px]">check_circle</span>
-                  <span>Grafik Etis &amp; Objektif</span>
+            <div className="p-4 sm:p-5 rounded-2xl bg-teal-50 border-2 border-teal-300 space-y-3 text-black">
+              <div className="flex items-center justify-between pb-2 border-b border-teal-200">
+                <div className="flex items-center gap-1.5 text-black font-bold text-xs uppercase tracking-wide">
+                  <span className="material-symbols-outlined text-[18px] text-teal-700">check_circle</span>
+                  <span className="text-black">Grafik Etis &amp; Objektif</span>
                 </div>
-                <span className="text-[10px] bg-teal-200 text-teal-900 px-2 py-0.5 rounded font-mono font-bold">
+                <span className="text-[10px] bg-teal-200 text-black px-2 py-0.5 rounded font-mono font-bold">
                   Sumbu Mulai 0
                 </span>
               </div>
 
               {/* Chart */}
-              <div className="h-44 flex items-end justify-center gap-8 pt-4 pb-2 border-b-2 border-teal-300 dark:border-teal-800 relative">
+              <div className="h-44 flex items-end justify-center gap-8 pt-4 pb-2 border-b-2 border-teal-300 relative text-black">
+                {/* Y-axis indicator */}
+                <div className="absolute left-2 bottom-2 text-[10px] font-mono font-bold text-black bg-teal-200/90 px-1.5 py-0.5 rounded border border-teal-300">
+                  Sumbu Y: Mulai 0
+                </div>
+
                 {/* Product A */}
                 <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-on-surface mb-1">100 unit</span>
-                  <div className="w-14 bg-teal-500 rounded-t h-32" />
-                  <span className="text-xs font-bold text-on-surface-variant mt-2">Produk A</span>
+                  <span className="text-xs font-bold font-mono text-black mb-1">100 unit</span>
+                  <div className="w-14 bg-teal-500 rounded-t h-32 shadow-xs" />
+                  <span className="text-xs font-bold text-black mt-2">Produk A</span>
                 </div>
                 {/* Product B */}
                 <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-teal-800 dark:text-teal-200 mb-1">
+                  <span className="text-xs font-bold font-mono text-black mb-1">
                     105 unit
                   </span>
-                  <div className="w-14 bg-teal-700 rounded-t h-34" />
-                  <span className="text-xs font-bold text-on-surface-variant mt-2">Produk B</span>
+                  <div className="w-14 bg-teal-700 rounded-t h-34 shadow-xs" />
+                  <span className="text-xs font-bold text-black mt-2">Produk B</span>
                 </div>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-teal-100/60 dark:bg-teal-900/40 text-[11px] text-teal-900 dark:text-teal-200 leading-relaxed">
-                ✅ <strong>Proporsi Jujur:</strong> Ketika sumbu Y dimulai dari nol, pembaca langsung memahami bahwa penjualan Produk A dan B sebenarnya setara dan selisihnya tipis.
+              <div className="p-2.5 rounded-xl bg-teal-100/90 border border-teal-200 text-[11px] text-black leading-relaxed">
+                ✅ <strong className="text-black font-bold">Proporsi Jujur:</strong> Ketika sumbu Y dimulai dari nol, pembaca langsung memahami bahwa penjualan Produk A dan B sebenarnya setara dan selisihnya tipis.
               </div>
             </div>
           </div>

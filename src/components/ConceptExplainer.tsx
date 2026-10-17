@@ -11,6 +11,9 @@ import {
   ScatterTimeSeriesVisual,
   MisleadingGraphsVisual,
 } from './OrganizingVisuals';
+import { MeasureVisuals } from './MeasureVisuals';
+import { ProbabilityVisuals } from './ProbabilityVisuals';
+import { DiscreteProbabilityVisuals } from './DiscreteProbabilityVisuals';
 
 interface ConceptExplainerProps {
   type: string;
@@ -34,6 +37,9 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ type }) => {
       {type === 'ogive-curve' && <OgiveCurveVisual />}
       {type === 'scatter-timeseries' && <ScatterTimeSeriesVisual />}
       {type === 'misleading-graphs' && <MisleadingGraphsVisual />}
+      <MeasureVisuals type={type} />
+      <ProbabilityVisuals type={type} />
+      <DiscreteProbabilityVisuals type={type} />
     </div>
   );
 };

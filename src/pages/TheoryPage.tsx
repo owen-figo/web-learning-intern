@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ActivePage, TheoryContent, TheorySection } from '../types';
 import { ConceptExplainer } from '../components/ConceptExplainer';
 import { PomodoroButton } from '../components/PomodoroButton';
+import { mockTopics } from '../data/mockData';
+import { RichText, stripMarkers } from '../components/RichText';
 
 interface TheoryPageProps {
   theoryContent: TheoryContent;
@@ -160,23 +162,35 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
       {/* Main Container - 3-Zone Layout on Desktop */}
       <div className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-10 py-6 sm:py-8 pb-36">
         {/* Article Meta Header (Spans cleanly across) */}
-        <header className="mb-8 pb-6 border-b border-outline-variant/60">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/30 text-primary text-xs font-semibold tracking-wide uppercase">
-              <span className="material-symbols-outlined text-[15px]">menu_book</span>
-              <span>Materi Wajib • Buku Teks Interaktif</span>
-            </span>
-            <span className="text-xs text-on-surface-variant/80 font-medium">
-              Fondasi Statistika Deskriptif &amp; Pengumpulan Data
-            </span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
-            {theoryContent.topicTitle}
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-on-surface-variant max-w-3xl leading-relaxed">
-            Kenali jenis variabel, populasi dan sampel, metode sampling, serta jenis error sebelum mulai menghitung. Bacalah dengan santai tanpa kuis atau ujian.
-          </p>
-        </header>
+        {(() => {
+          const currentTopic = mockTopics.find((t) => t.id === theoryContent.topicId);
+          return (
+            <header className="mb-8 pb-6 border-b border-outline-variant/60">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed/30 text-primary text-xs font-semibold tracking-wide uppercase">
+                  <span className="material-symbols-outlined text-[15px]">menu_book</span>
+                  <span>Materi Wajib • Buku Teks Interaktif</span>
+                </span>
+                <span className="text-xs text-on-surface-variant/80 font-medium">
+                  {currentTopic
+                    ? `${currentTopic.subCategory === 'deskriptif' ? 'Statistika Deskriptif' : 'Statistika Inferensial'} • ${currentTopic.badge}`
+                    : 'Fondasi Statistika'}
+                </span>
+              </div>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight text-on-surface leading-tight">
+                <RichText text={theoryContent.topicTitle} />
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-on-surface-variant max-w-3xl leading-relaxed">
+                <RichText
+                  text={
+                    currentTopic?.description ||
+                    'Pelajari materi ini dengan santai tanpa kuis atau ujian. XP diperoleh setelah menyelesaikan bacaan.'
+                  }
+                />
+              </p>
+            </header>
+          );
+        })()}
 
         {/* Mobile / Tablet Horizontal TOC Bar (Hidden on desktop lg) */}
         <div className="lg:hidden mb-6 -mx-4 px-4 overflow-x-auto no-scrollbar py-1">
@@ -191,6 +205,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                   key={section.id}
                   type="button"
                   onClick={() => scrollToSection(section.id)}
+                  title={stripMarkers(section.heading)}
+                  aria-label={stripMarkers(section.heading)}
                   className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
                     isActive
                       ? 'bg-primary text-on-primary shadow-xs'
@@ -200,7 +216,9 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                   <span className="w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center bg-black/15">
                     {idx + 1}
                   </span>
-                  <span>{section.heading.split('(')[0].trim()}</span>
+                  <span>
+                    <RichText text={section.heading.split('(')[0].trim()} />
+                  </span>
                 </button>
               );
             })}
@@ -222,37 +240,102 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                 </span>
               </div>
 
-              {/* Navigation list */}
-              <nav className="space-y-1">
-                {theoryContent.sections.map((section, idx) => {
-                  const isActive = activeSectionId === section.id;
+              {/* Navigation list: Grouped by group field if present, otherwise flat list */}
+              {(() => {
+                const hasGroups = theoryContent.sections.some((s) => !!s.group);
+
+                if (hasGroups) {
+                  // Build grouped structure
+                  const groups: { name: string; sections: { section: typeof theoryContent.sections[0]; globalIdx: number }[] }[] = [];
+                  theoryContent.sections.forEach((sec, idx) => {
+                    const gName = sec.group || 'Umum';
+                    let groupObj = groups.find((g) => g.name === gName);
+                    if (!groupObj) {
+                      groupObj = { name: gName, sections: [] };
+                      groups.push(groupObj);
+                    }
+                    groupObj.sections.push({ section: sec, globalIdx: idx });
+                  });
+
                   return (
-                    <button
-                      key={section.id}
-                      type="button"
-                      onClick={() => scrollToSection(section.id)}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-start gap-2.5 group ${
-                        isActive
-                          ? 'bg-primary/10 text-primary font-semibold border-l-3 border-primary pl-2.5 shadow-2xs'
-                          : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
-                      }`}
-                    >
-                      <span
-                        className={`w-5 h-5 rounded-md text-[11px] font-bold shrink-0 flex items-center justify-center transition-colors ${
-                          isActive
-                            ? 'bg-primary text-on-primary'
-                            : 'bg-surface-container text-on-surface-variant group-hover:bg-surface-container-high'
-                        }`}
-                      >
-                        {idx + 1}
-                      </span>
-                      <span className="leading-snug pt-0.5 line-clamp-2">
-                        {section.heading}
-                      </span>
-                    </button>
+                    <nav className="space-y-3">
+                      {groups.map((grp, gIdx) => (
+                        <div key={gIdx} className="space-y-1">
+                          <div className="text-[11px] font-bold text-primary uppercase tracking-wider px-2 pt-1 border-t first:border-t-0 border-surface-container">
+                            <RichText text={grp.name} />
+                          </div>
+                          {grp.sections.map(({ section, globalIdx }) => {
+                            const isActive = activeSectionId === section.id;
+                            return (
+                              <button
+                                key={section.id}
+                                type="button"
+                                onClick={() => scrollToSection(section.id)}
+                                title={stripMarkers(section.heading)}
+                                aria-label={stripMarkers(section.heading)}
+                                className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all flex items-start gap-2 group ${
+                                  isActive
+                                    ? 'bg-primary/10 text-primary font-semibold border-l-3 border-primary pl-2 shadow-2xs'
+                                    : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                                }`}
+                              >
+                                <span
+                                  className={`w-4 h-4 rounded text-[10px] font-bold shrink-0 flex items-center justify-center transition-colors mt-0.5 ${
+                                    isActive
+                                      ? 'bg-primary text-on-primary'
+                                      : 'bg-surface-container text-on-surface-variant group-hover:bg-surface-container-high'
+                                  }`}
+                                >
+                                  {globalIdx + 1}
+                                </span>
+                                <span className="leading-snug line-clamp-1">
+                                  <RichText text={section.heading.replace(/^\d+\.\s*/, '')} />
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      ))}
+                    </nav>
                   );
-                })}
-              </nav>
+                }
+
+                // Default flat navigation list
+                return (
+                  <nav className="space-y-1">
+                    {theoryContent.sections.map((section, idx) => {
+                      const isActive = activeSectionId === section.id;
+                      return (
+                        <button
+                          key={section.id}
+                          type="button"
+                          onClick={() => scrollToSection(section.id)}
+                          title={stripMarkers(section.heading)}
+                          aria-label={stripMarkers(section.heading)}
+                          className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-start gap-2.5 group ${
+                            isActive
+                              ? 'bg-primary/10 text-primary font-semibold border-l-3 border-primary pl-2.5 shadow-2xs'
+                              : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                          }`}
+                        >
+                          <span
+                            className={`w-5 h-5 rounded-md text-[11px] font-bold shrink-0 flex items-center justify-center transition-colors ${
+                              isActive
+                                ? 'bg-primary text-on-primary'
+                                : 'bg-surface-container text-on-surface-variant group-hover:bg-surface-container-high'
+                            }`}
+                          >
+                            {idx + 1}
+                          </span>
+                          <span className="leading-snug pt-0.5 line-clamp-2">
+                            <RichText text={section.heading} />
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </nav>
+                );
+              })()}
 
               {/* Reading Progress indicator */}
               <div className="mt-4 pt-3 border-t border-surface-container">
@@ -308,15 +391,38 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                         Bagian {idx + 1} dari {theoryContent.sections.length}
                       </span>
                       <h2 className="text-lg sm:text-xl font-bold text-on-surface tracking-tight leading-snug">
-                        {section.heading}
+                        <RichText text={section.heading} />
                       </h2>
                     </div>
                   </div>
 
                   {/* Body Paragraph */}
-                  <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed">
-                    {section.body}
+                  <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed whitespace-pre-line">
+                    <RichText text={section.body} />
                   </p>
+
+                  {/* POINTS LIST (Poin Penting) */}
+                  {section.points && section.points.length > 0 && (
+                    <div className="space-y-2.5 pt-1">
+                      <div className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="material-symbols-outlined text-[17px]">check_circle</span>
+                        <span>Poin Penting</span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        {section.points.map((pt, pIdx) => (
+                          <div
+                            key={pIdx}
+                            className="p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant/50 text-xs sm:text-sm text-on-surface flex items-start gap-2.5"
+                          >
+                            <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />
+                            <span className="leading-relaxed">
+                              <RichText text={pt} />
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* TERMS LIST (Structured Definition Cards) */}
                   {section.terms && section.terms.length > 0 && (
@@ -334,11 +440,11 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                             <div className="flex items-center gap-2">
                               <span className="w-2 h-2 rounded-full bg-primary"></span>
                               <strong className="text-xs sm:text-sm font-bold text-on-surface">
-                                {t.term}
+                                <RichText text={t.term} />
                               </strong>
                             </div>
                             <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed pl-4 border-l-2 border-primary/20">
-                              {t.definition}
+                              <RichText text={t.definition} />
                             </p>
                             {t.example && (
                               <div className="text-[11px] sm:text-xs text-on-surface/90 bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/40 flex items-start gap-1.5">
@@ -346,7 +452,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                                   lightbulb
                                 </span>
                                 <span>
-                                  <strong className="text-on-surface">Contoh:</strong> {t.example}
+                                  <strong className="text-on-surface">Contoh:</strong>{' '}
+                                  <RichText text={t.example} />
                                 </span>
                               </div>
                             )}
@@ -356,34 +463,124 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                     </div>
                   )}
 
+                  {/* SCENARIO IF PRESENT */}
+                  {section.scenario && (
+                    <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60 text-xs sm:text-sm text-on-surface leading-relaxed whitespace-pre-line">
+                      <RichText text={section.scenario} />
+                    </div>
+                  )}
+
                   {/* FORMULA OR MEMORY AID BOX */}
-                  {section.formula && (
-                    <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-primary/25 p-4 sm:p-5 shadow-2xs space-y-2.5">
+                  {(section.formula || (section.formulas && section.formulas.length > 0)) && (
+                    <div className="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-xl border border-primary/25 p-4 sm:p-5 shadow-2xs space-y-3">
                       <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider">
-                        <span className="material-symbols-outlined text-[17px]">tips_and_updates</span>
-                        <span>Pola Logika &amp; Jembatan Ingatan</span>
+                        <span className="material-symbols-outlined text-[17px]">functions</span>
+                        <span>Rumus &amp; Notasi Matematis</span>
                       </div>
-                      <div className="bg-surface-container-lowest px-4 py-3 rounded-lg border border-outline-variant/60 text-xs sm:text-sm font-semibold text-primary text-center sm:text-left overflow-x-auto font-sans leading-relaxed">
-                        {section.formula}
-                      </div>
+
+                      {section.formula && (
+                        <div className="bg-surface-container-lowest px-4 py-3.5 rounded-xl border border-outline-variant/60 text-sm sm:text-base font-bold text-black text-center sm:text-left overflow-x-auto font-mono leading-relaxed shadow-2xs">
+                          {section.formula}
+                        </div>
+                      )}
+
+                      {/* Multiple formulas list if available */}
+                      {section.formulas && section.formulas.length > 0 && (
+                        <div className="space-y-3">
+                          {section.formulas.map((fItem, fIdx) => (
+                            <div
+                              key={fIdx}
+                              className="bg-surface-container-lowest p-3.5 rounded-xl border border-outline-variant/60 space-y-2"
+                            >
+                              <div className="font-bold text-xs text-primary">
+                                <RichText text={fItem.label} />
+                              </div>
+                              <div className="font-mono font-bold text-sm sm:text-base text-black">
+                                {fItem.formula}
+                              </div>
+                              {fItem.note && (
+                                <p className="text-xs text-on-surface-variant leading-relaxed">
+                                  <RichText text={fItem.note} />
+                                </p>
+                              )}
+                              {fItem.symbols && fItem.symbols.length > 0 && (
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 pt-1.5 border-t border-outline-variant/30">
+                                  {fItem.symbols.map((sym, sIdx) => (
+                                    <div
+                                      key={sIdx}
+                                      className="flex items-center gap-1.5 text-xs text-on-surface-variant"
+                                    >
+                                      <span className="font-mono font-bold text-black bg-surface-container-high/60 px-1 py-0.5 rounded text-[11px]">
+                                        {sym.symbol}
+                                      </span>
+                                      <span>
+                                        ={' '}
+                                        <RichText text={sym.meaning} />
+                                      </span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Formula Symbol Legend */}
+                      {section.formulaSymbols && section.formulaSymbols.length > 0 && (
+                        <div className="pt-2 border-t border-primary/20 text-xs space-y-1.5">
+                          <div className="font-bold text-[11px] text-black uppercase tracking-wider flex items-center gap-1">
+                            <span className="material-symbols-outlined text-[14px] text-primary">info</span>
+                            <span>Keterangan Simbol:</span>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            {section.formulaSymbols.map((sym, sIdx) => (
+                              <div
+                                key={sIdx}
+                                className="flex items-center gap-2 text-xs text-black bg-surface-container-lowest px-2.5 py-1 rounded-lg border border-outline-variant/30"
+                              >
+                                <span className="font-mono font-bold text-black bg-surface-container-high/60 px-1.5 py-0.5 rounded">
+                                  {sym.symbol}
+                                </span>
+                                <span className="font-medium">
+                                  ={' '}
+                                  <RichText text={sym.meaning} />
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {section.formulaNote && (
-                        <div className="text-xs text-on-surface-variant flex items-start gap-2 pt-1 border-l-2 border-primary pl-3">
-                          <span className="font-semibold text-on-surface shrink-0">Catatan Memahami:</span>
-                          <span className="leading-relaxed">{section.formulaNote}</span>
+                        <div className="text-xs text-black font-medium flex items-start gap-2 pt-1 border-l-2 border-primary pl-3">
+                          <span className="font-bold text-black shrink-0">Catatan:</span>
+                          <span className="leading-relaxed text-black">
+                            <RichText text={section.formulaNote} />
+                          </span>
                         </div>
                       )}
                     </div>
                   )}
 
-                  {/* HOW TO MAKE / CARA MEMBUAT STEP LIST */}
-                  {section.howToMake && section.howToMake.steps && section.howToMake.steps.length > 0 && (
+                  {/* HOW TO MAKE / STEPS LIST */}
+                  {((section.steps && section.steps.length > 0) ||
+                    (section.howToMake && section.howToMake.steps && section.howToMake.steps.length > 0)) && (
                     <div className="space-y-3 pt-2">
                       <div className="text-xs font-bold text-secondary uppercase tracking-wider flex items-center gap-1.5">
                         <span className="material-symbols-outlined text-[17px]">format_list_numbered</span>
-                        <span>{section.howToMake.title || 'Cara Membuat'}</span>
+                        <span>
+                          <RichText
+                            text={
+                              section.stepsLabel ||
+                              section.howToMake?.title ||
+                              'Cara Menghitung'
+                            }
+                          />
+                        </span>
                       </div>
                       <div className="grid grid-cols-1 gap-2.5">
-                        {section.howToMake.steps.map((st) => (
+                        {(section.steps || section.howToMake?.steps || []).map((st) => (
                           <div
                             key={st.step}
                             className="p-3.5 sm:p-4 rounded-xl bg-surface-container-low/90 border border-outline-variant/60 flex items-start gap-3 hover:border-primary/40 transition-colors"
@@ -392,15 +589,54 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                               {st.step}
                             </div>
                             <div className="space-y-1">
-                              <h4 className="text-xs sm:text-sm font-bold text-on-surface">
-                                {st.title}
+                              <h4 className="text-xs sm:text-sm font-bold text-black">
+                                <RichText text={st.title} />
                               </h4>
-                              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
-                                {st.instruction}
+                              <p className="text-xs sm:text-sm text-black font-medium leading-relaxed">
+                                <RichText text={st.instruction} />
                               </p>
                             </div>
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* SUMMARY TABLE (For Final Section Ringkasan Rumus) */}
+                  {section.summaryTable && (
+                    <div className="space-y-3 pt-2">
+                      <div className="overflow-x-auto rounded-xl border border-outline-variant/60">
+                        <table className="w-full text-xs text-left border-collapse">
+                          <thead>
+                            <tr className="bg-surface-container text-black font-bold border-b-2 border-outline-variant/80">
+                              {section.summaryTable.columns.map((col, cIdx) => (
+                                <th key={cIdx} className="py-3 px-3 text-black font-extrabold text-xs">
+                                  <RichText text={col} />
+                                </th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-surface-container">
+                            {section.summaryTable.rows.map((row, rIdx) => (
+                              <tr key={rIdx} className="hover:bg-surface-container-low/60 transition-colors">
+                                <td className="py-2.5 px-3 font-bold text-black">
+                                  <RichText text={row.ukuran} />
+                                </td>
+                                <td className="py-2.5 px-3 font-mono font-bold text-black text-xs sm:text-sm">
+                                  {row.sampel}
+                                </td>
+                                <td className="py-2.5 px-3 font-mono font-bold text-black text-xs sm:text-sm bg-surface-container-low/40">
+                                  {row.populasi || '—'}
+                                </td>
+                                {row.catatan && (
+                                  <td className="py-2.5 px-3 text-[11px] text-black font-medium leading-relaxed">
+                                    <RichText text={row.catatan} />
+                                  </td>
+                                )}
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
                       </div>
                     </div>
                   )}
@@ -429,10 +665,12 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                           >
                             <div className="flex items-center gap-2 text-xs sm:text-sm font-bold text-primary">
                               <span className="material-symbols-outlined text-[18px]">menu_book</span>
-                              <span>{example.label}</span>
+                              <span>
+                                <RichText text={example.label} />
+                              </span>
                             </div>
                             <div className="text-xs sm:text-sm text-on-surface leading-relaxed whitespace-pre-line bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40 space-y-1">
-                              {example.text}
+                              <RichText text={example.text} />
                             </div>
                           </div>
                         ))}
@@ -447,7 +685,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
             <div ref={sentinelRef} className="h-8 w-full mt-4" aria-hidden="true" />
           </main>
 
-          {/* RIGHT RAIL (~25% = 3 cols): Sticky "Poin Penting" Panel for active section */}
+          {/* RIGHT RAIL (~25% = 3 cols): Sticky "Poin Penting & Rumus" Panel for active section */}
           <aside className="hidden lg:block lg:col-span-3 sticky top-24 space-y-4">
             <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
               {/* Header */}
@@ -458,65 +696,134 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                   </div>
                   <div>
                     <h3 className="text-xs font-bold text-on-surface uppercase tracking-wider">
-                      Poin Penting
+                      {activeSection.formula || (activeSection.formulas && activeSection.formulas.length > 0)
+                        ? 'Rumus & Poin Kunci'
+                        : 'Poin Penting'}
                     </h3>
-                    <p className="text-[11px] text-on-surface-variant truncate max-w-[170px]">
-                      {activeSection.heading}
+                    <p
+                      className="text-[11px] text-on-surface-variant truncate max-w-[170px]"
+                      title={stripMarkers(activeSection.heading)}
+                    >
+                      <RichText text={activeSection.heading} />
                     </p>
                   </div>
                 </div>
               </div>
 
+              {/* PROMINENT FORMULA CARD IF AVAILABLE */}
+              {(activeSection.formula || (activeSection.formulas && activeSection.formulas.length > 0)) && (
+                <div className="space-y-2 p-3.5 bg-gradient-to-br from-primary/10 via-primary/5 to-surface-container-low rounded-xl border border-primary/30">
+                  <div className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[15px]">functions</span>
+                    <span>Rumus Aktif</span>
+                  </div>
+                  {activeSection.formula && (
+                    <div className="p-2.5 bg-surface-container-lowest rounded-lg border border-outline-variant/60 text-xs font-bold text-black font-mono leading-relaxed text-center overflow-x-auto shadow-2xs">
+                      {activeSection.formula}
+                    </div>
+                  )}
+
+                  {/* Active section multiple formulas */}
+                  {activeSection.formulas && activeSection.formulas.length > 0 && (
+                    <div className="space-y-2">
+                      {activeSection.formulas.map((fItem, fIdx) => (
+                        <div
+                          key={fIdx}
+                          className="p-2 bg-surface-container-lowest rounded-lg border border-outline-variant/50 space-y-1"
+                        >
+                          <div className="text-[10px] font-bold text-primary">
+                            <RichText text={fItem.label} />
+                          </div>
+                          <div className="font-mono font-bold text-[11px] text-black text-center">
+                            {fItem.formula}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Symbol Legend in Right Rail */}
+                  {activeSection.formulaSymbols && activeSection.formulaSymbols.length > 0 && (
+                    <div className="pt-2 border-t border-primary/20 space-y-1 text-[10px]">
+                      <span className="font-bold text-on-surface uppercase tracking-wide">Keterangan:</span>
+                      {activeSection.formulaSymbols.map((sym, idx) => (
+                        <div key={idx} className="flex items-center gap-1.5 text-on-surface-variant">
+                          <span className="font-mono font-bold text-primary">{sym.symbol}</span>
+                          <span>
+                            : <RichText text={sym.meaning} />
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* POINTS (Poin Penting) */}
+              {activeSection.points && activeSection.points.length > 0 && (
+                <div className="space-y-2 pt-2 border-t border-surface-container">
+                  <div className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[14px]">check_circle</span>
+                    <span>Intisari Konsep</span>
+                  </div>
+                  <div className="space-y-1.5">
+                    {activeSection.points.map((pt, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2 rounded-lg bg-surface-container-low text-[11px] text-on-surface-variant flex items-start gap-1.5 leading-snug"
+                      >
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1" />
+                        <span>
+                          <RichText text={pt} />
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Dynamic Content: Terms of active section or highlights */}
-              {activeSection.terms && activeSection.terms.length > 0 ? (
-                <div className="space-y-3">
+              {activeSection.terms && activeSection.terms.length > 0 && (
+                <div className="space-y-2 pt-2 border-t border-surface-container">
                   <div className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px]">label_important</span>
                     <span>Istilah Kunci Bagian Ini</span>
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {activeSection.terms.map((t, idx) => (
                       <div
                         key={idx}
                         className="p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs space-y-1"
                       >
-                        <div className="font-bold text-on-surface text-[11px]">{t.term}</div>
+                        <div className="font-bold text-on-surface text-[11px]">
+                          <RichText text={t.term} />
+                        </div>
                         <p className="text-[10px] text-on-surface-variant leading-tight line-clamp-3">
-                          {t.definition}
+                          <RichText text={t.definition} />
                         </p>
                       </div>
                     ))}
                   </div>
                 </div>
-              ) : null}
-
-              {/* Formula or Memory Aid if available */}
-              {activeSection.formula && (
-                <div className="space-y-2 pt-2 border-t border-surface-container">
-                  <div className="text-[11px] font-bold text-primary uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[14px]">lightbulb</span>
-                    <span>Intisari Logika</span>
-                  </div>
-                  <div className="p-3 bg-primary/5 rounded-xl border border-primary/20 text-xs text-on-surface leading-relaxed font-medium">
-                    {activeSection.formula}
-                  </div>
-                </div>
               )}
 
-              {/* Steps summary if activeSection has howToMake */}
-              {activeSection.howToMake && (
+              {/* Steps summary if activeSection has steps or howToMake */}
+              {((activeSection.steps && activeSection.steps.length > 0) ||
+                (activeSection.howToMake && activeSection.howToMake.steps && activeSection.howToMake.steps.length > 0)) && (
                 <div className="space-y-2 pt-2 border-t border-surface-container">
                   <div className="text-[11px] font-bold text-secondary uppercase tracking-wider flex items-center gap-1">
                     <span className="material-symbols-outlined text-[14px]">checklist</span>
-                    <span>Langkah Pembuatan</span>
+                    <span>Langkah Pengerjaan</span>
                   </div>
                   <div className="p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-1.5">
-                    {activeSection.howToMake.steps.map((st) => (
+                    {(activeSection.steps || activeSection.howToMake?.steps || []).map((st) => (
                       <div key={st.step} className="flex items-start gap-1.5 text-[11px]">
                         <span className="w-4 h-4 rounded-full bg-primary/20 text-primary font-bold text-[10px] flex items-center justify-center shrink-0 mt-0.5">
                           {st.step}
                         </span>
-                        <span className="text-on-surface font-medium truncate">{st.title}</span>
+                        <span className="text-on-surface font-medium truncate">
+                          <RichText text={st.title} />
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -531,7 +838,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                     <span>Soal &amp; Solusi</span>
                   </div>
                   <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 text-[11px] text-on-surface-variant leading-relaxed">
-                    Tersedia {activeSection.examples.length} studi kasus nyata dengan pembahasan lengkap empat komponen: Populasi, Sampel, Parameter, dan Statistik.
+                    Tersedia {activeSection.examples.length} studi kasus nyata dengan pembahasan lengkap.
                   </div>
                 </div>
               )}

@@ -19,7 +19,7 @@ export const initialUserProfile: UserProfile = {
   questionsDone: 64,
   selfCheckPercentage: 88,
   masteredTopics: 0,
-  totalTopics: 8,
+  totalTopics: 11,
   understandingScore: 78,
 };
 
@@ -307,8 +307,59 @@ export const mockTopics: Topic[] = [
     contentType: 'teori',
   },
   {
-    id: 'statistika-deskriptif',
+    id: 'ukuran-deskriptif-numerik',
     order: 3,
+    category: 'statistika',
+    subCategory: 'deskriptif',
+    title: 'Ukuran Deskriptif Numerik',
+    badge: 'Materi Wajib',
+    badgeType: 'fondasi',
+    description:
+      'Ringkas data dengan angka: pemusatan, variasi, bentuk distribusi, kuartil, dan hubungan antar dua variabel, lengkap dengan rumusnya.',
+    progressPercent: 0,
+    progressLabel: 'Terkunci',
+    modulesCount: 16,
+    iconName: 'calculate',
+    statusAction: 'mulai',
+    contentType: 'teori',
+  },
+  {
+    id: 'probabilitas-dasar',
+    order: 4,
+    category: 'statistika',
+    subCategory: 'inferensial',
+    title: 'Probabilitas Dasar',
+    badge: 'Materi Wajib',
+    badgeType: 'fondasi',
+    description:
+      'Kenali peluang, jenis probabilitas, probabilitas bersyarat, decision tree, dan aturan perkalian, lengkap dengan rumusnya.',
+    progressPercent: 0,
+    progressLabel: 'Terkunci',
+    modulesCount: 8,
+    iconName: 'casino',
+    statusAction: 'mulai',
+    contentType: 'teori',
+  },
+  {
+    id: 'distribusi-probabilitas-diskrit',
+    order: 5,
+    category: 'statistika',
+    subCategory: 'inferensial',
+    title: 'Distribusi Probabilitas Diskrit',
+    badge: 'Materi Wajib',
+    badgeType: 'fondasi',
+    description:
+      'Kenali distribusi probabilitas variabel diskrit: expected value, binomial, Poisson, dan hypergeometric, lengkap dengan rumusnya.',
+    progressPercent: 0,
+    progressLabel: 'Terkunci',
+    modulesCount: 8,
+    iconName: 'functions',
+    statusAction: 'mulai',
+    contentType: 'teori',
+  },
+  {
+    id: 'statistika-deskriptif',
+    order: 6,
     category: 'statistika',
     subCategory: 'deskriptif',
     title: 'Statistika Deskriptif',
@@ -324,7 +375,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'probabilitas-distribusi',
-    order: 4,
+    order: 7,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Probabilitas & Distribusi Normal',
@@ -339,7 +390,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'uji-hipotesis',
-    order: 5,
+    order: 8,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Uji Hipotesis & T-Test',
@@ -355,7 +406,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'regresi-korelasi',
-    order: 6,
+    order: 9,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Regresi & Korelasi Linier',
@@ -370,13 +421,13 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'analisis-varian-anova',
-    order: 7,
+    order: 10,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Analisis Varians (ANOVA)',
     badge: 'Komparasi Multigrup',
     badgeType: 'praktikum',
-    description: 'Bandingkan rata-rata lebih dari 2 kelompok sampel sekaligus. Kunci penting riset A/B testing dan eksperimen bisnis mahasiswa BINUS.',
+    description: 'Bandingkan rata-rata lebih dari 2 kelompok sampel sekaligus. Kunci penting riset A/B testing dan eksperimen bisnis mahasiswa.',
     progressPercent: 0,
     progressLabel: 'Terkunci',
     modulesCount: 6,
@@ -386,7 +437,7 @@ export const mockTopics: Topic[] = [
   },
   {
     id: 'chi-square-nonparametrik',
-    order: 8,
+    order: 11,
     category: 'statistika',
     subCategory: 'inferensial',
     title: 'Uji Chi-Square & Non-Parametrik',
@@ -1232,6 +1283,1367 @@ export const theoryContents: TheoryContent[] = [
           ],
         },
         visualType: 'misleading-graphs',
+      },
+    ],
+  },
+  {
+    topicId: 'ukuran-deskriptif-numerik',
+    topicTitle: 'Ukuran Deskriptif Numerik',
+    estimatedReadMinutes: 20,
+    completionXp: 15,
+    sections: [
+      // GROUP 1: Central Tendency
+      {
+        id: 'sec-num-1',
+        group: '1. Ukuran Pemusatan Data (Central Tendency)',
+        heading: 'Mean (Rata-rata Hitung)',
+        body: 'Mean adalah nilai rata-rata dari seluruh data numerik, diperoleh dengan menjumlahkan semua nilai kemudian membaginya dengan jumlah keseluruhan amatan. Mean merupakan ukuran pemusatan yang paling umum dipakai dalam inferensi statistik, namun sangat sensitif terhadap nilai ekstrem (outlier).',
+        points: [
+          'Nilai rata-rata dari seluruh data, diperoleh dengan menjumlahkan semua nilai kemudian membaginya dengan jumlah keseluruhan.',
+          'Paling sering digunakan dalam analisis statistik parametrik dan permodelan data.',
+          'Sensitif terhadap nilai outlier (nilai ekstrem tinggi atau rendah akan menarik nilai mean secara signifikan).',
+        ],
+        formula: 'X̄ = (X₁ + X₂ + … + Xₙ) / n = ΣXᵢ / n',
+        formulaSymbols: [
+          { symbol: 'X̄', meaning: 'Mean sampel (dibaca X-bar)' },
+          { symbol: 'ΣXᵢ', meaning: 'Jumlah seluruh nilai data amatan' },
+          { symbol: 'n', meaning: 'Ukuran sampel (banyaknya amatan)' },
+        ],
+        formulaNote: 'Pada populasi, simbol mean menggunakan huruf Yunani μ (mu) dan pembagi N (ukuran total populasi).',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Jumlahkan Semua Nilai', instruction: 'Jumlahkan seluruh angka amatan dalam sampel: ΣX = X₁ + X₂ + ... + Xₙ.' },
+          { step: 2, title: 'Bagi dengan Banyak Data', instruction: 'Bagi hasil penjumlahan dengan ukuran sampel: X̄ = ΣX / n.' },
+        ],
+        visualType: 'mean-median-mode',
+      },
+      {
+        id: 'sec-num-2',
+        group: '1. Ukuran Pemusatan Data (Central Tendency)',
+        heading: 'Median (Nilai Tengah)',
+        body: 'Median adalah nilai tengah dari sekumpulan data yang telah diurutkan dari terkecil hingga terbesar. Median membagi distribusi data menjadi dua kelompok sama besar (50% di bawah dan 50% di atas).',
+        points: [
+          'Nilai tengah dari data yang telah diurutkan dari terkecil hingga terbesar.',
+          'Tidak terlalu dipengaruhi oleh nilai outlier (bersifat resisten terhadap nilai pencilan ekstrem).',
+          'Sangat tepat digunakan ketika distribusi data miring (skewed) atau memiliki pencilan.',
+        ],
+        formula: 'Posisi Median = (n + 1) / 2',
+        formulaSymbols: [
+          { symbol: 'n', meaning: 'Banyaknya data amatan yang telah diurutkan' },
+          { symbol: 'Posisi', meaning: 'Nomor urut posisi nilai tengah (bukan nilai median itu sendiri)' },
+        ],
+        formulaNote: 'Jika n ganjil, median adalah nilai tepat di posisi tengah. Jika n genap, posisi menghasilkan pecahan .5, sehingga median adalah rata-rata dua nilai tengah.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Urutkan Data', instruction: 'Susun data dari angka terkecil hingga terbesar (array terurut).' },
+          { step: 2, title: 'Hitung Posisi', instruction: 'Gunakan rumus posisi median: (n + 1) / 2.' },
+          { step: 3, title: 'Ambil Nilainya', instruction: 'Ambil angka pada posisi tersebut; jika n genap, ambil rata-rata dua nilai tengah.' },
+        ],
+        visualType: 'mean-median-mode',
+      },
+      {
+        id: 'sec-num-3',
+        group: '1. Ukuran Pemusatan Data (Central Tendency)',
+        heading: 'Modus (Mode)',
+        body: 'Modus adalah nilai yang paling sering muncul dalam suatu kumpulan data amatan. Kumpulan data bisa tidak memiliki modus, memiliki satu modus (unimodal), dua modus (bimodal), atau banyak modus (multimodal).',
+        points: [
+          'Nilai yang paling sering muncul dalam suatu kumpulan data (frekuensi kemunculan tertinggi).',
+          'Satu-satunya ukuran pemusatan yang dapat digunakan untuk data bertipe kategorikal / nominal.',
+          'Tidak dipengaruhi sama sekali oleh nilai ekstrem (outlier).',
+        ],
+        formula: 'Modus = Nilai dengan Frekuensi Kemunculan Tertinggi (f_max)',
+        formulaSymbols: [
+          { symbol: 'f_max', meaning: 'Frekuensi kemunculan terbanyak dalam kumpulan data' },
+        ],
+        formulaNote: 'Jika setiap angka muncul dengan frekuensi yang sama (misal masing-masing muncul 1 kali), data dikatakan tidak memiliki modus.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung Kemunculan Tiap Nilai', instruction: 'Buat tabel hitungan frekuensi kemunculan dari setiap angka yang ada.' },
+          { step: 2, title: 'Pilih yang Paling Sering', instruction: 'Identifikasi nilai dengan frekuensi terbesar sebagai modus data.' },
+        ],
+        visualType: 'mean-median-mode',
+      },
+      {
+        id: 'sec-num-4',
+        group: '1. Ukuran Pemusatan Data (Central Tendency)',
+        heading: 'Rata-rata Geometrik (Geometric Mean)',
+        body: 'Rata-rata Geometrik (Geometric Mean) digunakan untuk mengukur tingkat perubahan atau pertumbuhan suatu variabel dari waktu ke waktu, seperti imbal hasil portofolio investasi tahunan atau pertumbuhan majemuk.',
+        points: [
+          'Digunakan untuk mengukur tingkat perubahan atau pertumbuhan suatu variabel dari waktu ke waktu.',
+          'Mencerminkan pertumbuhan majemuk nyata tanpa distorsi inflasi aritmatika biasa.',
+          'Nilai rata-rata geometrik selalu lebih kecil atau sama dengan rata-rata aritmatika.',
+        ],
+        formula: 'R_G = [(1 + R₁) × (1 + R₂) × … × (1 + Rₙ)]^(1/n) − 1',
+        formulaSymbols: [
+          { symbol: 'R_G', meaning: 'Tingkat pengembalian / laju pertumbuhan rata-rata geometrik' },
+          { symbol: 'Rᵢ', meaning: 'Tingkat pengembalian atau pertumbuhan periode ke-i (dalam desimal)' },
+          { symbol: 'n', meaning: 'Jumlah periode waktu' },
+        ],
+        formulaNote: 'Tiap laju persentase Rᵢ ditambahkan 1 untuk menangani nilai pertumbuhan negatif (kerugian modal) secara matematis.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Ubah Persentase Jadi (1 + R)', instruction: 'Ubah tiap persentase periode ke format faktor pengali (1 + Rᵢ).' },
+          { step: 2, title: 'Kalikan Semuanya', instruction: 'Kalikan seluruh faktor pengali majemuk secara berantai.' },
+          { step: 3, title: 'Ambil Akar Pangkat n', instruction: 'Tarik akar pangkat n (atau pangkatkan 1/n) dari hasil kali tersebut.' },
+          { step: 4, title: 'Kurangi 1', instruction: 'Kurangkan hasil akhir dengan 1 untuk memperoleh laju geometrik R_G.' },
+        ],
+        visualType: 'geometric-mean',
+      },
+
+      // GROUP 2: Variation & Shape
+      {
+        id: 'sec-num-5',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Jangkauan (Range)',
+        body: 'Jangkauan (Range) adalah selisih antara nilai terbesar dan nilai terkecil dalam suatu kumpulan data. Range merupakan ukuran variasi paling sederhana, namun sangat rentan terhadap amatan ekstrem.',
+        points: [
+          'Selisih antara nilai terbesar dan nilai terkecil.',
+          'Ukuran dispersi paling sederhana namun sangat rentan terhadap amatan ekstrem.',
+          'Tidak memberikan informasi tentang bagaimana data tersebar di antara kedua titik ekstrem.',
+        ],
+        formula: 'Range = X largest − X smallest',
+        formulaSymbols: [
+          { symbol: 'X largest', meaning: 'Nilai data amatan maksimum (terbesar)' },
+          { symbol: 'X smallest', meaning: 'Nilai data amatan minimum (terkecil)' },
+        ],
+        formulaNote: 'Pada Dataset A: Range = 30 − 12 = 18 menit.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Cari Nilai Terbesar dan Terkecil', instruction: 'Pindai kumpulan data untuk mencatat nilai maksimum dan nilai minimum.' },
+          { step: 2, title: 'Kurangkan Keduanya', instruction: 'Kurangkan nilai terbesar dengan nilai terkecil: Range = X largest − X smallest.' },
+        ],
+        visualType: 'range',
+      },
+      {
+        id: 'sec-num-6',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Variansi Sampel (Sample Variance)',
+        body: 'Variansi (Variance) mengukur variasi data berdasarkan jumlah kuadrat selisih setiap nilai terhadap mean. Karena dikuadratkan, variansi selalu bernilai positif dan memiliki satuan kuadrat dari data aslinya (misal menit²).',
+        points: [
+          'Variasi data berdasarkan jumlah kuadrat selisih setiap nilai terhadap mean.',
+          'Menggunakan pembagi derajat kebebasan (n − 1) agar menjadi penduga tak-bias bagi variansi populasi.',
+          'Satuannya berbentuk kuadrat sehingga sulit diinterpretasikan secara langsung terhadap skala asli data.',
+        ],
+        formula: 'S² = Σ(Xᵢ − X̄)² / (n − 1)',
+        formulaSymbols: [
+          { symbol: 'S²', meaning: 'Variansi sampel' },
+          { symbol: 'Xᵢ', meaning: 'Nilai data amatan ke-i' },
+          { symbol: 'X̄', meaning: 'Mean sampel' },
+          { symbol: 'n − 1', meaning: 'Derajat kebebasan sampel (degrees of freedom)' },
+        ],
+        formulaNote: 'Jumlah deviasi mentah Σ(Xᵢ − X̄) selalu bernilai 0, itulah sebabnya deviasi harus dikuadratkan.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung Mean', instruction: 'Hitung rata-rata sampel: X̄ = ΣX / n.' },
+          { step: 2, title: 'Hitung Selisih Tiap Nilai dengan Mean', instruction: 'Kurangkan tiap angka amatan dengan mean: (Xᵢ − X̄).' },
+          { step: 3, title: 'Kuadratkan', instruction: 'Kuadratkan setiap selisih: (Xᵢ − X̄)².' },
+          { step: 4, title: 'Jumlahkan', instruction: 'Jumlahkan seluruh hasil kuadrat tersebut: Σ(Xᵢ − X̄)².' },
+          { step: 5, title: 'Bagi dengan n − 1', instruction: 'Bagi jumlah kuadrat deviasi tersebut dengan n − 1.' },
+        ],
+        visualType: 'variance-sd',
+      },
+      {
+        id: 'sec-num-7',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Standar Deviasi Sampel (Standard Deviation)',
+        body: 'Standar Deviasi adalah akar kuadrat dari variance dan menunjukkan seberapa jauh data menyebar dari mean. Standar deviasi mengembalikan satuan ukuran ke skala asli data amatan (misal menit).',
+        points: [
+          'Akar kuadrat dari variance dan menunjukkan seberapa jauh data menyebar dari mean.',
+          'Ukuran sebaran yang paling umum dipakai bersamaan dengan mean dalam riset ilmiah.',
+          'Memiliki satuan yang persis sama dengan data aslinya.',
+        ],
+        formula: 'S = √S² = √[ Σ(Xᵢ − X̄)² / (n − 1) ]',
+        formulaSymbols: [
+          { symbol: 'S', meaning: 'Standar deviasi sampel' },
+          { symbol: 'S²', meaning: 'Variansi sampel' },
+        ],
+        formulaNote: 'Pada Dataset A: S = √36.33 ≈ 6.03 menit.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung Variance', instruction: 'Hitung variansi sampel S² terlebih dahulu sesuai langkah sebelumnya.' },
+          { step: 2, title: 'Ambil Akar Kuadratnya', instruction: 'Tarik akar kuadrat dari variansi: S = √S².' },
+        ],
+        visualType: 'variance-sd',
+      },
+      {
+        id: 'sec-num-8',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Koefisien Variasi (Coefficient of Variation)',
+        body: 'Koefisien Variasi (CV) adalah perbandingan antara standard deviation dengan mean yang dinyatakan dalam persentase; digunakan untuk membandingkan variasi relatif dari data yang memiliki satuan berbeda (misal cm vs kg).',
+        points: [
+          'Perbandingan antara standard deviation dengan mean yang dinyatakan dalam persentase.',
+          'Digunakan untuk membandingkan variasi relatif dari data yang memiliki satuan berbeda.',
+          'Bebas dari pengaruh satuan fisik (angka rasio murni).',
+        ],
+        formula: 'CV = (S / X̄) × 100%',
+        formulaSymbols: [
+          { symbol: 'CV', meaning: 'Koefisien variasi sampel (dalam %)' },
+          { symbol: 'S', meaning: 'Standar deviasi sampel' },
+          { symbol: 'X̄', meaning: 'Mean sampel' },
+        ],
+        formulaNote: 'Pada populasi, rumusnya adalah CV = (σ / μ) × 100%.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung S', instruction: 'Hitung standar deviasi sampel S dari kumpulan data.' },
+          { step: 2, title: 'Hitung X̄', instruction: 'Hitung mean sampel X̄.' },
+          { step: 3, title: 'Bagi lalu Kalikan 100%', instruction: 'Bagi nilai S dengan X̄, kemudian kalikan dengan 100%.' },
+        ],
+        visualType: 'coefficient-of-variation',
+      },
+      {
+        id: 'sec-num-9',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Skor Z (Z-Score)',
+        body: 'Skor Z (Z-Score) menunjukkan posisi suatu nilai terhadap mean dalam satuan standard deviation; dapat membantu mengidentifikasi outlier; nilai kurang dari −3 atau lebih dari +3 secara umum menunjukkan kemungkinan outlier.',
+        points: [
+          'Menunjukkan posisi suatu nilai terhadap mean dalam satuan standard deviation.',
+          'Dapat membantu mengidentifikasi outlier.',
+          'Nilai kurang dari −3 atau lebih dari +3 secara umum menunjukkan kemungkinan outlier.',
+        ],
+        formula: 'Z = (X − X̄) / S',
+        formulaSymbols: [
+          { symbol: 'Z', meaning: 'Skor standar (Z-score)' },
+          { symbol: 'X', meaning: 'Nilai data amatan individu yang ingin diuji' },
+          { symbol: 'X̄', meaning: 'Mean sampel' },
+          { symbol: 'S', meaning: 'Standar deviasi sampel' },
+        ],
+        formulaNote: 'Pada Dataset A: Z dari 30 = (30 − 20)/6.03 ≈ 1.66, dan Z dari 12 = (12 − 20)/6.03 ≈ −1.33.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Kurangi Nilai dengan Mean', instruction: 'Hitung selisih nilai amatan terhadap mean: (X − X̄).' },
+          { step: 2, title: 'Bagi dengan Standard Deviation', instruction: 'Bagi selisih tersebut dengan S: Z = (X − X̄) / S.' },
+          { step: 3, title: 'Bandingkan Hasilnya dengan −3 dan +3', instruction: 'Jika Z < −3 atau Z > +3, amatan tersebut patut dicurigai sebagai kemungkinan outlier.' },
+        ],
+        visualType: 'z-score',
+      },
+      {
+        id: 'sec-num-10',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Kemiringan Distribusi (Skewness)',
+        body: 'Kemiringan (Skewness) mengukur tingkat ketidaksimetrian distribusi data terhadap mean; mean < median berarti distribusi negative/left-skewed; mean = median berarti distribusi simetris; mean > median berarti distribusi positive/right-skewed.',
+        points: [
+          'Mengukur tingkat ketidaksimetrian distribusi data terhadap mean.',
+          'Mean < Median berarti distribusi negative/left-skewed (ekor kiri memanjang).',
+          'Mean = Median berarti distribusi simetris (lonceng seimbang).',
+          'Mean > Median berarti distribusi positive/right-skewed (ekor kanan memanjang).',
+        ],
+        formula: 'Kriteria: Mean < Median (Left) | Mean = Median (Simetris) | Mean > Median (Right)',
+        formulaSymbols: [
+          { symbol: 'Mean', meaning: 'Titik pusat yang ditarik oleh nilai ekstrem' },
+          { symbol: 'Median', meaning: 'Titik tengah 50% data yang kebal terhadap pencilan' },
+        ],
+        formulaNote: 'Pada Dataset B: Mean (27.09) > Median (25) membuktikan distribusi data condong ke kanan (right-skewed).',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung Mean dan Median', instruction: 'Hitung nilai rata-rata hitung (X̄) dan nilai tengah (Median).' },
+          { step: 2, title: 'Bandingkan Keduanya', instruction: 'Bandingkan posisi: jika X̄ < Median (Left), X̄ = Median (Simetris), X̄ > Median (Right).' },
+        ],
+        visualType: 'skewness',
+      },
+      {
+        id: 'sec-num-11',
+        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
+        heading: 'Keruncingan Distribusi (Kurtosis)',
+        body: 'Kurtosis mengukur tingkat ketajaman puncak distribusi relatif terhadap kurva distribusi normal standar.',
+        points: [
+          'Tingkat ketajaman puncak distribusi.',
+          'Leptokurtic: puncak tajam dan ekor lebih tebal dibanding distribusi normal.',
+          'Mesokurtic: puncak normal sedang standar.',
+          'Platykurtic: puncak lebih mendatar dan sebaran lebih landai.',
+        ],
+        formula: 'Bentuk Puncak: Leptokurtic (Tajam) vs Mesokurtic (Normal) vs Platykurtic (Datar)',
+        formulaSymbols: [
+          { symbol: 'K = 3', meaning: 'Kurtosis kurva normal standar (mesokurtik)' },
+        ],
+        formulaNote: 'Dalam manajemen risiko keuangan, kurtosis tinggi (leptokurtik) mengindikasikan kemungkinan kejadian ekstrem yang lebih besar.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Evaluasi Bentuk Puncak Kurva', instruction: 'Bandingkan keruncingan kurva terhadap kurva normal standar pada simpangan baku yang sama.' },
+        ],
+        visualType: 'kurtosis',
+      },
+
+      // GROUP 3: Exploring Numerical Data
+      {
+        id: 'sec-num-12',
+        group: '3. Menjelajahi Data Numerik (Exploring Numerical Data)',
+        heading: 'Kuartil & Rentang Antarkuartil (Quartiles & IQR)',
+        body: 'Kuartil membagi data menjadi empat bagian yang sama; Q1 memisahkan 25% data terbawah; Q2 adalah median; Q3 memisahkan 75% data terbawah dari 25% data tertinggi. Interquartile Range (IQR) adalah selisih antara Q3 dan Q1 yang menggambarkan penyebaran 50% data bagian tengah.',
+        points: [
+          'Membagi data menjadi empat bagian yang sama.',
+          'Q1 memisahkan 25% data terbawah; Q2 adalah median; Q3 memisahkan 75% data terbawah dari 25% data tertinggi.',
+          'IQR = Q3 − Q1 menggambarkan penyebaran 50% data bagian tengah dan resisten terhadap outlier.',
+        ],
+        formula: 'Q1 = Posisi (n + 1)/4 | Q2 = Posisi (n + 1)/2 | Q3 = Posisi 3(n + 1)/4 | IQR = Q3 − Q1',
+        formulaSymbols: [
+          { symbol: 'Q1', meaning: 'Kuartil Pertama (25% data terbawah)' },
+          { symbol: 'Q2', meaning: 'Kuartil Kedua / Median (50% data)' },
+          { symbol: 'Q3', meaning: 'Kuartil Ketiga (75% data terbawah)' },
+          { symbol: 'IQR', meaning: 'Rentang antarkuartil (Interquartile Range)' },
+        ],
+        formulaNote: 'Pada Dataset B (n = 11): Q1 = 18 (posisi 3), Q2 = 25 (posisi 6), Q3 = 34 (posisi 9), dan IQR = 34 − 18 = 16 menit.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Urutkan Data', instruction: 'Urutkan seluruh data amatan dari nilai terkecil hingga terbesar.' },
+          { step: 2, title: 'Hitung Posisi', instruction: 'Hitung posisi kuartil: Posisi Q1 = (n + 1) / 4, Posisi Q3 = 3(n + 1) / 4.' },
+          { step: 3, title: 'Ambil Nilainya', instruction: 'Ambil nilai data amatan pada posisi kuartil yang bersangkutan.' },
+          { step: 4, title: 'Kurangkan untuk IQR', instruction: 'Kurangkan Q3 dengan Q1: IQR = Q3 − Q1.' },
+        ],
+        visualType: 'quartiles-iqr',
+      },
+      {
+        id: 'sec-num-13',
+        group: '3. Menjelajahi Data Numerik (Exploring Numerical Data)',
+        heading: 'Five-Number Summary (Lima Angka Ringkasan)',
+        body: 'Five-Number Summary merangkum distribusi data menggunakan lima nilai kunci: nilai minimum, Q1, median, Q3, dan nilai maksimum.',
+        points: [
+          'Five-Number Summary: nilai minimum, Q1, median, Q3, dan nilai maksimum.',
+          'Memberikan ringkasan cepat atas nilai pusat, sebaran, dan batas rentang seluruh data.',
+          'Menjadi fondasi matematis utama dalam menggambar Boxplot.',
+        ],
+        formula: 'Five-Number Summary: [X smallest, Q1, Median (Q2), Q3, X largest]',
+        formulaSymbols: [
+          { symbol: 'X smallest', meaning: 'Nilai data minimum' },
+          { symbol: 'Q1', meaning: 'Kuartil pertama (persentil 25)' },
+          { symbol: 'Median', meaning: 'Kuartil kedua / nilai tengah (persentil 50)' },
+          { symbol: 'Q3', meaning: 'Kuartil ketiga (persentil 75)' },
+          { symbol: 'X largest', meaning: 'Nilai data maksimum' },
+        ],
+        formulaNote: 'Pada Dataset B: [12, 18, 25, 34, 55] menit.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Urutkan Data', instruction: 'Urutkan seluruh data amatan dari yang terkecil sampai terbesar.' },
+          { step: 2, title: 'Tentukan 5 Nilai Kunci', instruction: 'Cari nilai terkecil, Q1, median, Q3, dan nilai terbesar secara berurutan.' },
+        ],
+        visualType: 'five-number-summary',
+      },
+      {
+        id: 'sec-num-14',
+        group: '3. Menjelajahi Data Numerik (Exploring Numerical Data)',
+        heading: 'Diagram Kotak Garis (Boxplot)',
+        body: 'Boxplot menggunakan five-number summary untuk memvisualisasikan bentuk dan penyebaran distribusi suatu variabel secara grafis.',
+        points: [
+          'Menggunakan five-number summary untuk memvisualisasikan bentuk dan penyebaran distribusi suatu variabel.',
+          'Kotak box mewakili 50% data di tengah (dari Q1 ke Q3) dengan garis median di dalamnya.',
+          'Garis whisker membentang ke X smallest dan X largest.',
+          'Kotak dan whisker seimbang berarti cenderung simetris; whisker kanan lebih panjang atau median mendekati Q1 berarti right-skewed; whisker kiri lebih panjang berarti left-skewed.',
+        ],
+        formula: 'Komponen Boxplot: Whisker Kiri [X smallest, Q1] + Box [Q1, Q3] + Whisker Kanan [Q3, X largest]',
+        formulaSymbols: [
+          { symbol: 'Box', meaning: 'Kotak antarkuartil selebar IQR' },
+          { symbol: 'Whisker', meaning: 'Garis kumis ke nilai amatan ekstrem' },
+        ],
+        formulaNote: 'Garis pembatas kotak box adalah Q1 dan Q3; panjang kotak persis sama dengan nilai IQR.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Urutkan Data dan Cari Five-Number Summary', instruction: 'Temukan nilai X smallest, Q1, Median, Q3, dan X largest.' },
+          { step: 2, title: 'Gambar Sumbu Angka', instruction: 'Buat sumbu skala angka horizontal yang mencakup seluruh rentang data.' },
+          { step: 3, title: 'Gambar Kotak Box', instruction: 'Gambar kotak dari Q1 sampai Q3 dengan garis di median.' },
+          { step: 4, title: 'Gambar Garis Whisker', instruction: 'Gambar garis (whisker) dari Q1 ke X smallest dan dari Q3 ke X largest.' },
+        ],
+        visualType: 'boxplot',
+      },
+
+      // GROUP 4: Population Measures
+      {
+        id: 'sec-num-15',
+        group: '4. Ukuran Deskriptif untuk Populasi',
+        heading: 'Ukuran Deskriptif untuk Populasi (Parameter)',
+        body: 'Ketika data mencakup seluruh anggota populasi (sensus lengkap), nilai pemusatan dan variasi disebut sebagai parameter populasi. Mean populasi adalah jumlah seluruh nilai dalam populasi dibagi dengan ukuran populasi (μ = ΣXᵢ / N). Population variance dan standard deviation mengukur variasi data dalam populasi dengan pembagi N penuh.',
+        points: [
+          'Population Mean: jumlah seluruh nilai dalam populasi dibagi dengan ukuran populasi (μ = ΣXᵢ / N).',
+          'Population Variance & SD: digunakan untuk mengukur variasi data dalam populasi (σ² = Σ(Xᵢ − μ)² / N; σ = √σ²).',
+          'Tidak ada derajat kebebasan yang dikurangkan (dibagi N, bukan N − 1) karena seluruh data populasi telah diketahui secara lengkap.',
+        ],
+        formula: 'μ = ΣXᵢ / N | σ² = Σ(Xᵢ − μ)² / N | σ = √σ²',
+        formulaSymbols: [
+          { symbol: 'μ', meaning: 'Mean populasi (mu)' },
+          { symbol: 'σ²', meaning: 'Variansi populasi (sigma kuadrat)' },
+          { symbol: 'σ', meaning: 'Standar deviasi populasi (sigma)' },
+          { symbol: 'N', meaning: 'Ukuran total populasi' },
+        ],
+        formulaNote: 'Pada Dataset A jika diperlakukan sebagai populasi: μ = 20, σ² = 218 / 7 ≈ 31.14, dan σ ≈ 5.58.',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung μ', instruction: 'Jumlahkan seluruh data dan bagi dengan ukuran populasi N: μ = ΣX / N.' },
+          { step: 2, title: 'Hitung Selisih Tiap Nilai dengan μ', instruction: 'Kurangkan tiap amatan dengan mean populasi: (Xᵢ − μ).' },
+          { step: 3, title: 'Kuadratkan dan Jumlahkan', instruction: 'Kuadratkan tiap selisih lalu jumlahkan: Σ(Xᵢ − μ)².' },
+          { step: 4, title: 'Bagi dengan N', instruction: 'Bagi dengan ukuran populasi N untuk variansi σ².' },
+          { step: 5, title: 'Ambil Akar Kuadrat untuk σ', instruction: 'Tarik akar kuadrat untuk standar deviasi populasi: σ = √σ².' },
+        ],
+        visualType: 'population-measures',
+      },
+
+      // GROUP 5: Covariance & Correlation
+      {
+        id: 'sec-num-16',
+        group: '5. Kovarians dan Koefisien Korelasi (Covariance & Coefficient of Correlation)',
+        heading: 'Kovarians & Koefisien Korelasi Linear',
+        body: 'Kovarians mengukur kekuatan hubungan linear antara dua variabel numerik, yaitu X dan Y. Koefisien korelasi linear Pearson mengukur kekuatan relatif hubungan linear antara dua variabel numerik secara bebas satuan dengan rentang universal dari −1 sampai +1.',
+        points: [
+          'Covariance: mengukur kekuatan hubungan linear antara dua variabel numerik, yaitu X dan Y (cov(X, Y) = Σ(Xᵢ − X̄)(Yᵢ − Ȳ) / (n − 1)).',
+          'Coefficient of Correlation: mengukur kekuatan relatif hubungan linear antara dua variabel numerik (r = cov(X, Y) / (S_X × S_Y)).',
+          'Nilai r berkisar dari −1 (negatif sempurna) sampai +1 (positif sempurna); r = 0 berarti tidak ada hubungan linear.',
+        ],
+        formula: 'cov(X, Y) = Σ(Xᵢ − X̄)(Yᵢ − Ȳ) / (n − 1) | r = cov(X, Y) / (S_X × S_Y)',
+        formulaSymbols: [
+          { symbol: 'cov(X, Y)', meaning: 'Kovarians sampel antara X dan Y' },
+          { symbol: 'r', meaning: 'Koefisien korelasi Pearson sampel' },
+          { symbol: 'S_X', meaning: 'Standar deviasi variabel X' },
+          { symbol: 'S_Y', meaning: 'Standar deviasi variabel Y' },
+        ],
+        formulaNote: 'Pada data jam belajar vs nilai ujian: cov(X, Y) ≈ 77.49 dan r ≈ 0.98 (hubungan linear positif sangat kuat).',
+        stepsLabel: 'Cara Menghitung',
+        steps: [
+          { step: 1, title: 'Hitung X̄ dan Ȳ', instruction: 'Hitung mean sampel dari kedua variabel.' },
+          { step: 2, title: 'Hitung Perkalian Deviasi Pasangan', instruction: 'Untuk tiap pasangan amatan, hitung (Xᵢ − X̄)(Yᵢ − Ȳ).' },
+          { step: 3, title: 'Jumlahkan', instruction: 'Jumlahkan seluruh hasil kali deviasi: Σ(Xᵢ − X̄)(Yᵢ − Ȳ).' },
+          { step: 4, title: 'Bagi dengan n − 1', instruction: 'Bagi dengan n − 1 untuk mendapatkan nilai kovarians cov(X, Y).' },
+          { step: 5, title: 'Hitung S_X dan S_Y', instruction: 'Hitung standar deviasi masing-masing variabel.' },
+          { step: 6, title: 'Bagi Kovarians dengan Hasil Kali Keduanya', instruction: 'Hitung r = cov(X, Y) / (S_X × S_Y).' },
+        ],
+        visualType: 'correlation',
+      },
+
+      // FINAL SECTION: Ringkasan Rumus (no visual)
+      {
+        id: 'sec-num-17',
+        group: 'Ringkasan Rumus',
+        heading: 'Ringkasan Rumus Ukuran Deskriptif Numerik',
+        body: 'Berikut adalah komparasi ringkas seluruh formula ukuran deskriptif numerik yang membedakan rumus statistik sampel dan rumus parameter populasi.',
+        points: [
+          'Ukuran Pemusatan: Mean, Median, Modus, dan Rata-rata Geometrik.',
+          'Ukuran Variasi: Range, Variansi, Standar Deviasi, dan Koefisien Variasi.',
+          'Bentuk & Posisi: Kuartil, IQR, Five-Number Summary, Boxplot, dan Z-Score.',
+          'Hubungan Bivariat: Kovarians dan Koefisien Korelasi Pearson (r).',
+        ],
+        formula: 'Tabel Ringkasan Komparasi Rumus Sampel vs Populasi',
+        summaryTable: {
+          columns: ['Ukuran Deskriptif', 'Rumus Sampel (Statistik)', 'Rumus Populasi (Parameter)', 'Catatan Karakteristik'],
+          rows: [
+            { ukuran: 'Mean (Rata-rata)', sampel: 'X̄ = ΣXᵢ / n', populasi: 'μ = ΣXᵢ / N', catatan: 'Sensitif terhadap outlier' },
+            { ukuran: 'Median (Nilai Tengah)', sampel: 'Posisi = (n + 1) / 2', populasi: 'Posisi = (N + 1) / 2', catatan: 'Resisten terhadap outlier' },
+            { ukuran: 'Modus', sampel: 'Nilai frekuensi terbanyak (f_max)', populasi: 'Nilai frekuensi terbanyak (f_max)', catatan: 'Dapat digunakan untuk data kategorikal' },
+            { ukuran: 'Geometric Mean', sampel: 'R_G = [Π(1 + Rᵢ)]^(1/n) − 1', populasi: 'R_G = [Π(1 + Rᵢ)]^(1/N) − 1', catatan: 'Laju pertumbuhan majemuk' },
+            { ukuran: 'Range (Rentang)', sampel: 'X largest − X smallest', populasi: 'X largest − X smallest', catatan: 'Hanya melihat 2 angka ekstrem' },
+            { ukuran: 'Variance', sampel: 'S² = Σ(Xᵢ − X̄)² / (n − 1)', populasi: 'σ² = Σ(Xᵢ − μ)² / N', catatan: 'Pembagi sampel n − 1 (Koreksi Bessel)' },
+            { ukuran: 'Standard Deviation', sampel: 'S = √S²', populasi: 'σ = √σ²', catatan: 'Satuan sama dengan data asli' },
+            { ukuran: 'Coefficient of Variation', sampel: 'CV = (S / X̄) × 100%', populasi: 'CV = (σ / μ) × 100%', catatan: 'Bebas satuan, bandingkan cm vs kg' },
+            { ukuran: 'Skor Z (Z-Score)', sampel: 'Z = (X − X̄) / S', populasi: 'Z = (X − μ) / σ', catatan: '|Z| > 3 adalah kemungkinan outlier' },
+            { ukuran: 'Kuartil (Q1, Q2, Q3)', sampel: 'Qk = Posisi k(n + 1) / 4', populasi: 'Qk = Posisi k(N + 1) / 4', catatan: 'Membagi data jadi 4 bagian (25%)' },
+            { ukuran: 'Interquartile Range (IQR)', sampel: 'IQR = Q3 − Q1', populasi: 'IQR = Q3 − Q1', catatan: 'Sebaran 50% data tengah (resisten)' },
+            { ukuran: 'Kovarians (Covariance)', sampel: 'cov(X,Y) = Σ(X−X̄)(Y−Ȳ)/(n−1)', populasi: 'cov(X,Y) = Σ(X−μ_X)(Y−μ_Y)/N', catatan: 'Mengukur arah hubungan linear bersama' },
+            { ukuran: 'Korelasi Pearson (r)', sampel: 'r = cov(X,Y) / (S_X × S_Y)', populasi: 'ρ = cov(X,Y) / (σ_X × σ_Y)', catatan: 'Rentang universal [−1, +1]' },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    topicId: 'probabilitas-dasar',
+    topicTitle: 'Probabilitas Dasar',
+    estimatedReadMinutes: 15,
+    completionXp: 15,
+    sections: [
+      // GROUP 1: Fondasi & Konsep Probabilitas
+      {
+        id: 'sec-prob-1',
+        group: '1. Fondasi & Konsep Probabilitas',
+        heading: 'Konsep & Skala Probabilitas',
+        body: 'Probabilitas (peluang) adalah ukuran numerik tentang kemungkinan terjadinya suatu peristiwa (event) acak. Nilai probabilitas selalu berada pada rentang tertutup antara 0 dan 1 (atau 0% hingga 100%). Nilai 0 menunjukkan peristiwa mustahil terjadi (impossible event), sedangkan nilai 1 menunjukkan peristiwa pasti terjadi (certain event).',
+        points: [
+          'Probabilitas adalah ukuran numerik seberapa besar kemungkinan suatu kejadian akan terjadi.',
+          'Nilai probabilitas selalu berada pada interval [0, 1] (0 ≤ P(A) ≤ 1).',
+          'P(A) = 0 berarti peristiwa mustahil terjadi (impossible event).',
+          'P(A) = 1 berarti peristiwa pasti terjadi (certain event).',
+          'Semakin dekat nilai probabilitas ke 1, semakin tinggi keyakinan peristiwa tersebut akan terealisasi.',
+        ],
+        formula: 'P(A) = X / T',
+        formulaSymbols: [
+          { symbol: 'P(A)', meaning: 'Probabilitas terjadinya peristiwa A' },
+          { symbol: 'X', meaning: 'Banyaknya cara peristiwa A dapat terjadi (favorable outcomes)' },
+          { symbol: 'T', meaning: 'Total seluruh kemungkinan outcome dalam ruang sampel (sample space)' },
+        ],
+        formulaNote: 'Nilai P(A) dapat dituliskan sebagai pecahan biasa (X/T), angka desimal (0.00 – 1.00), atau persentase (0% – 100%).',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Tentukan Total Banyak Outcome (T)',
+            instruction: 'Hitung seluruh kemungkinan hasil yang dapat terjadi dalam ruang sampel (misal dadu 6 sisi, T = 6).',
+          },
+          {
+            step: 2,
+            title: 'Tentukan Banyak Cara Event Terjadi (X)',
+            instruction: 'Hitung banyaknya hasil yang memenuhi kriteria peristiwa A (misal angka genap {2, 4, 6}, X = 3).',
+          },
+          {
+            step: 3,
+            title: 'Bagi Nilai X dengan T',
+            instruction: 'Hitung peluang dengan rumus P(A) = X / T (misal 3 / 6 = 0.50 atau 50%).',
+          },
+        ],
+        visualType: 'probability-scale',
+      },
+      {
+        id: 'sec-prob-2',
+        group: '1. Fondasi & Konsep Probabilitas',
+        heading: 'Tiga Pendekatan Probabilitas (A Priori, Empiris, Subjektif)',
+        body: 'Bagaimana kita menetapkan nilai peluang suatu peristiwa? Dalam statistika terdapat tiga pendekatan utama: Probabilitas Klasik (A Priori), Probabilitas Empiris (Frekuensi Relatif), dan Probabilitas Subjektif. Masing-masing pendekatan diterapkan sesuai dengan konteks dan ketersediaan data.',
+        points: [
+          'A Priori (Klasik): Ditentukan secara deduktif teoritis sebelum eksperimen dimulai, dengan asumsi setiap outcome memiliki kemungkinan yang sama besar (equally likely).',
+          'Empiris (Frekuensi Relatif): Ditentukan secara induktif berdasarkan rekaman data historis atau eksperimen nyata berulang.',
+          'Subjektif: Didasarkan pada keyakinan individu, intuisi, atau pertimbangan pakar saat data masa lalu tidak tersedia.',
+          'Menurut Law of Large Numbers, saat jumlah percobaan diperbanyak, probabilitas empiris akan semakin mendekati probabilitas a priori teoritis.',
+        ],
+        terms: [
+          {
+            term: 'A Priori (Klasik)',
+            definition: 'Peluang yang dihitung langsung dari sifat alamiah sistem tanpa harus melakukan percobaan fisik terlebih dahulu.',
+            example: 'Peluang mendapat angka 4 pada lemparan satu dadu seimbang adalah 1/6 ≈ 0.167.',
+          },
+          {
+            term: 'Empiris (Frekuensi Relatif)',
+            definition: 'Peluang yang dihitung dari rasio jumlah kemunculan peristiwa terhadap total amatan percobaan.',
+            example: 'Dari 50 kali lemparan koin, muncul Kepala sebanyak 27 kali, maka P_empiris(Kepala) = 27/50 = 0.54.',
+          },
+          {
+            term: 'Subjektif',
+            definition: 'Peluang yang didasarkan pada analisis informasi unik, opini ahli, atau insting manajerial.',
+            example: 'Prediksi founder bahwa rilis aplikasi baru berpeluang 70% diterima pasar secara luas.',
+          },
+        ],
+        formula: 'P_empiris(A) = (Frekuensi Kemunculan Event A) / (Total Percobaan n)',
+        formulaSymbols: [
+          { symbol: 'P_empiris(A)', meaning: 'Peluang empiris berdasarkan pengamatan langsung' },
+          { symbol: 'Frekuensi Kemunculan', meaning: 'Berapa kali peristiwa A teramati terjadi' },
+          { symbol: 'Total Percobaan n', meaning: 'Banyaknya observasi atau eksperimen yang dilakukan' },
+        ],
+        formulaNote: 'Probabilitas a priori menggunakan rumus teoritis P(A) = X / T, sedangkan probabilitas subjektif tidak memiliki rumus kaku karena berbasis asesmen pakar.',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Identifikasi Tipe Pendekatan',
+            instruction: 'Tentukan apakah peluang dianalisis dari sifat simetris teoritis (A Priori), data historis (Empiris), atau perkiraan ahli (Subjektif).',
+          },
+          {
+            step: 2,
+            title: 'Kumpulkan Frekuensi Kemunculan Data',
+            instruction: 'Untuk probabilitas empiris, hitung berapa kali kejadian muncul dari keseluruhan n pengamatan.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Rasio Frekuensi Terhadap Total',
+            instruction: 'Bagi frekuensi kemunculan peristiwa dengan ukuran total observasi untuk mendapatkan probabilitas empirisnya.',
+          },
+        ],
+        visualType: 'jenis-probabilitas',
+      },
+      {
+        id: 'sec-prob-3',
+        group: '1. Fondasi & Konsep Probabilitas',
+        heading: 'Ruang Sampel, Simple Event, Joint Event & Komplemen',
+        body: 'Ruang Sampel (Sample Space, dilambangkan S) adalah himpunan seluruh kemungkinan hasil dari suatu percobaan. Setiap hasil tunggal dengan satu karakteristik disebut Simple Event. Jika suatu peristiwa melibatkan gabungan dua atau lebih karakteristik secara serentak, maka disebut Joint Event. Komplemen peristiwa A (dilambangkan A\') adalah seluruh anggota ruang sampel yang bukan merupakan A.',
+        points: [
+          'Ruang Sampel (S) mencakup seluruh hasil yang mungkin tanpa terkecuali.',
+          'Simple Event: Peristiwa yang didefinisikan oleh tepat satu karakteristik (misal pada dadu: "muncul angka genap" = {2, 4, 6}).',
+          'Joint Event: Peristiwa yang memiliki dua atau lebih kriteria karakteristik secara simultan (misal: "angka genap DAN lebih dari 3" = {4, 6}).',
+          'Komplemen (A\'): Seluruh hasil di dalam ruang sampel S yang bukan bagian dari peristiwa A.',
+          'Aturan Komplemen: P(A) + P(A\') = 1, sehingga P(A\') = 1 − P(A).',
+        ],
+        formula: 'P(A\') = 1 − P(A)',
+        formulaSymbols: [
+          { symbol: 'P(A\')', meaning: 'Peluang komplemen (peristiwa A TIDAK terjadi)' },
+          { symbol: 'P(A)', meaning: 'Peluang peristiwa A terjadi' },
+          { symbol: '1', meaning: 'Peluang total seluruh ruang sampel (kepastian 100%)' },
+        ],
+        formulaNote: 'Aturan komplemen mempermudah perhitungan peluang, terutama saat menghitung peristiwa negasi "setidaknya satu".',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Tuliskan Himpunan Ruang Sampel S',
+            instruction: 'Daftar semua anggota outcome eksperimen (misal lempar dadu: S = {1, 2, 3, 4, 5, 6}).',
+          },
+          {
+            step: 2,
+            title: 'Tentukan Anggota Peristiwa A',
+            instruction: 'Pilih anggota yang memenuhi syarat A dan hitung peluangnya: P(A) = n(A) / n(S).',
+          },
+          {
+            step: 3,
+            title: 'Hitung Peluang Komplemen A\'',
+            instruction: 'Kurangkan peluang A dari angka satu: P(A\') = 1 − P(A).',
+          },
+        ],
+        visualType: 'sample-space',
+      },
+
+      // GROUP 2: Tabel Kontingensi & Peluang Bersama
+      {
+        id: 'sec-prob-4',
+        group: '2. Tabel Kontingensi & Peluang Bersama',
+        heading: 'Tabel Kontingensi, Joint Probability & Marginal Probability',
+        body: 'Tabel kontingensi mengklasifikasikan data observasi menurut dua variabel kategorikal secara bersamaan. Dari tabel ini, kita dapat menghitung Joint Probability (peluang terjadinya dua peristiwa secara serentak di sel irisan baris dan kolom) serta Marginal Probability (peluang terjadinya satu peristiwa tanpa memandang variabel lainnya, dihitung dari total baris atau total kolom).',
+        points: [
+          'Tabel Kontingensi memetakan hubungan silang dua variabel kategorikal dalam format baris dan kolom.',
+          'Joint Probability: Peluang terjadinya peristiwa A DAN B secara bersamaan, dihitung dari frekuensi sel irisan dibagi Grand Total.',
+          'Marginal Probability: Peluang terjadinya satu peristiwa tunggal, dihitung dari total baris atau kolom dibagi Grand Total.',
+          'Jumlah seluruh joint probability pada semua sel dalam tabel kontingensi selalu tepat sama dengan 1.00.',
+          'Marginal probability P(A) sama dengan jumlah joint probability di sepanjang baris atau kolom A.',
+        ],
+        formula: 'P(A and B) = (Frekuensi Sel A ∩ B) / (Grand Total N)',
+        formulaSymbols: [
+          { symbol: 'P(A and B)', meaning: 'Joint probability peristiwa A dan B (sering ditulis P(A ∩ B))' },
+          { symbol: 'Sel A ∩ B', meaning: 'Frekuensi kemunculan pada perpotongan baris A dan kolom B' },
+          { symbol: 'Grand Total N', meaning: 'Ukuran total seluruh sampel amatan di tabel' },
+        ],
+        formulaNote: 'Probabilitas marginal dihitung dengan membagi total baris atau total kolom dengan grand total: P(A) = Total Baris A / N.',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Cari Nilai Sel Irisan (A and B)',
+            instruction: 'Temukan perpotongan baris peristiwa A dan kolom peristiwa B (misal: Rutin dan Nilai ≥ 70 = 90).',
+          },
+          {
+            step: 2,
+            title: 'Bagi dengan Grand Total Sampel',
+            instruction: 'Hitung Joint Probability: P(Rutin and ≥70) = 90 / 200 = 0.45.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Marginal Probability dari Total Baris / Kolom',
+            instruction: 'Bagi total baris atau kolom dengan Grand Total (misal: P(Rutin) = 120 / 200 = 0.60; P(≥70) = 110 / 200 = 0.55).',
+          },
+        ],
+        visualType: 'contingency-probability',
+      },
+      {
+        id: 'sec-prob-5',
+        group: '2. Tabel Kontingensi & Peluang Bersama',
+        heading: 'Probabilitas Bersyarat (Conditional Probability)',
+        body: 'Probabilitas Bersyarat adalah peluang terjadinya peristiwa A dengan syarat bahwa peristiwa B sudah diketahui telah terjadi, dilambangkan P(A | B). Hadirnya informasi bahwa peristiwa B telah terjadi mengecilkan ruang sampel dari keseluruhan populasi menjadi hanya kelompok peristiwa B saja.',
+        points: [
+          'Mengukur peluang peristiwa A dengan batasan bahwa peristiwa B telah terbukti terjadi lebih dahulu.',
+          'Informasi syarat B menyebabkan ruang sampel "mengecil" ke baris atau kolom peristiwa B.',
+          'Secara umum urutan syarat sangat menentukan: P(A | B) biasanya TIDAK sama dengan P(B | A).',
+          'Dihitung dengan membagi joint probability P(A and B) dengan marginal probability peristiwa syarat P(B).',
+        ],
+        formula: 'P(A | B) = P(A and B) / P(B) = (Frekuensi Sel A ∩ B) / (Total Sel Syarat B)',
+        formulaSymbols: [
+          { symbol: 'P(A | B)', meaning: 'Peluang bersyarat terjadinya peristiwa A bila diketahui B telah terjadi' },
+          { symbol: 'P(A and B)', meaning: 'Joint probability terjadinya A dan B serentak (sel irisan)' },
+          { symbol: 'P(B)', meaning: 'Marginal probability dari peristiwa syarat B (harus > 0)' },
+        ],
+        formulaNote: 'Penyebut dalam rumus bersyarat SELALU merupakan peristiwa syarat (kejadian yang berada di sebelah kanan garis vertikal |).',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Persempit Ruang Sampel ke Syarat B',
+            instruction: 'Abaikan baris/kolom lain; fokuskan perhatian hanya pada kelompok syarat B (misal: kelompok Rutin, Total = 120).',
+          },
+          {
+            step: 2,
+            title: 'Ambil Frekuensi Irisan Target A di Kelompok B',
+            instruction: 'Hitung banyaknya amatan yang memenuhi kriteria A di dalam kelompok B tersebut (misal: Rutin dan Lolos = 90).',
+          },
+          {
+            step: 3,
+            title: 'Bagi Irisan dengan Total Kelompok Syarat',
+            instruction: 'Hitung P(≥70 | Rutin) = 90 / 120 = 0.75 (atau via peluang: 0.45 / 0.60 = 0.75).',
+          },
+        ],
+        visualType: 'conditional-probability',
+      },
+
+      // GROUP 3: Diagram Pohon, Independensi & Aturan Perkalian
+      {
+        id: 'sec-prob-6',
+        group: '3. Diagram Pohon, Independensi & Aturan Perkalian',
+        heading: 'Diagram Pohon Keputusan (Decision Tree)',
+        body: 'Diagram Pohon Probabilitas (Decision Tree) adalah alat bantu visual untuk memetakan tahapan peristiwa beruntun. Cabang tingkat pertama merepresentasikan probabilitas marginal, cabang tingkat kedua menggambarkan probabilitas bersyarat, dan ujung daun pohon (terminal leaves) menghasilkan probabilitas bersama (joint probabilities) melalui perkalian di sepanjang jalurnya.',
+        points: [
+          'Menyajikan rangkaian peristiwa beruntun secara visual dan runtut dari kiri ke kanan.',
+          'Cabang tingkat pertama menunjukkan probabilitas marginal P(A), sedangkan cabang berikutnya memuat probabilitas bersyarat P(B | A).',
+          'Jumlah peluang dari semua cabang yang berpangkal pada satu simpul yang sama selalu tepat bernilai 1.00.',
+          'Kalikan seluruh nilai peluang di sepanjang satu jalur cabang dari pangkal hingga daun untuk memperoleh Joint Probability.',
+          'Jumlah peluang dari seluruh daun terminal pada pohon keputusan selalu tepat sama dengan 1.00.',
+        ],
+        formula: 'P(Daun Akhir) = P(Cabang 1) × P(Cabang 2 | Cabang 1) = P(A) × P(B | A)',
+        formulaSymbols: [
+          { symbol: 'P(Daun Akhir)', meaning: 'Joint probability rangkaian peristiwa sepanjang jalur ranting' },
+          { symbol: 'P(Cabang 1)', meaning: 'Probabilitas marginal pada tahap percabangan pertama' },
+          { symbol: 'P(Cabang 2 | Cabang 1)', meaning: 'Probabilitas bersyarat pada percabangan tahap kedua' },
+        ],
+        formulaNote: 'Diagram pohon sangat efektif untuk membedakan secara visual antara probabilitas marginal, bersyarat, dan bersama.',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Gambarkan Cabang Tahap Pertama (Marginal)',
+            instruction: 'Buat cabang dari akar untuk setiap kategori tahap 1 dengan nilai peluang marginalnya (P(Rutin) = 0.60, P(Tidak Rutin) = 0.40).',
+          },
+          {
+            step: 2,
+            title: 'Tarik Ranting Tahap Kedua (Bersyarat)',
+            instruction: 'Dari tiap cabang, buat sub-cabang dengan peluang bersyaratnya (P(≥70|Rutin) = 0.75, P(<70|Rutin) = 0.25).',
+          },
+          {
+            step: 3,
+            title: 'Kalikan Peluang di Sepanjang Ranting Jalur',
+            instruction: 'Hitung nilai daun dengan mengalikan peluang di jalurnya: P(Rutin and ≥70) = 0.60 × 0.75 = 0.45.',
+          },
+        ],
+        visualType: 'decision-tree',
+      },
+      {
+        id: 'sec-prob-7',
+        group: '3. Diagram Pohon, Independensi & Aturan Perkalian',
+        heading: 'Independensi Statistik (Statistical Independence)',
+        body: 'Dua peristiwa A dan B dikatakan Independen secara Statistik (saling bebas) jika terjadinya peristiwa B sama sekali tidak memengaruhi kemungkinan terjadinya peristiwa A. Jika peluang A berubah setelah mengetahui bahwa B terjadi, maka kedua peristiwa tersebut bersifat Dependen (saling bergantung).',
+        points: [
+          'Dua peristiwa saling bebas jika terjadinya peristiwa satu tidak mengubah probabilitas terjadinya peristiwa lainnya.',
+          'Uji Independensi: A dan B independen jika dan hanya jika P(A | B) = P(A).',
+          'Alternatif Uji Independensi: P(A and B) = P(A) × P(B).',
+          'Jika P(A | B) ≠ P(A), maka kedua peristiwa tersebut terbukti Dependen.',
+          'Catatan Penting: Independen TIDAK sama dengan Mutually Exclusive (saling lepas). Peristiwa saling lepas justru sangat dependen karena jika yang satu terjadi, yang lain mustahil terjadi.',
+        ],
+        formula: 'Kriteria Independensi: P(A | B) = P(A)  atau  P(A and B) = P(A) × P(B)',
+        formulaSymbols: [
+          { symbol: 'P(A | B)', meaning: 'Peluang bersyarat A setelah mengetahui kejadian B' },
+          { symbol: 'P(A)', meaning: 'Peluang marginal dasar peristiwa A tanpa syarat' },
+          { symbol: 'P(A and B)', meaning: 'Peluang bersama terjadinya A dan B serentak' },
+        ],
+        formulaNote: 'Jika salah satu kriteria kesamaan di atas terpenuhi, maka kriteria lainnya secara matematis pasti terpenuhi pula.',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Hitung Peluang Marginal P(A)',
+            instruction: 'Hitung peluang peristiwa target tanpa syarat dari keseluruhan populasi (misal: P(≥70) = 110 / 200 = 0.55).',
+          },
+          {
+            step: 2,
+            title: 'Hitung Peluang Bersyarat P(A | B)',
+            instruction: 'Hitung peluang peristiwa target di bawah batasan syarat B (misal: P(≥70 | Rutin) = 90 / 120 = 0.75).',
+          },
+          {
+            step: 3,
+            title: 'Bandingkan Kedua Nilai Peluang',
+            instruction: 'Periksa apakah nilainya sama: karena 0.75 ≠ 0.55, maka pada Tabel A kebiasaan belajar dan kelulusan terbukti DEPENDEN.',
+          },
+        ],
+        visualType: 'independence',
+      },
+      {
+        id: 'sec-prob-8',
+        group: '3. Diagram Pohon, Independensi & Aturan Perkalian',
+        heading: 'Aturan Perkalian Probabilitas (Multiplication Rule)',
+        body: 'Aturan Perkalian digunakan untuk menentukan peluang bersama P(A and B). Rumus umum perkalian berlaku untuk segala kondisi (baik peristiwa dependen maupun independen). Apabila kedua peristiwa terbukti saling independen, rumusnya disederhanakan menjadi perkalian langsung kedua peluang marginalnya.',
+        points: [
+          'Aturan Perkalian Umum: P(A and B) = P(A | B) × P(B), berlaku universal untuk semua peristiwa.',
+          'Aturan Perkalian Independen: P(A and B) = P(A) × P(B), HANYA boleh digunakan jika kedua peristiwa telah terbukti independen.',
+          'Peringatan Kritis: Jangan menggunakan rumus singkat P(A) × P(B) sebelum memverifikasi bahwa kedua kejadian memang saling bebas.',
+          'Rumus perkalian umum diperoleh langsung dari modifikasi aljabar definisi peluang bersyarat.',
+        ],
+        formulas: [
+          {
+            label: 'Aturan Perkalian Umum (Universal)',
+            formula: 'P(A and B) = P(A | B) × P(B)',
+            note: 'Berlaku untuk semua jenis peristiwa, baik yang dependen maupun independen.',
+            symbols: [
+              { symbol: 'P(A and B)', meaning: 'Joint probability peristiwa A dan B (sering ditulis P(A ∩ B))' },
+              { symbol: 'P(A | B)', meaning: 'Peluang bersyarat terjadinya A jika B terjadi' },
+              { symbol: 'P(B)', meaning: 'Peluang marginal peristiwa syarat B' },
+            ],
+          },
+          {
+            label: 'Aturan Perkalian Khusus Peristiwa Independen',
+            formula: 'P(A and B) = P(A) × P(B)',
+            note: 'HANYA berlaku jika A dan B telah terbukti saling bebas secara statistik.',
+            symbols: [
+              { symbol: 'P(A and B)', meaning: 'Peluang terjadinya A dan B bersamaan' },
+              { symbol: 'P(A)', meaning: 'Peluang marginal peristiwa A' },
+              { symbol: 'P(B)', meaning: 'Peluang marginal peristiwa B' },
+            ],
+          },
+        ],
+        formula: 'P(A and B) = P(A | B) × P(B)',
+        formulaSymbols: [
+          { symbol: 'P(A and B)', meaning: 'Joint probability terjadinya A dan B (sering ditulis P(A ∩ B))' },
+          { symbol: 'P(A | B)', meaning: 'Peluang bersyarat A setelah mengetahui informasi B' },
+          { symbol: 'P(B)', meaning: 'Peluang marginal peristiwa syarat B' },
+        ],
+        formulaNote: 'Jika A dan B independen, nilai P(A | B) setara dengan P(A), sehingga rumusnya tereduksi menjadi P(A) × P(B).',
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Verifikasi Independensi Kejadian',
+            instruction: 'Tentukan apakah peristiwa saling memengaruhi (misal lemparan dua koin = independen; kartu tanpa pengembalian = dependen).',
+          },
+          {
+            step: 2,
+            title: 'Pilih Rumus yang Sesuai Kaidah',
+            instruction: 'Gunakan P(A | B) × P(B) jika dependen; gunakan P(A) × P(B) hanya jika independen.',
+          },
+          {
+            step: 3,
+            title: 'Kalikan Nilai Peluang',
+            instruction: 'Hitung hasil perkalian untuk mendapatkan nilai joint probability akhir.',
+          },
+        ],
+        visualType: 'multiplication-rule',
+      },
+
+      // GROUP 4: Rangkuman Kaidah & Rumus Probabilitas
+      {
+        id: 'sec-prob-9',
+        group: '4. Rangkuman Kaidah & Rumus Probabilitas',
+        heading: 'Ringkasan Rumus & Kaidah Probabilitas Dasar',
+        body: 'Tabel berikut merangkum seluruh definisi, rumus matematis, dan kaidah utama dalam probabilitas dasar untuk mempermudah pemahaman konseptual dan rujukan belajar.',
+        points: [
+          'Probabilitas dasar berlandaskan skala [0, 1], aturan komplemen, tabel kontingensi, dan aturan perkalian.',
+          'Pahami perbedaan tegas antara Joint Probability P(A and B) dengan Conditional Probability P(A | B).',
+          'Uji independensi selalu membandingkan nilai peluang bersyarat terhadap peluang marginal dasarnya.',
+        ],
+        summaryTable: {
+          columns: ['Kaidah / Konsep', 'Rumus Matematis', 'Kondisi Penggunaan', 'Catatan Kunci'],
+          rows: [
+            {
+              ukuran: 'Rentang Nilai Probabilitas',
+              sampel: '0 ≤ P(A) ≤ 1',
+              populasi: '0% ≤ P(A) ≤ 100%',
+              catatan: 'P(Mustahil) = 0, P(Pasti) = 1; tidak pernah bernilai negatif.',
+            },
+            {
+              ukuran: 'Probabilitas Klasik (A Priori)',
+              sampel: 'P(A) = X / T',
+              populasi: 'X cara / T kemungkinan',
+              catatan: 'Mengasumsikan setiap outcome berpeluang sama (equally likely).',
+            },
+            {
+              ukuran: 'Probabilitas Empiris',
+              sampel: 'P(A) = f / n',
+              populasi: 'Frekuensi kemunculan / n amatan',
+              catatan: 'Dihitung berdasarkan observasi data riil masa lalu.',
+            },
+            {
+              ukuran: 'Aturan Komplemen',
+              sampel: 'P(A\') = 1 − P(A)',
+              populasi: 'P(A) + P(A\') = 1',
+              catatan: 'Peluang peristiwa TIDAK terjadinya A.',
+            },
+            {
+              ukuran: 'Joint Probability (Tabel)',
+              sampel: 'P(A and B) = Sel(A ∩ B) / N',
+              populasi: 'Irisan sel / Grand Total',
+              catatan: 'Peluang dua peristiwa terjadi serentak (sering ditulis P(A ∩ B)).',
+            },
+            {
+              ukuran: 'Marginal Probability',
+              sampel: 'P(A) = Total Baris atau Kolom / N',
+              populasi: 'Σ P(A and Bᵢ)',
+              catatan: 'Peluang suatu peristiwa tanpa melihat variabel lainnya.',
+            },
+            {
+              ukuran: 'Probabilitas Bersyarat',
+              sampel: 'P(A | B) = P(A and B) / P(B)',
+              populasi: 'Sel(A ∩ B) / Total Syarat B',
+              catatan: 'Semesta data mengecil ke kondisi syarat B.',
+            },
+            {
+              ukuran: 'Uji Independensi',
+              sampel: 'P(A | B) = P(A)',
+              populasi: 'P(A and B) = P(A) × P(B)',
+              catatan: 'Jika sama berarti independen; jika berbeda berarti dependen.',
+            },
+            {
+              ukuran: 'Aturan Perkalian Umum',
+              sampel: 'P(A and B) = P(A | B) × P(B)',
+              populasi: 'P(A ∩ B) = P(A | B) × P(B)',
+              catatan: 'Berlaku universal untuk semua peristiwa (dependen maupun independen).',
+            },
+            {
+              ukuran: 'Aturan Perkalian Independen',
+              sampel: 'P(A and B) = P(A) × P(B)',
+              populasi: 'P(A ∩ B) = P(A) × P(B)',
+              catatan: 'HANYA boleh digunakan jika kedua peristiwa telah terbukti independen.',
+            },
+          ],
+        },
+      },
+    ],
+  },
+  {
+    topicId: 'distribusi-probabilitas-diskrit',
+    topicTitle: 'Distribusi Probabilitas Diskrit',
+    estimatedReadMinutes: 20,
+    completionXp: 15,
+    sections: [
+      {
+        id: 'dpd-1-variabel-diskrit',
+        heading: 'Variabel Acak Diskrit & Distribusi Probabilitas',
+        group: 'Variabel Diskrit & Nilai Harapan',
+        body: 'Variabel Acak Diskrit (**Discrete Random Variable**) adalah variabel kuantitatif yang diperoleh dari hasil pencacahan (counting) dengan nilai-nilai berupa bilangan bulat utuh yang terpisah tanpa nilai di antaranya (seperti 0, 1, 2, 3 kali gangguan sinyal).\n\nDistribusi Probabilitas (**Probability Distribution**) untuk variabel diskrit adalah daftar atau fungsi matematis yang memetakan seluruh kemungkinan nilai variabel acak X bersama peluang terjadinya P(X = x). Distribusi ini memberikan gambaran menyeluruh tentang seberapa sering setiap kejadian diperkirakan muncul.',
+        points: [
+          'Rentang Nilai: Setiap probabilitas individu harus bernilai non-negatif dan tidak melebihi satu: 0 ≤ P(X = x) ≤ 1.',
+          'Penjumlahan Peluang: Jumlah total seluruh kemungkinan probabilitas dalam ruang sampel harus tepat sama dengan satu: Σ P(X = x) = 1.00 (100%).',
+          'Sifat Eksklusif: Setiap nilai outcome bersifat saling lepas (mutually exclusive); suatu sesi tidak bisa sekaligus mengalami tepat 1 gangguan dan tepat 2 gangguan.',
+        ],
+        formula: '0 ≤ P(X = x) ≤ 1   dan   Σ P(X = x) = 1.00',
+        formulaSymbols: [
+          { symbol: 'X', meaning: 'Variabel acak diskrit yang sedang diteliti' },
+          { symbol: 'x', meaning: 'Nilai numerik spesifik yang dapat diambil oleh variabel X' },
+          { symbol: 'P(X = x)', meaning: 'Probabilitas bahwa variabel acak X menghasilkan nilai tepat x' },
+          { symbol: 'Σ', meaning: 'Sigma (penjumlahan atas seluruh nilai x yang mungkin)' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Daftar Seluruh Nilai Variabel Acak X',
+            instruction:
+              'Identifikasi seluruh kemungkinan hasil pencacahan yang dapat terjadi (misal X = 0, 1, 2, 3, 4 kali gangguan).',
+          },
+          {
+            step: 2,
+            title: 'Tentukan Probabilitas untuk Masing-Masing Nilai X',
+            instruction:
+              'Hitung frekuensi relatif atau gunakan model teoritis untuk menetapkan nilai P(X = x) di setiap baris.',
+          },
+          {
+            step: 3,
+            title: 'Periksa Validitas Penjumlahan: Σ P(X) = 1.00',
+            instruction:
+              'Jumlahkan semua nilai probabilitas: 0.10 + 0.30 + 0.30 + 0.20 + 0.10 = 1.00. Jika totalnya tidak 1.00, tabel belum sah.',
+          },
+          {
+            step: 4,
+            title: 'Hitung Peluang Rentang Peristiwa jika Diperlukan',
+            instruction:
+              'Untuk mencari peluang minimal 2 gangguan P(X ≥ 2), jumlahkan baris X=2, X=3, dan X=4: 0.30 + 0.20 + 0.10 = 0.60 (60%).',
+          },
+        ],
+        visualType: 'discrete-distribution',
+      },
+      {
+        id: 'dpd-2-expected-value-variance',
+        heading: 'Nilai Harapan (Expected Value) & Varians / Standar Deviasi',
+        group: 'Variabel Diskrit & Nilai Harapan',
+        body: 'Nilai Harapan (**Expected Value**) yang dilambangkan E(X) atau μ adalah rata-rata tertimbang (**weighted average**) jangka panjang dari variabel acak X, di mana bobot penimbangnya adalah probabilitas masing-masing kejadian P(X = x).\n\nSementara itu, **Variance** (σ²) dan **Standard Deviation** (σ) mengukur seberapa jauh nilai-nilai outcome menyebar atau berfluktuasi dari nilai harapan pusatnya. Standar deviasi selalu dinyatakan dalam satuan asli yang sama dengan variabelnya.',
+        points: [
+          'Makna Jangka Panjang: E(X) bukan jaminan hasil satu kali percobaan, melainkan rata-rata teoritis bila percobaan diulang dalam jumlah yang sangat banyak.',
+          'Bobot Probabilitas: Nilai X yang memiliki peluang lebih besar akan memberikan kontribusi lebih kuat terhadap nilai tengah E(X).',
+          'Akar Varians: Standar deviasi σ = √σ² mengembalikan ukuran dispersi ke satuan aslinya sehingga mudah diinterpretasikan.',
+        ],
+        formula: 'E(X) = μ = Σ [x · P(X = x)]   |   σ² = Σ [(x - μ)² · P(X = x)]   |   σ = √σ²',
+        formulaSymbols: [
+          { symbol: 'E(X) / μ', meaning: 'Nilai harapan (Expected Value) atau rata-rata terbobot populasi' },
+          { symbol: 'x · P(X = x)', meaning: 'Perkalian setiap nilai x dengan probabilitas kemunculannya' },
+          { symbol: 'σ²', meaning: 'Varians variabel diskrit (rata-rata deviasi kuadrat terbobot)' },
+          { symbol: 'σ', meaning: 'Standar deviasi variabel diskrit (simpangan dalam satuan asli)' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Buat Kolom Pengali x · P(X = x)',
+            instruction:
+              'Kalikan tiap nilai x dengan probabilitasnya: 0×0.10=0.00, 1×0.30=0.30, 2×0.30=0.60, 3×0.20=0.60, 4×0.10=0.40.',
+          },
+          {
+            step: 2,
+            title: 'Jumlahkan untuk Memperoleh Nilai Harapan E(X) = μ',
+            instruction:
+              'Jumlahkan seluruh hasil kali di langkah 1: E(X) = 0 + 0.30 + 0.60 + 0.60 + 0.40 = 1.90 kali gangguan sinyal.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Deviasi Kuadrat Terbobot: (x - μ)² · P(X = x)',
+            instruction:
+              'Kurangkan tiap x dengan μ=1.9, kuadratkan selisihnya, lalu kalikan dengan P(X). Contoh: (0-1.9)²×0.10 = 0.361.',
+          },
+          {
+            step: 4,
+            title: 'Jumlahkan Menjadi Varians dan Tarik Akar untuk Standar Deviasi',
+            instruction:
+              'Total deviasi kuadrat menghasilkan varians σ² = 1.290. Tarik akar kuadrat: σ = √1.290 ≈ 1.136 kali gangguan.',
+          },
+        ],
+        visualType: 'discrete-distribution',
+      },
+      {
+        id: 'dpd-3-syarat-binomial',
+        heading: 'Syarat & Karakteristik Eksperimen Binomial',
+        group: 'Distribusi Binomial',
+        body: 'Distribusi Binomial (**Binomial Distribution**) adalah salah satu model probabilitas diskrit yang paling banyak diterapkan di dunia nyata. Kata binomial merujuk pada struktur dua kemungkinan hasil (**binary outcome**).\n\nUntuk dapat menggunakan model Binomial, eksperimen yang dilakukan wajib memenuhi 4 syarat formal tanpa terkecuali. Jika ada satu syarat saja yang dilanggar, maka kesimpulan perhitungan probabilitas tidak akan valid.',
+        points: [
+          'Syarat 1 (Fixed Trials n): Eksperimen terdiri dari n pengulangan percobaan yang identik dan jumlahnya sudah ditentukan sejak awal.',
+          'Syarat 2 (Two Outcomes): Setiap percobaan hanya memiliki 2 kemungkinan hasil yang saling lepas: Sukses (S) atau Gagal (F).',
+          'Syarat 3 (Constant Probability π): Peluang keberhasilan π selalu konstan dan tidak berubah dari percobaan pertama hingga terakhir.',
+          'Syarat 4 (Independent Trials): Setiap percobaan bersifat independen; hasil satu percobaan tidak memengaruhi peluang percobaan lain.',
+        ],
+        formula: 'P(Sukses) = π   |   P(Gagal) = 1 - π',
+        formulaSymbols: [
+          { symbol: 'n', meaning: 'Banyak percobaan identik yang dilakukan' },
+          { symbol: 'π (pi)', meaning: 'Peluang terjadinya sukses pada setiap percobaan tunggal' },
+          { symbol: '1 - π', meaning: 'Peluang kegagalan pada setiap percobaan tunggal (sering dinotasikan q)' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Pastikan Ukuran Percobaan Tetap (n)',
+            instruction:
+              'Tentukan berapa kali percobaan diulang secara terencana (misal n = 5 soal kuis atau n = 10 lemparan koin).',
+          },
+          {
+            step: 2,
+            title: 'Definisikan Hasil "Sukses" dan "Gagal"',
+            instruction:
+              'Tetapkan apa yang dianggap sukses (misal menjawab benar) dan gagal (menjawab salah), tanpa adanya hasil ketiga.',
+          },
+          {
+            step: 3,
+            title: 'Verifikasi Ketetapan Nilai Peluang π',
+            instruction:
+              'Periksa apakah peluang sukses selalu sama di setiap percobaan (misal 1/4 = 0.25 untuk 4 opsi pilihan ganda).',
+          },
+          {
+            step: 4,
+            title: 'Uji Independensi Antar Percobaan',
+            instruction:
+              'Pastikan tebakan pada soal pertama tidak mengubah peluang tebakan pada soal-soal berikutnya.',
+          },
+        ],
+        visualType: 'binomial-conditions',
+      },
+      {
+        id: 'dpd-4-kombinasi',
+        heading: 'Kombinasi (Combination) & Kaidah Pencacahan',
+        group: 'Distribusi Binomial',
+        body: 'Dalam eksperimen binomial, kita sering kali hanya peduli pada berapa banyak keberhasilan yang tercapai, bukan urutan bagaimana keberhasilan tersebut terjadi. Misalnya, jika seorang mahasiswa menjawab benar 2 dari 5 soal kuis, keberhasilan tersebut dapat terjadi pada soal (1 dan 2), (1 dan 3), (3 dan 5), dan seterusnya.\n\nRumus **Combination** nCx menghitung berapa banyak cara memilih x objek sukses dari n percobaan tanpa memedulikan urutan kemunculannya.',
+        points: [
+          'Pengabaian Urutan: Dalam kombinasi, susunan {A, B} dianggap sama dengan {B, A}.',
+          'Definisi Faktorial: n! = n × (n - 1) × (n - 2) × ... × 1, dengan definisi khusus 0! = 1.',
+          'Sifat Simetri Kombinasi: nCx = nC(n - x). Contohnya: 5C2 = 10 dan 5C3 = 10.',
+          'Nilai Khusus: nC0 = 1 (hanya ada 1 cara tidak memilih sama sekali) dan nCn = 1 (hanya ada 1 cara memilih semuanya).',
+        ],
+        formula: 'nCx = n! / [x! · (n - x)!]',
+        formulaSymbols: [
+          { symbol: 'nCx', meaning: 'Banyak kombinasi memilih x objek dari n objek tanpa memperhatikan urutan' },
+          { symbol: 'n!', meaning: 'Faktorial dari total percobaan n' },
+          { symbol: 'x!', meaning: 'Faktorial dari jumlah sukses target x' },
+          { symbol: '(n - x)!', meaning: 'Faktorial dari jumlah kegagalan (n - x)' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Identifikasi Nilai n dan x',
+            instruction:
+              'Tentukan jumlah total item atau percobaan n dan banyak item yang dipilih x (misal n = 5, x = 2).',
+          },
+          {
+            step: 2,
+            title: 'Tuliskan Rumus Faktorial',
+            instruction:
+              'Tuliskan pecahan 5C2 = 5! / [2! · (5 - 2)!] = 5! / [2! · 3!].',
+          },
+          {
+            step: 3,
+            title: 'Lakukan Pembatalan Faktor Terbesar untuk Efisiensi',
+            instruction:
+              'Jabarkan 5! = 5 × 4 × 3!. Coret 3! di pembilang dan penyebut: menyisakan (5 × 4) / (2 × 1).',
+          },
+          {
+            step: 4,
+            title: 'Hitung Hasil Akhir Kombinasi',
+            instruction:
+              'Hitung 20 / 2 = 10 cara kombinasi yang berbeda untuk memilih 2 soal benar dari 5 soal.',
+          },
+        ],
+        visualType: 'combination',
+      },
+      {
+        id: 'dpd-5-distribusi-binomial',
+        heading: 'Distribusi Probabilitas Binomial',
+        group: 'Distribusi Binomial',
+        body: 'Rumus **Binomial Distribution** menggabungkan dua pilar utama: banyaknya susunan urutan (dihitung dengan kombinasi nCx) dan peluang terjadinya satu urutan tertentu (dihitung dengan aturan perkalian probabilitas independen π^x · (1 - π)^(n - x)).\n\nRumus ini menghasilkan probabilitas tepat mendapatkan x kali sukses dari total n percobaan bebas dengan peluang sukses per percobaan sebesar π.',
+        points: [
+          'Dua Komponen Rumus: nCx menentukan banyaknya jalur, sedangkan π^x · (1 - π)^(n - x) menentukan bobot peluang setiap jalur.',
+          'Peluang Titik: P(X = x) menghitung peluang tepat x sukses.',
+          'Peluang Kumulatif: P(X ≥ x) dihitung dengan menjumlahkan probabilitas dari x hingga n, atau menggunakan aturan komplemen: 1 - P(X < x).',
+          'Contoh Soal Kuis Tebak Murni: Dari 5 soal pilihan ganda (π = 0.25), peluang mendapat tepat 2 benar adalah 0.2637 (26.37%).',
+        ],
+        formula: 'P(X = x) = [n! / (x!(n - x)!)] · π^x · (1 - π)^(n - x)',
+        formulaSymbols: [
+          { symbol: 'X', meaning: 'Variabel acak binomial (jumlah sukses yang terjadi)' },
+          { symbol: 'n', meaning: 'Banyak percobaan identik dan independen' },
+          { symbol: 'x', meaning: 'Jumlah target sukses yang ingin dihitung peluangnya (x = 0, 1, ..., n)' },
+          { symbol: 'π', meaning: 'Peluang sukses di setiap percobaan tunggal' },
+          { symbol: '1 - π', meaning: 'Peluang gagal di setiap percobaan tunggal' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Tetapkan Parameter n, π, dan Target x',
+            instruction:
+              'Untuk kuis 5 soal: n = 5, peluang menebak benar π = 0.25, peluang gagal 1 - π = 0.75, dan target x = 2.',
+          },
+          {
+            step: 2,
+            title: 'Hitung Faktor Kombinasi nCx',
+            instruction:
+              'Hitung 5C2 = 5! / (2! · 3!) = 10 cara urutan jawaban benar.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Peluang Satu Jalur Urutan: π^x · (1 - π)^(n - x)',
+            instruction:
+              'Hitung (0.25)² × (0.75)³ = 0.0625 × 0.421875 = 0.026367.',
+          },
+          {
+            step: 4,
+            title: 'Kalikan Kombinasi dengan Peluang Satu Jalur',
+            instruction:
+              'P(X = 2) = 10 × 0.026367 = 0.2637 (26.37%). Peluang menebak tepat 2 benar adalah 26.37%.',
+          },
+        ],
+        visualType: 'binomial-distribution',
+      },
+      {
+        id: 'dpd-6-mean-sd-binomial',
+        heading: 'Rata-rata dan Standar Deviasi Distribusi Binomial',
+        group: 'Distribusi Binomial',
+        body: 'Salah satu keistimewaan luar biasa dari distribusi Binomial adalah kita tidak perlu menghitung tabel perkalian panjang Σ [x · P(x)] untuk mencari nilai tengah dan penyebarannya. Parameter rata-rata populasi (μ), varians (σ²), dan standar deviasi (σ) dapat langsung dihitung dari rumus ringkas berbasis n dan π.\n\nSelain itu, ketika ukuran n cukup besar sehingga nπ ≥ 5 dan n(1 - π) ≥ 5 (**Rule of Thumb**), bentuk kurva binomial yang awalnya condong akan berubah menjadi simetris berbentuk lonceng dan dapat didekati menggunakan Distribusi Normal Gauss.',
+        points: [
+          'Rata-rata Ringkas: μ = nπ. Pada kuis 5 soal dengan π = 0.25, rata-rata mahasiswa yang menebak murni diharapkan benar μ = 5 × 0.25 = 1.25 soal.',
+          'Varians Ringkas: σ² = nπ(1 - π) = 1.25 × 0.75 = 0.9375.',
+          'Standar Deviasi: σ = √[nπ(1 - π)] = √0.9375 ≈ 0.968 soal.',
+          'Aturan Praktis (Rule of Thumb): Jika nπ ≥ 5 dan n(1 - π) ≥ 5, distribusi binomial dapat didekati dengan kurva normal kontinu.',
+        ],
+        formula: 'μ = n · π   |   σ² = n · π · (1 - π)   |   σ = √[n · π · (1 - π)]',
+        formulaSymbols: [
+          { symbol: 'μ', meaning: 'Rata-rata (mean) jumlah keberhasilan yang diharapkan dalam n percobaan' },
+          { symbol: 'σ²', meaning: 'Varians populasi distribusi binomial' },
+          { symbol: 'σ', meaning: 'Standar deviasi populasi distribusi binomial' },
+          { symbol: 'nπ ≥ 5', meaning: 'Batas kecukupan data untuk pendekatan distribusi normal simetris' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Hitung Rata-rata Binomial: μ = n · π',
+            instruction:
+              'Kalikan jumlah soal n = 5 dengan peluang benar π = 0.25: μ = 5 × 0.25 = 1.25 soal benar.',
+          },
+          {
+            step: 2,
+            title: 'Hitung Varians Binomial: σ² = n · π · (1 - π)',
+            instruction:
+              'Kalikan rata-rata dengan peluang salah 0.75: σ² = 1.25 × 0.75 = 0.9375.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Standar Deviasi: σ = √σ²',
+            instruction:
+              'Tarik akar kuadrat dari varians: σ = √0.9375 ≈ 0.968 soal.',
+          },
+          {
+            step: 4,
+            title: 'Uji Aturan Praktis Pendekatan Normal',
+            instruction:
+              'Periksa nπ = 1.25 (< 5). Karena bernilai di bawah 5, kuis 5 soal masih asimetris dan wajib menggunakan rumus binomial eksak.',
+          },
+        ],
+        visualType: 'binomial-mean-sd',
+      },
+      {
+        id: 'dpd-7-distribusi-poisson',
+        heading: 'Distribusi Probabilitas Poisson',
+        group: 'Distribusi Poisson',
+        body: 'Distribusi Poisson (**Poisson Distribution**) digunakan untuk menghitung probabilitas kemunculan sejumlah kejadian diskrit dalam suatu interval kontinu yang tetap (seperti rentang waktu, jarak, luas wilayah, atau volume).\n\nModel ini sangat populer untuk menganalisis kedatangan pelanggan, panggilan telepon ke call center, cacat pada permukaan kain, atau jumlah pengunjung website per menit. Ciri khas Poisson adalah hanya membutuhkan satu parameter tunggal: laju rata-rata kedatangan λ (lambda).',
+        points: [
+          'Satu Parameter Tunggal λ: Menggambarkan rata-rata frekuensi kemunculan peristiwa per satuan rentang kontinu.',
+          'Keistimewaan Matematis: Rata-rata dan varians dari distribusi Poisson bernilai identik sama: μ = λ dan σ² = λ, sehingga standar deviasinya σ = √λ.',
+          'Konstanta Euler: Rumus menggunakan basis logaritma natural e ≈ 2.71828.',
+          'Kejadian Diskrit Acak: Peristiwa terjadi secara acak dan independen satu sama lain tanpa saling menumpuk.',
+        ],
+        formula: 'P(X = x) = (λ^x · e^(-λ)) / x!',
+        formulaSymbols: [
+          { symbol: 'λ (lambda)', meaning: 'Rata-rata frekuensi kejadian per satuan rentang waktu atau ruang' },
+          { symbol: 'e', meaning: 'Konstanta bilangan Euler alami (e ≈ 2.71828)' },
+          { symbol: 'x', meaning: 'Jumlah kejadian target yang ingin dihitung peluangnya (x = 0, 1, 2, ...)' },
+          { symbol: 'x!', meaning: 'Faktorial dari nilai target x' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Tentukan Nilai Parameter Laju λ',
+            instruction:
+              'Misalkan pada studi kasus pengunjung website, diketahui rata-rata kedatangan λ = 3 pengunjung per menit.',
+          },
+          {
+            step: 2,
+            title: 'Hitung Nilai Eksponensial Basis Euler: e^(-λ)',
+            instruction:
+              'Hitung e^(-3) = (2.71828)^(-3) ≈ 0.049787 (sekitar 0.0498).',
+          },
+          {
+            step: 3,
+            title: 'Hitung Suku Pangkat dan Faktorial untuk Target x',
+            instruction:
+              'Untuk menghitung peluang tepat x = 2 pengunjung: λ^x = 3² = 9, dan x! = 2! = 2. Maka suku pembagi adalah 9 / 2 = 4.5.',
+          },
+          {
+            step: 4,
+            title: 'Kalikan Komponen untuk Mendapatkan P(X = x)',
+            instruction:
+              'P(X = 2) = 4.5 × 0.049787 = 0.2240 (22.40%). Peluang tepat 2 pengunjung tiba dalam semenit adalah 22.40%.',
+          },
+        ],
+        visualType: 'poisson-distribution',
+      },
+      {
+        id: 'dpd-8-area-of-opportunity',
+        heading: 'Rentang Kesempatan (Area of Opportunity) Poisson',
+        group: 'Distribusi Poisson',
+        body: 'Konsep terpenting dalam penerapan praktis Poisson adalah **Area of Opportunity** (bidang atau interval kesempatan di mana suatu kejadian memiliki peluang untuk terjadi).\n\nJika rentang waktu atau luas area yang diamati diperbesar atau diperkecil, maka parameter laju λ wajib disesuaikan secara proporsional. Misalnya, jika rata-rata kedatangan pengunjung adalah 3 orang per menit (60 detik), maka dalam interval 10 detik rata-rata yang diharapkan turun menjadi 0.5 orang.',
+        points: [
+          'Penyesuaian Skala Proporsional: λ_baru = λ_dasar × (Ukuran Rentang Baru / Ukuran Rentang Dasar).',
+          'Peluang Komplemen Kumulatif: Untuk menghitung peluang "paling sedikit 2 pengunjung" P(X ≥ 2), gunakan rumus komplementer: P(X ≥ 2) = 1 - P(0) - P(1).',
+          'Perubahan Drastis: Dalam 60 detik (λ = 3), P(X ≥ 2) mencapai 80.09%. Namun dalam rentang 1 detik (λ = 0.05), peluang terjadi ≥2 pengunjung anjlok ke 0.12%.',
+        ],
+        formula: 'λ_baru = λ_dasar · (Rentang Baru / Rentang Dasar)   |   P(X ≥ 2) = 1 - P(0) - P(1)',
+        formulaSymbols: [
+          { symbol: 'λ_baru', meaning: 'Parameter laju Poisson yang disesuaikan dengan jendela waktu baru' },
+          { symbol: 'λ_dasar', meaning: 'Laju rata-rata kedatangan pada satuan waktu standar (misal per menit)' },
+          { symbol: 'P(X ≥ 2)', meaning: 'Peluang terjadi 2 atau lebih peristiwa dihitung via komplemen 1 - [P(0) + P(1)]' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Ketahui Laju Dasar per Satuan Standar',
+            instruction:
+              'Laju dasar website adalah λ = 3 pengunjung per 60 detik (0.05 pengunjung per detik).',
+          },
+          {
+            step: 2,
+            title: 'Skalakan Nilai λ ke Rentang Waktu yang Diminta',
+            instruction:
+              'Untuk rentang 10 detik: λ = 3 × (10 / 60) = 0.5 pengunjung. Untuk 1 detik: λ = 3 × (1 / 60) = 0.05 pengunjung.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Peluang Kasus Dasar P(0) dan P(1)',
+            instruction:
+              'Untuk jendela 10 detik (λ = 0.5): P(0) = e^(-0.5) = 0.6065, dan P(1) = 0.5 × e^(-0.5) = 0.3033.',
+          },
+          {
+            step: 4,
+            title: 'Hitung Peluang Komplementer P(X ≥ 2)',
+            instruction:
+              'P(X ≥ 2) = 1 - (0.6065 + 0.3033) = 1 - 0.9098 = 0.0902 (9.02%).',
+          },
+        ],
+        visualType: 'poisson-area',
+      },
+      {
+        id: 'dpd-9-distribusi-hipergeometrik',
+        heading: 'Distribusi Hipergeometrik: Sampling Tanpa Pengembalian',
+        group: 'Distribusi Hipergeometrik',
+        body: 'Ketika kita mengambil sampel dari populasi berukuran kecil (terbatas) **tanpa pengembalian** (**Without Replacement**), setiap kali satu item ditarik, komposisi populasi yang tersisa berubah. Akibatnya, peluang keberhasilan di tarikan berikutnya tidak lagi konstan dan percobaan menjadi saling dependen.\n\nKondisi ini melanggar asumsi dasar Binomial. Model matematika yang tepat untuk situasi tanpa pengembalian ini adalah **Hypergeometric Distribution**.',
+        points: [
+          'Populasi Terbatas (N): Ukuran populasi N diketahui secara pasti dan relatif kecil terhadap ukuran sampel (umumnya n/N > 0.05).',
+          'Komposisi Dikotomis: Terdapat A item sukses dan (N - A) item gagal di dalam populasi awal.',
+          'Peluang Dependen: Tarikan pertama mengubah peluang tarikan kedua. Misalnya dari 10 lampu (3 rusak), P(rusak ke-1) = 3/10 = 0.30; jika tarikan ke-1 rusak, maka P(rusak ke-2) turun menjadi 2/9 ≈ 0.222.',
+          'Rasio Kombinasi: Rumus menghitung kombinasi sukses dikali kombinasi gagal, dibagi total kombinasi seluruh sampel.',
+        ],
+        formula: 'P(X = x) = [ ACx · (N - A)C(n - x) ] / NCn',
+        formulaSymbols: [
+          { symbol: 'N', meaning: 'Ukuran total populasi terhingga' },
+          { symbol: 'A', meaning: 'Jumlah item sukses di dalam populasi (misal 3 lampu rusak)' },
+          { symbol: 'n', meaning: 'Ukuran sampel yang diambil tanpa pengembalian (misal n = 2)' },
+          { symbol: 'x', meaning: 'Target jumlah sukses yang terambil di dalam sampel' },
+          { symbol: 'NCn', meaning: 'Total seluruh kemungkinan kombinasi sampel berukuran n dari populasi N' },
+        ],
+        stepsLabel: 'Cara menghitung',
+        steps: [
+          {
+            step: 1,
+            title: 'Identifikasi Parameter Populasi dan Sampel',
+            instruction:
+              'Pada studi kasus lampu LED: total populasi N = 10, jumlah rusak A = 3, jumlah baik (N - A) = 7, dan ukuran sampel n = 2.',
+          },
+          {
+            step: 2,
+            title: 'Hitung Total Kombinasi Sampel: NCn',
+            instruction:
+              'Hitung total cara mengambil 2 dari 10 lampu: 10C2 = 10! / (2! · 8!) = 45 kombinasi penyebut.',
+          },
+          {
+            step: 3,
+            title: 'Hitung Kombinasi Pembilang untuk Target x = 1 Rusak',
+            instruction:
+              'Pilih 1 dari 3 rusak: 3C1 = 3. Pilih 1 dari 7 normal: 7C1 = 7. Kalikan pembilangnya: 3 × 7 = 21 cara.',
+          },
+          {
+            step: 4,
+            title: 'Bagi Pembilang dengan Penyebut',
+            instruction:
+              'P(X = 1) = 21 / 45 ≈ 0.4667 (46.67%). Peluang terambil tepat 1 lampu rusak dan 1 normal adalah 46.67%.',
+          },
+        ],
+        visualType: 'hypergeometric',
+      },
+      {
+        id: 'dpd-10-rangkuman-rumus',
+        heading: 'Tabel Komparasi & Rangkuman Rumus Distribusi Diskrit',
+        group: 'Rangkuman Distribusi Probabilitas Diskrit',
+        body: 'Berikut adalah panduan komparasi praktis untuk memilih model distribusi probabilitas diskrit yang tepat berdasarkan karakteristik eksperimen data riset dan tugas perkuliahanmu.',
+        points: [
+          'Gunakan Diskrit Umum jika peluang tiap nilai x diberikan langsung lewat tabel frekuensi empiris tanpa pola fungsi khusus.',
+          'Gunakan Binomial jika ada n percobaan bebas, hanya 2 hasil (sukses/gagal), dan peluang sukses π tetap konstan.',
+          'Gunakan Poisson jika menghitung kemunculan peristiwa dalam suatu rentang waktu atau wilayah kontinu dengan laju rata-rata λ.',
+          'Gunakan Hipergeometrik jika penarikan sampel dilakukan dari populasi terbatas tanpa pengembalian (sampling without replacement).',
+        ],
+        summaryTable: {
+          columns: ['Model Distribusi', 'Rumus Probabilitas P(X = x)', 'Parameter Rata-rata & Varians', 'Kapan Digunakan'],
+          rows: [
+            {
+              ukuran: 'Diskrit Umum',
+              sampel: 'P(X = x) empiris, Σ P(x) = 1.00',
+              populasi: 'μ = Σ [x · P(x)], σ² = Σ [(x - μ)² · P(x)]',
+              catatan: 'Variabel acak diskrit dengan bobot probabilitas yang terdaftar dalam tabel terhingga.',
+            },
+            {
+              ukuran: 'Binomial',
+              sampel: 'P(x) = nCx · π^x · (1 - π)^(n - x)',
+              populasi: 'μ = nπ, σ² = nπ(1 - π), σ = √[nπ(1 - π)]',
+              catatan: 'n percobaan independen, hasil dikotomis (sukses/gagal), peluang sukses konstan π.',
+            },
+            {
+              ukuran: 'Poisson',
+              sampel: 'P(x) = (λ^x · e^-λ) / x!',
+              populasi: 'μ = λ, σ² = λ, σ = √λ (Mean = Varians!)',
+              catatan: 'Jumlah kemunculan event acak dalam rentang waktu, jarak, atau area kontinu dengan laju λ.',
+            },
+            {
+              ukuran: 'Hipergeometrik',
+              sampel: 'P(x) = [ ACx · (N - A)C(n - x) ] / NCn',
+              populasi: 'μ = n(A / N), σ² = n(A / N)(1 - A/N)[(N - n)/(N - 1)]',
+              catatan: 'Sampling dari populasi terbatas N tanpa pengembalian (dependen, peluang sukses berubah).',
+            },
+          ],
+        },
       },
     ],
   },

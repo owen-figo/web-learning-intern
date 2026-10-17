@@ -1,6 +1,7 @@
 import React from 'react';
 import { ActivePage, Topic, TopicStatus, UserProfile } from '../types';
-import { mockTopics } from '../data/mockData';
+import { mockTopics, theoryContents } from '../data/mockData';
+import { RichText } from '../components/RichText';
 
 interface TopicsPageProps {
   user: UserProfile;
@@ -187,12 +188,14 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
                           {topic.contentType === 'teori' && (
                             <span className="px-2 py-0.5 rounded text-[11px] font-medium bg-primary-fixed/30 text-primary border border-primary/20 flex items-center gap-1">
                               <span className="material-symbols-outlined text-[13px]">schedule</span>
-                              <span>~10 menit baca</span>
+                              <span>
+                                ~{theoryContents.find((tc) => tc.topicId === topic.id)?.estimatedReadMinutes || 15} menit baca
+                              </span>
                             </span>
                           )}
                         </div>
                         <h2 className="text-base sm:text-lg font-bold text-on-surface">
-                          {topic.order}. {topic.title}
+                          {topic.order}. <RichText text={topic.title} />
                         </h2>
                       </div>
                     </div>
@@ -222,7 +225,7 @@ export const TopicsPage: React.FC<TopicsPageProps> = ({
 
                   {/* Topic Description */}
                   <p className="text-xs sm:text-sm text-on-surface-variant mb-4 leading-relaxed">
-                    {topic.description}
+                    <RichText text={topic.description} />
                   </p>
 
                   {/* Middle Section: Progress or Lock helper */}

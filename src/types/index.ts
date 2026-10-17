@@ -66,18 +66,56 @@ export interface HowToMakeStep {
   instruction: string;
 }
 
+export interface FormulaSymbol {
+  symbol: string;
+  meaning: string;
+}
+
+export interface FormulaItem {
+  label?: string;
+  formula: string;
+  note?: string;
+  symbols?: FormulaSymbol[];
+}
+
+export interface CalculationStep {
+  step: number;
+  title: string;
+  instruction: string;
+  subSteps?: string[];
+  substituted?: string;
+}
+
+export interface SummaryTableRow {
+  ukuran: string;
+  sampel: string;
+  populasi?: string;
+  catatan?: string;
+}
+
 export interface TheorySection {
   id: string;
   heading: string;
+  group?: string;
   body: string;
+  points?: string[];
   formula?: string;
   formulaNote?: string;
-  examples?: TheoryExample[];
-  terms?: { term: string; definition: string; example?: string }[];
-  scenario?: string;
+  formulaSymbols?: FormulaSymbol[];
+  formulas?: FormulaItem[];
+  stepsLabel?: string;
   howToMake?: {
     title?: string;
     steps: HowToMakeStep[];
+  };
+  steps?: CalculationStep[];
+  examples?: TheoryExample[];
+  terms?: { term: string; definition: string; example?: string }[];
+  scenario?: string;
+  visualStage?: number;
+  summaryTable?: {
+    columns: string[];
+    rows: SummaryTableRow[];
   };
   visualType?:
     | 'jenis-variabel'
@@ -95,6 +133,36 @@ export interface TheorySection {
     | 'ogive-curve'
     | 'scatter-timeseries'
     | 'misleading-graphs'
+    | 'mean-median-mode'
+    | 'geometric-mean'
+    | 'range'
+    | 'variance-sd'
+    | 'coefficient-of-variation'
+    | 'z-score'
+    | 'skewness'
+    | 'kurtosis'
+    | 'quartiles-iqr'
+    | 'five-number-summary'
+    | 'boxplot'
+    | 'population-measures'
+    | 'covariance'
+    | 'correlation'
+    | 'probability-scale'
+    | 'jenis-probabilitas'
+    | 'sample-space'
+    | 'contingency-probability'
+    | 'conditional-probability'
+    | 'decision-tree'
+    | 'independence'
+    | 'multiplication-rule'
+    | 'discrete-distribution'
+    | 'binomial-conditions'
+    | 'combination'
+    | 'binomial-distribution'
+    | 'binomial-mean-sd'
+    | 'poisson-distribution'
+    | 'poisson-area'
+    | 'hypergeometric'
     | string;
 }
 
