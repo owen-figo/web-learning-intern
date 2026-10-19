@@ -431,7 +431,7 @@ export const GeometricMeanVisual: React.FC = () => {
             <div key={idx} className="p-3 bg-surface-container-lowest rounded-xl border border-outline-variant/40 space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <span className="font-bold text-on-surface">Tahun {idx + 1}</span>
-                <span className={`font-mono font-bold ${rate >= 0 ? 'text-teal-700 dark:text-teal-300' : 'text-rose-700 dark:text-rose-300'}`}>
+                <span className={`font-mono font-bold ${rate >= 0 ? 'text-primary' : 'text-error'}`}>
                   {rate >= 0 ? `+${rate}%` : `${rate}%`}
                 </span>
               </div>
@@ -444,7 +444,7 @@ export const GeometricMeanVisual: React.FC = () => {
                 onChange={(e) => handleRateChange(idx, Number(e.target.value))}
                 className="w-full accent-primary cursor-pointer"
               />
-              <div className="text-[11px] text-on-surface-variant font-mono">
+              <div className="text-xs text-on-surface-variant font-mono">
                 Faktor: (1 + {rate / 100 >= 0 ? `+${(rate / 100).toFixed(2)}` : (rate / 100).toFixed(2)}) = {(1 + rate / 100).toFixed(2)}
               </div>
             </div>
@@ -453,26 +453,26 @@ export const GeometricMeanVisual: React.FC = () => {
 
         {/* Side-by-side comparison */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-          <div className="p-4 rounded-xl bg-teal-50 dark:bg-teal-950/40 border-2 border-teal-300 dark:border-teal-800 space-y-1">
-            <span className="text-[11px] font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wide">
+          <div className="p-4 rounded-xl bg-primary-fixed/20 border-2 border-primary/30 space-y-1">
+            <span className="text-xs font-bold text-primary uppercase tracking-wide">
               Geometric Mean (R_G) — Tepat untuk Laju Majemuk
             </span>
-            <div className="text-2xl font-extrabold text-teal-900 dark:text-teal-100 font-mono">
+            <div className="text-2xl font-extrabold text-primary font-mono">
               {geometricMean.toFixed(2)}%
             </div>
-            <p className="text-[11px] text-teal-950/80 dark:text-teal-200/80 leading-relaxed">
+            <p className="text-xs text-on-surface-variant leading-relaxed">
               Mencerminkan pertumbuhan majemuk nyata saldo awal investasi jika bertumbuh dengan laju tetap setiap tahun.
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border-2 border-amber-300 dark:border-amber-800 space-y-1">
-            <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300 uppercase tracking-wide">
+          <div className="p-4 rounded-xl bg-secondary-fixed/25 border-2 border-secondary/30 space-y-1">
+            <span className="text-xs font-bold text-secondary uppercase tracking-wide">
               Arithmetic Mean (X̄) — Bias Terlalu Tinggi
             </span>
-            <div className="text-2xl font-extrabold text-amber-900 dark:text-amber-100 font-mono">
+            <div className="text-2xl font-extrabold text-secondary font-mono">
               {arithmeticMean.toFixed(2)}%
             </div>
-            <p className="text-[11px] text-amber-950/80 dark:text-amber-200/80 leading-relaxed">
+            <p className="text-xs text-on-surface-variant leading-relaxed">
               Rata-rata aritmatika biasa ({arithmeticMean.toFixed(2)}%) selalu melebih-lebihkan laju pertumbuhan finansial nyata saat ada fluktuasi.
             </p>
           </div>
