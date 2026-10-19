@@ -1829,119 +1829,263 @@ export const ScatterTimeSeriesVisual: React.FC = () => {
 // =========================================================================
 // 10. MISLEADING GRAPHS VS ETHICAL VISUALS
 // =========================================================================
+interface BarItem {
+  label: string;
+  value: number;
+  color?: string;
+}
+
+interface BarCompareProps {
+  title: string;
+  badge: string;
+  bars: BarItem[];
+  axisStart: number;
+  axisMax: number;
+  ticks: number[];
+  tone: 'bad' | 'good';
+  takeaway: React.ReactNode;
+}
+
+const BarCompare: React.FC<BarCompareProps> = ({
+  title,
+  badge,
+  bars,
+  axisStart,
+  axisMax,
+  ticks,
+  tone,
+  takeaway,
+}) => {
+  const isBad = tone === 'bad';
+
+  return (
+    <div
+      className={`w-full min-w-0 p-4 rounded-2xl border-2 space-y-4 text-[#1B2430] flex flex-col justify-between ${
+        isBad ? 'bg-rose-50 border-rose-300' : 'bg-teal-50 border-teal-300'
+      }`}
+    >
+      {/* 1. Card Header */}
+      <div
+        className={`flex flex-wrap items-center justify-between gap-2 pb-3 border-b ${
+          isBad ? 'border-rose-200' : 'border-teal-200'
+        }`}
+      >
+        <div className="flex items-center gap-2 min-w-0">
+          <span
+            className={`material-symbols-outlined text-[20px] shrink-0 ${
+              isBad ? 'text-rose-600' : 'text-teal-700'
+            }`}
+          >
+            {isBad ? 'cancel' : 'check_circle'}
+          </span>
+          <h4 className="text-base font-bold text-[#1B2430] leading-snug">{title}</h4>
+        </div>
+        <span
+          className={`text-xs font-mono font-bold px-2.5 py-1 rounded-md border shrink-0 ${
+            isBad
+              ? 'bg-rose-200/90 text-[#1B2430] border-rose-300'
+              : 'bg-teal-200/90 text-[#1B2430] border-teal-300'
+          }`}
+        >
+          {badge}
+        </span>
+      </div>
+
+      {/* 2. Chart Layout */}
+      <div className="w-full">
+        {/* Plot area with explicit 220px pixel height and 32px top padding */}
+        <div className="relative h-[220px] pt-8">
+          <div className="flex h-full">
+            {/* Left gutter (40px wide) for tick labels */}
+            <div className="w-[40px] shrink-0 relative h-full">
+              {ticks.map((tick) => {
+                const bottomPct = ((tick - axisStart) / (axisMax - axisStart)) * 100;
+                return (
+                  <div
+                    key={tick}
+                    className="absolute right-2 font-mono text-[12px] tabular-nums text-slate-500 -translate-y-1/2 leading-none"
+                    style={{ bottom: `${bottomPct}%` }}
+                  >
+                    {tick}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Plot canvas */}
+            <div className="relative flex-1 h-full">
+              {/* Gridlines */}
+              {ticks.map((tick) => {
+                const bottomPct = ((tick - axisStart) / (axisMax - axisStart)) * 100;
+                const isBaseline = tick === axisStart;
+                if (isBaseline) {
+                  return (
+                    <div
+                      key={tick}
+                      className="absolute left-0 right-0 h-0.5 bg-slate-400 z-10"
+                      style={{ bottom: 0 }}
+                    />
+                  );
+                }
+                return (
+                  <div
+                    key={tick}
+                    className="absolute left-0 right-0 h-px bg-[#D9E3DC]"
+                    style={{ bottom: `${bottomPct}%` }}
+                  />
+                );
+              })}
+
+              {/* Bars */}
+              <div className="absolute inset-0 flex z-10">
+                {bars.map((bar, idx) => {
+                  const heightPct = Math.max(
+                    0,
+                    Math.min(100, ((bar.value - axisStart) / (axisMax - axisStart)) * 100)
+                  );
+                  const barColor =
+                    bar.color ||
+                    (isBad
+                      ? idx === 0
+                        ? 'bg-rose-500'
+                        : 'bg-rose-600'
+                      : idx === 0
+                      ? 'bg-teal-500'
+                      : 'bg-teal-600');
+
+                  return (
+                    <div
+                      key={bar.label}
+                      className="relative flex-1 h-full flex flex-col justify-end items-center"
+                    >
+                      {/* Bar container: about 55% of column, max 72px */}
+                      <div
+                        className="relative w-[55%] max-w-[72px] flex flex-col items-center"
+                        style={{ height: `${heightPct}%` }}
+                      >
+                        {/* Value label directly above bar */}
+                        <span className="absolute bottom-full mb-1.5 text-xs font-mono font-bold text-[#1B2430] text-center leading-tight">
+                          {bar.value} unit
+                        </span>
+
+                        {/* Bar rectangle */}
+                        <div className={`w-full h-full rounded-t-md shadow-xs ${barColor}`} />
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Category labels in a separate row below baseline */}
+        <div className="flex pt-2.5">
+          <div className="w-[40px] shrink-0" />
+          <div className="flex-1 flex">
+            {bars.map((bar) => (
+              <div
+                key={bar.label}
+                className="flex-1 text-center px-1 text-sm font-semibold text-[#1B2430] leading-tight break-words"
+              >
+                {bar.label}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* 3. Takeaway Box */}
+      <div
+        className={`p-4 rounded-xl text-sm leading-relaxed text-[#1B2430] border ${
+          isBad ? 'bg-rose-100/90 border-rose-200' : 'bg-teal-100/90 border-teal-200'
+        }`}
+      >
+        {takeaway}
+      </div>
+    </div>
+  );
+};
+
 export const MisleadingGraphsVisual: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'comparison' | 'checklist'>('comparison');
 
   return (
     <div className="space-y-4">
       {/* Tab Switcher */}
-      <div className="flex items-center justify-between gap-3 pb-3 border-b border-surface-container">
-        <div className="flex items-center gap-1.5 p-1 bg-surface-container rounded-xl">
+      <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-surface-container">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-surface-container rounded-xl max-w-full">
           <button
+            type="button"
             onClick={() => setActiveTab('comparison')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'comparison' ? 'bg-surface-container-lowest text-black shadow-2xs font-bold' : 'text-black/70 hover:text-black'
+            className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+              activeTab === 'comparison'
+                ? 'bg-surface-container-lowest text-[#1B2430] shadow-xs font-bold'
+                : 'text-[#4A5568] hover:text-[#1B2430]'
             }`}
           >
-            Bandingkan Sumbu Terpotong (Truncated Axis)
+            <span className="hidden sm:inline">Bandingkan Sumbu Terpotong (Truncated Axis)</span>
+            <span className="sm:hidden">Sumbu Terpotong</span>
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('checklist')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              activeTab === 'checklist' ? 'bg-surface-container-lowest text-primary shadow-2xs' : 'text-on-surface-variant'
+            className={`px-3.5 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all ${
+              activeTab === 'checklist'
+                ? 'bg-surface-container-lowest text-[#1B2430] shadow-xs font-bold'
+                : 'text-[#4A5568] hover:text-[#1B2430]'
             }`}
           >
             Checklist Grafik Etis
           </button>
         </div>
 
-        <span className="text-[11px] text-black font-semibold hidden sm:inline">
+        <span className="text-xs text-[#1B2430] font-semibold hidden md:inline">
           Kaidah Integritas Visual Data
         </span>
       </div>
 
       {activeTab === 'comparison' && (
-        <div className="space-y-4 text-black">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="@container w-full">
+          <div className="grid grid-cols-1 @2xl:grid-cols-2 gap-6">
             {/* BAD: Truncated Y-Axis */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-rose-50 border-2 border-rose-300 space-y-3 text-black">
-              <div className="flex items-center justify-between pb-2 border-b border-rose-200">
-                <div className="flex items-center gap-1.5 text-black font-bold text-xs uppercase tracking-wide">
-                  <span className="material-symbols-outlined text-[18px] text-rose-600">cancel</span>
-                  <span className="text-black">Grafik Menyesatkan (Manipulatif)</span>
-                </div>
-                <span className="text-[10px] bg-rose-200 text-black px-2 py-0.5 rounded font-mono font-bold">
-                  Sumbu Mulai 98
-                </span>
-              </div>
-
-              {/* Chart */}
-              <div className="h-44 flex items-end justify-center gap-8 pt-4 pb-2 border-b-2 border-rose-300 relative text-black">
-                {/* Y-axis indicator */}
-                <div className="absolute left-2 bottom-2 text-[10px] font-mono font-bold text-black bg-rose-200/90 px-1.5 py-0.5 rounded border border-rose-300">
-                  Sumbu Y: Mulai 98
-                </div>
-
-                {/* Product A */}
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-black mb-1">100 unit</span>
-                  <div className="w-14 bg-rose-400 rounded-t h-10 shadow-xs" />
-                  <span className="text-xs font-bold text-black mt-2">Produk A</span>
-                </div>
-                {/* Product B */}
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-black mb-1">
-                    105 unit
-                  </span>
-                  <div className="w-14 bg-rose-600 rounded-t h-36 shadow-xs" />
-                  <span className="text-xs font-bold text-black mt-2">Produk B</span>
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-rose-100/90 border border-rose-200 text-[11px] text-black leading-relaxed">
-                ⚠️ <strong className="text-black font-bold">Ilusi Palsu:</strong> Memotong sumbu Y di angka 98 membuat Produk B tampak <strong className="text-black font-bold">3.5 kali lebih tinggi</strong> dari Produk A, padahal selisih aslinya hanya 5%!
-              </div>
-            </div>
+            <BarCompare
+              title="Grafik Menyesatkan (Manipulatif)"
+              badge="Sumbu Y: Mulai 98"
+              tone="bad"
+              axisStart={98}
+              axisMax={106}
+              ticks={[98, 100, 102, 104, 106]}
+              bars={[
+                { label: 'Produk A', value: 100, color: 'bg-rose-500' },
+                { label: 'Produk B', value: 105, color: 'bg-rose-600' },
+              ]}
+              takeaway={
+                <>
+                  ⚠️ <strong className="font-bold text-[#1B2430]">Ilusi Palsu:</strong> Memotong sumbu Y di angka 98 membuat Produk B tampak{' '}
+                  <strong className="font-bold text-[#1B2430]">3.5 kali lebih tinggi</strong> dari Produk A, padahal selisih aslinya hanya 5%!
+                </>
+              }
+            />
 
             {/* GOOD: Full Axis from 0 */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-teal-50 border-2 border-teal-300 space-y-3 text-black">
-              <div className="flex items-center justify-between pb-2 border-b border-teal-200">
-                <div className="flex items-center gap-1.5 text-black font-bold text-xs uppercase tracking-wide">
-                  <span className="material-symbols-outlined text-[18px] text-teal-700">check_circle</span>
-                  <span className="text-black">Grafik Etis &amp; Objektif</span>
-                </div>
-                <span className="text-[10px] bg-teal-200 text-black px-2 py-0.5 rounded font-mono font-bold">
-                  Sumbu Mulai 0
-                </span>
-              </div>
-
-              {/* Chart */}
-              <div className="h-44 flex items-end justify-center gap-8 pt-4 pb-2 border-b-2 border-teal-300 relative text-black">
-                {/* Y-axis indicator */}
-                <div className="absolute left-2 bottom-2 text-[10px] font-mono font-bold text-black bg-teal-200/90 px-1.5 py-0.5 rounded border border-teal-300">
-                  Sumbu Y: Mulai 0
-                </div>
-
-                {/* Product A */}
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-black mb-1">100 unit</span>
-                  <div className="w-14 bg-teal-500 rounded-t h-32 shadow-xs" />
-                  <span className="text-xs font-bold text-black mt-2">Produk A</span>
-                </div>
-                {/* Product B */}
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-bold font-mono text-black mb-1">
-                    105 unit
-                  </span>
-                  <div className="w-14 bg-teal-700 rounded-t h-34 shadow-xs" />
-                  <span className="text-xs font-bold text-black mt-2">Produk B</span>
-                </div>
-              </div>
-
-              <div className="p-2.5 rounded-xl bg-teal-100/90 border border-teal-200 text-[11px] text-black leading-relaxed">
-                ✅ <strong className="text-black font-bold">Proporsi Jujur:</strong> Ketika sumbu Y dimulai dari nol, pembaca langsung memahami bahwa penjualan Produk A dan B sebenarnya setara dan selisihnya tipis.
-              </div>
-            </div>
+            <BarCompare
+              title="Grafik Etis &amp; Objektif"
+              badge="Sumbu Y: Mulai 0"
+              tone="good"
+              axisStart={0}
+              axisMax={120}
+              ticks={[0, 30, 60, 90, 120]}
+              bars={[
+                { label: 'Produk A', value: 100, color: 'bg-teal-500' },
+                { label: 'Produk B', value: 105, color: 'bg-teal-600' },
+              ]}
+              takeaway={
+                <>
+                  ✅ <strong className="font-bold text-[#1B2430]">Proporsi Jujur:</strong> Ketika sumbu Y dimulai dari nol, pembaca langsung memahami bahwa penjualan Produk A dan B sebenarnya setara dan selisihnya tipis.
+                </>
+              }
+            />
           </div>
         </div>
       )}
