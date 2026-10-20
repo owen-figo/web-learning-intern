@@ -3,6 +3,7 @@ import { ActivePage, DifficultyTier, Question, Concept, UserProfile } from '../t
 import { sampleQuestions } from '../data/mockData';
 import { getConceptById, getAllConcepts } from '../data/concepts';
 import { ConceptModal } from '../components/ConceptModal';
+import { PomodoroButton } from '../components/PomodoroButton';
 
 interface PracticePageProps {
   setActivePage: (page: ActivePage) => void;
@@ -159,15 +160,19 @@ export const PracticePage: React.FC<PracticePageProps> = ({
               <span className="w-8 h-8 rounded-lg bg-primary-container text-on-primary flex items-center justify-center font-bold text-sm">
                 N
               </span>
-              <span>Ngerti</span>
+              <span className="sr-only sm:not-sr-only">Ngerti</span>
             </button>
-            <span className="text-outline-variant">/</span>
+            <span className="hidden md:inline text-outline-variant">/</span>
             <div className="hidden md:flex items-center gap-1.5 text-xs sm:text-sm text-on-surface-variant font-medium">
               <button onClick={() => setActivePage('topics')} className="hover:text-primary transition-colors">
                 Topik
               </button>
               <span className="text-outline-variant text-xs">›</span>
-              <button onClick={() => setActivePage('topics')} className="hover:text-primary transition-colors">
+              <button
+                onClick={() => setActivePage('topics')}
+                title={currentQ.topicName}
+                className="hover:text-primary transition-colors max-w-[7rem] truncate lg:max-w-none"
+              >
                 {currentQ.topicName}
               </button>
               <span className="text-outline-variant text-xs">›</span>
@@ -176,21 +181,22 @@ export const PracticePage: React.FC<PracticePageProps> = ({
           </div>
 
           {/* Gamification Chips & Glosarium Shortcut */}
-          <div className="flex items-center gap-2.5 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-4">
             <button
               type="button"
               onClick={() => handleOpenConcept(currentQ.conceptId)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary-fixed/30 text-primary text-xs font-semibold hover:bg-primary-fixed hover:border-primary transition-colors"
+              aria-label="Glosarium Istilah"
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg border border-primary/30 bg-primary-fixed/30 text-primary text-xs font-semibold hover:bg-primary-fixed hover:border-primary transition-colors"
               title="Buka Glosarium Istilah Statistika"
             >
               <span className="material-symbols-outlined text-[16px]">menu_book</span>
-              <span>Glosarium Istilah</span>
+              <span className="hidden lg:inline">Glosarium Istilah</span>
             </button>
 
             {/* Streak Indicator Pill */}
             <div
               aria-label={`Streak ${user?.streakDays ?? 5} hari`}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
             >
               <span className="text-lg sm:text-xl leading-none">🔥</span>
               <span className="leading-none">{user?.streakDays ?? 5}</span>
@@ -199,7 +205,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
             {/* XP Indicator Pill */}
             <div
               aria-label={`Total ${user?.xp ?? 120} XP`}
-              className="flex items-center gap-1.5 px-3 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold select-none shrink-0"
+              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold select-none shrink-0"
             >
               <span
                 className="material-symbols-outlined text-primary text-[20px] sm:text-[24px]"
@@ -209,12 +215,15 @@ export const PracticePage: React.FC<PracticePageProps> = ({
               </span>
               <span className="leading-none">{user?.xp ?? 120} XP</span>
             </div>
+            <PomodoroButton />
             <button
               onClick={() => setActivePage('topics')}
-              className="flex items-center gap-1 text-on-surface-variant hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors text-xs sm:text-sm font-medium"
+              aria-label="Keluar Sesi"
+              title="Keluar Sesi"
+              className="flex items-center gap-1 text-on-surface-variant hover:text-primary px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors text-xs sm:text-sm font-medium"
             >
-              <span className="material-symbols-outlined text-lg">close</span>
-              <span className="hidden sm:inline">Keluar Sesi</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-lg">close</span>
+              <span className="hidden lg:inline">Keluar Sesi</span>
             </button>
           </div>
         </div>

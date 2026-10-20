@@ -97,3 +97,23 @@ body {
 .animate-gentle-pulse {
   animation: pulse-subtle 2.4s ease-in-out infinite;
 }
+
+/* Pomodoro: popup muncul dari pojok kanan atas, cincin waktu bergerak halus */
+@keyframes pomodoro-pop {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.pomodoro-popover {
+  transform-origin: top right;
+  animation: pomodoro-pop 0.16s ease-out;
+}
+
+.pomodoro-ring {
+  transition: stroke-dashoffset 0.3s linear, stroke 0.3s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pomodoro-popover { animation: none; }
+  .pomodoro-ring { transition: none; }
+}

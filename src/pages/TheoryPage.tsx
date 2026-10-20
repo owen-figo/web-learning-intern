@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ActivePage, TheoryContent, TheorySection } from '../types';
 import { ConceptExplainer } from '../components/ConceptExplainer';
+import { PomodoroButton } from '../components/PomodoroButton';
 
 interface TheoryPageProps {
   theoryContent: TheoryContent;
@@ -151,6 +152,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
               </span>
               <span>+{theoryContent.completionXp} XP</span>
             </span>
+            <PomodoroButton />
           </div>
         </div>
       </header>
