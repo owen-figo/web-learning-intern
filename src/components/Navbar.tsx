@@ -50,7 +50,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="bg-surface-container-lowest border-b border-outline-variant/60 sticky top-0 z-40 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 h-16 flex items-center justify-between">
         {/* Brand & Nav Items */}
-        <div className="flex items-center gap-6 md:gap-8">
+        <div className="flex items-center gap-6 md:gap-2 lg:gap-8">
           <button
             onClick={() => setActivePage('landing')}
             className="flex items-center gap-2 text-primary font-semibold text-lg md:text-xl tracking-tight hover:opacity-90 transition-opacity"
@@ -61,14 +61,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </span>
             {/* Di layar sempit wordmark disembunyikan secara visual supaya ruang header cukup, tetap terbaca pembaca layar. */}
-            <span className="sr-only sm:not-sr-only">Ngerti</span>
+            <span className="sr-only xl:not-sr-only">Ngerti</span>
           </button>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-on-surface-variant">
-              <button
+          <nav className="hidden md:flex items-center gap-2.5 lg:gap-6 text-[13px] lg:text-sm font-medium text-on-surface-variant">
+            <button
               onClick={() => setActivePage('landing')}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'landing'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -78,7 +78,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               onClick={() => setActivePage('topics')}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'topics'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -94,7 +94,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setActivePage('practice');
                 }
               }}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'practice'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -104,7 +104,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               onClick={() => setActivePage('leaderboard')}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'leaderboard'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -112,18 +112,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               Leaderboard
             </button>
-
           </nav>
         </div>
 
         {/* Right Section: Streak, XP, Notifications, User */}
-        <div className="flex items-center gap-1 sm:gap-3.5">
+        <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-3.5">
           {/* Streak Indicator Pill: Only flame and number */}
           <div
             aria-label={`Streak ${user.streakDays} hari`}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+            className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base lg:text-lg font-bold select-none shrink-0"
           >
-            <span className="text-lg sm:text-xl leading-none">🔥</span>
+            <span className="text-lg lg:text-xl leading-none">🔥</span>
             <span className="leading-none">{user.streakDays}</span>
           </div>
 
@@ -131,10 +130,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="relative shrink-0">
             <div
               aria-label={`Total ${user.xp} XP`}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold transition-all duration-300"
+              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base lg:text-lg font-bold transition-all duration-300"
             >
               <span
-                className="material-symbols-outlined text-primary text-[20px] sm:text-[24px]"
+                className="material-symbols-outlined text-primary text-[20px] lg:text-[24px]"
                 style={{ fontVariationSettings: "'FILL' 1" }}
               >
                 stars

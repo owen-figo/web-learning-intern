@@ -168,7 +168,11 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                 Topik
               </button>
               <span className="text-outline-variant text-xs">›</span>
-              <button onClick={() => setActivePage('topics')} className="hover:text-primary transition-colors">
+              <button
+                onClick={() => setActivePage('topics')}
+                title={currentQ.topicName}
+                className="hover:text-primary transition-colors max-w-[7rem] truncate lg:max-w-none"
+              >
                 {currentQ.topicName}
               </button>
               <span className="text-outline-variant text-xs">›</span>
@@ -177,21 +181,22 @@ export const PracticePage: React.FC<PracticePageProps> = ({
           </div>
 
           {/* Gamification Chips & Glosarium Shortcut */}
-          <div className="flex items-center gap-1.5 sm:gap-4">
+          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-4">
             <button
               type="button"
               onClick={() => handleOpenConcept(currentQ.conceptId)}
-              className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary-fixed/30 text-primary text-xs font-semibold hover:bg-primary-fixed hover:border-primary transition-colors"
+              aria-label="Glosarium Istilah"
+              className="hidden sm:inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg border border-primary/30 bg-primary-fixed/30 text-primary text-xs font-semibold hover:bg-primary-fixed hover:border-primary transition-colors"
               title="Buka Glosarium Istilah Statistika"
             >
               <span className="material-symbols-outlined text-[16px]">menu_book</span>
-              <span>Glosarium Istilah</span>
+              <span className="hidden lg:inline">Glosarium Istilah</span>
             </button>
 
             {/* Streak Indicator Pill */}
             <div
               aria-label={`Streak ${user?.streakDays ?? 5} hari`}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
             >
               <span className="text-lg sm:text-xl leading-none">🔥</span>
               <span className="leading-none">{user?.streakDays ?? 5}</span>
@@ -200,7 +205,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
             {/* XP Indicator Pill */}
             <div
               aria-label={`Total ${user?.xp ?? 120} XP`}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold select-none shrink-0"
+              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold select-none shrink-0"
             >
               <span
                 className="material-symbols-outlined text-primary text-[20px] sm:text-[24px]"
@@ -213,10 +218,12 @@ export const PracticePage: React.FC<PracticePageProps> = ({
             <PomodoroButton />
             <button
               onClick={() => setActivePage('topics')}
+              aria-label="Keluar Sesi"
+              title="Keluar Sesi"
               className="flex items-center gap-1 text-on-surface-variant hover:text-primary px-2 sm:px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors text-xs sm:text-sm font-medium"
             >
-              <span className="material-symbols-outlined text-lg">close</span>
-              <span className="hidden sm:inline">Keluar Sesi</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-lg">close</span>
+              <span className="hidden lg:inline">Keluar Sesi</span>
             </button>
           </div>
         </div>

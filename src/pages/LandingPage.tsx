@@ -1,87 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { ActivePage } from '../types';
+import { XpVerticalCarousel } from '../components/XpVerticalCarousel';
 
 interface LandingPageProps {
   setActivePage: (page: ActivePage) => void;
   onStartActiveTopic?: () => void;
 }
 
-const xpRewardSlides = [
-  {
-    title: 'Mencoba soal',
-    xp: '+10 XP',
-    desc: 'Benar atau salah, tetap dihargai.',
-    icon: 'edit_note',
-  },
-  {
-    title: 'Jawaban benar',
-    xp: '+15 XP',
-    desc: 'Bonus untuk jawaban tepat.',
-    icon: 'check_circle',
-  },
-  {
-    title: 'Cek jawabanmu',
-    xp: '+10 XP',
-    desc: 'Bonus karena kamu memeriksa dulu.',
-    icon: 'fact_check',
-  },
-  {
-    title: 'Bonus kecepatan',
-    xp: 'sampai +10 XP',
-    desc: 'Hanya saat mengerjakan, bukan saat mengecek.',
-    icon: 'bolt',
-  },
-  {
-    title: 'Baca materi sampai selesai',
-    xp: '+15 XP',
-    desc: 'Selesaikan satu materi.',
-    icon: 'menu_book',
-  },
-  {
-    title: 'Daily Quest',
-    xp: '+20 XP',
-    desc: 'Satu set singkat tiap hari.',
-    icon: 'task_alt',
-  },
-];
-
 export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStartActiveTopic }) => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [touchStartX, setTouchStartX] = useState<number | null>(null);
-
-  const goToPrev = () => {
-    setCurrentSlide((prev) => (prev > 0 ? prev - 1 : xpRewardSlides.length - 1));
-  };
-
-  const goToNext = () => {
-    setCurrentSlide((prev) => (prev < xpRewardSlides.length - 1 ? prev + 1 : 0));
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStartX(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX === null) return;
-    const touchEndX = e.changedTouches[0].clientX;
-    const diff = touchStartX - touchEndX;
-    if (diff > 40) {
-      goToNext();
-    } else if (diff < -40) {
-      goToPrev();
-    }
-    setTouchStartX(null);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'ArrowLeft') {
-      e.preventDefault();
-      goToPrev();
-    } else if (e.key === 'ArrowRight') {
-      e.preventDefault();
-      goToNext();
-    }
-  };
   return (
     <div className="flex flex-col min-h-screen">
       {/* Main Canvas */}
@@ -127,128 +53,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               </div>
             </div>
 
-            {/* Right Column: Cara Dapat XP (5 Columns) */}
+            {/* Right Column: Cara Dapat XP (5 Columns), carousel vertikal */}
             <div className="lg:col-span-5">
-              <div className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-4 sm:p-5 card-float relative overflow-hidden transition-all duration-300">
-                {/* Header */}
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-0.5">
-                      <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
-                        stars
-                      </span>
-                      <span>Sistem Apresiasi Usaha</span>
-                    </div>
-                    <h2 className="text-lg sm:text-xl font-bold text-on-surface">
-                      Cara Dapat XP
-                    </h2>
-                    <p className="text-xs sm:text-sm text-on-surface-variant mt-0.5">
-                      Setiap usaha dihitung.
-                    </p>
-                  </div>
-                  {/* Counter e.g. "1 / 6" */}
-                  <div className="shrink-0">
-                    <span className="px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-bold">
-                      {currentSlide + 1} / {xpRewardSlides.length}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Carousel Viewport (One Reward at a Time) */}
-                <div
-                  className="w-full overflow-hidden my-3 focus:outline-none focus:ring-2 focus:ring-primary/40 rounded-xl cursor-grab active:cursor-grabbing"
-                  tabIndex={0}
-                  role="region"
-                  aria-roledescription="carousel"
-                  aria-label="Karusel Cara Dapat XP"
-                  onKeyDown={handleKeyDown}
-                  onTouchStart={handleTouchStart}
-                  onTouchEnd={handleTouchEnd}
-                >
-                  <div
-                    className="flex w-full transition-transform duration-300 ease-out motion-reduce:transition-none"
-                    style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-                  >
-                    {xpRewardSlides.map((slide, idx) => (
-                      <div
-                        key={idx}
-                        className="w-full shrink-0"
-                        aria-hidden={idx !== currentSlide}
-                      >
-                        {/* Compact single row on desktop, stacked on mobile */}
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 p-3 sm:p-3.5 rounded-xl bg-surface-container-low/70 border border-outline-variant/60">
-                          <div className="flex items-center gap-3 min-w-0">
-                            {/* Small icon */}
-                            <div className="w-10 h-10 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0">
-                              <span
-                                className="material-symbols-outlined text-xl"
-                                style={{ fontVariationSettings: "'FILL' 1" }}
-                              >
-                                {slide.icon}
-                              </span>
-                            </div>
-
-                            {/* Title & 1-line Description */}
-                            <div className="min-w-0 flex-1">
-                              <h3 className="text-sm sm:text-base font-bold text-on-surface leading-tight truncate">
-                                {slide.title}
-                              </h3>
-                              <p className="text-xs sm:text-sm text-on-surface-variant truncate whitespace-nowrap mt-0.5">
-                                {slide.desc}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* XP Chip */}
-                          <div className="shrink-0 self-end sm:self-center">
-                            <span className="inline-block px-3 py-1 rounded-xl bg-primary/15 text-primary text-xs sm:text-sm font-extrabold border border-primary/25 font-code-formula whitespace-nowrap">
-                              {slide.xp}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Controls: Prev / Dots / Next */}
-                <div className="pt-3 border-t border-outline-variant/60 flex items-center justify-between gap-3">
-                  <button
-                    type="button"
-                    onClick={goToPrev}
-                    aria-label="Hadiah sebelumnya"
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container border border-outline-variant text-on-surface flex items-center justify-center transition-all active:scale-95 shadow-xs"
-                  >
-                    <span className="material-symbols-outlined text-xl">arrow_back</span>
-                  </button>
-
-                  {/* Dot Indicators */}
-                  <div className="flex items-center gap-1.5 sm:gap-2">
-                    {xpRewardSlides.map((_, idx) => (
-                      <button
-                        type="button"
-                        key={idx}
-                        onClick={() => setCurrentSlide(idx)}
-                        aria-label={`Pindah ke slide ${idx + 1}: ${xpRewardSlides[idx].title}`}
-                        className={`h-2 sm:h-2.5 rounded-full transition-all duration-300 ${
-                          idx === currentSlide
-                            ? 'w-6 sm:w-7 bg-primary'
-                            : 'w-2 sm:w-2.5 bg-outline-variant/80 hover:bg-primary/50'
-                        }`}
-                      />
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={goToNext}
-                    aria-label="Hadiah berikutnya"
-                    className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-surface-container-low hover:bg-surface-container-high active:bg-surface-container border border-outline-variant text-on-surface flex items-center justify-center transition-all active:scale-95 shadow-xs"
-                  >
-                    <span className="material-symbols-outlined text-xl">arrow_forward</span>
-                  </button>
-                </div>
-              </div>
+              <XpVerticalCarousel />
             </div>
           </div>
 
