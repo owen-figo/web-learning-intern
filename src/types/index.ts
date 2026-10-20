@@ -163,6 +163,13 @@ export interface TheorySection {
     | 'poisson-distribution'
     | 'poisson-area'
     | 'hypergeometric'
+    | 'continuous-vs-discrete'
+    | 'pdf-area'
+    | 'normal-pdf'
+    | 'z-transformation'
+    | 'uniform-pdf'
+    | 'uniform-stats'
+    | 'exponential-pdf'
     | string;
 }
 

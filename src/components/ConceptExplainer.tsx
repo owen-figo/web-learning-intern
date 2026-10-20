@@ -14,6 +14,7 @@ import {
 import { MeasureVisuals } from './MeasureVisuals';
 import { ProbabilityVisuals } from './ProbabilityVisuals';
 import { DiscreteProbabilityVisuals } from './DiscreteProbabilityVisuals';
+import { ContinuousProbabilityVisuals } from './ContinuousProbabilityVisuals';
 
 interface ConceptExplainerProps {
   type: string;
@@ -40,6 +41,7 @@ export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ type }) => {
       <MeasureVisuals type={type} />
       <ProbabilityVisuals type={type} />
       <DiscreteProbabilityVisuals type={type} />
+      <ContinuousProbabilityVisuals type={type} />
     </div>
   );
 };

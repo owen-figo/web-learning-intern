@@ -1442,34 +1442,34 @@ export const QuartilesIqrVisual: React.FC = () => {
         </div>
 
         {/* 11 Sorted Values Dots */}
-        <div className="space-y-3">
-          <div className="text-xs font-semibold text-on-surface-variant">
+        <div className="@container w-full space-y-3">
+          <div className="text-sm font-semibold text-on-surface">
             11 Nilai Waktu Pengerjaan Tugas (Dataset B, n = {n}):
           </div>
 
-          <div className="grid grid-cols-4 sm:grid-cols-11 gap-2">
+          <div className="grid grid-cols-4 @md:grid-cols-6 gap-2">
             {values.map((v, i) => {
               const isQ1 = i === q1Idx;
               const isQ2 = i === q2Idx;
               const isQ3 = i === q3Idx;
               const isInIqr = i >= q1Idx && i <= q3Idx;
 
-              let highlightClass = 'bg-surface-container-lowest border-outline-variant/60 text-slate-900 dark:text-slate-100';
-              if (highlighted === 'q1' && isQ1) highlightClass = 'bg-primary text-on-primary border-primary scale-110';
-              if (highlighted === 'q2' && isQ2) highlightClass = 'bg-blue-600 text-white border-blue-600 scale-110';
-              if (highlighted === 'q3' && isQ3) highlightClass = 'bg-purple-600 text-white border-purple-600 scale-110';
-              if (highlighted === 'iqr' && isInIqr) highlightClass = 'bg-amber-100 dark:bg-amber-950/60 border-amber-500 text-amber-900 dark:text-amber-200 font-bold';
+              let highlightClass = 'bg-white border border-outline-variant text-black';
+              if (highlighted === 'q1' && isQ1) highlightClass = 'bg-primary-fixed border-2 border-primary-container text-black scale-105';
+              if (highlighted === 'q2' && isQ2) highlightClass = 'bg-blue-100 border-2 border-blue-600 text-black scale-105';
+              if (highlighted === 'q3' && isQ3) highlightClass = 'bg-violet-100 border-2 border-violet-600 text-black scale-105';
+              if (highlighted === 'iqr' && isInIqr) highlightClass = 'bg-secondary-fixed/60 border-2 border-secondary text-black';
 
               return (
                 <div
                   key={i}
-                  className={`p-2.5 rounded-xl border flex flex-col items-center justify-center transition-all ${highlightClass}`}
+                  className={`min-w-[64px] p-2.5 rounded-xl flex flex-col items-center justify-center transition-all ${highlightClass}`}
                 >
-                  <span className="text-[10px] text-on-surface-variant/70 font-mono">#{i + 1}</span>
-                  <span className="text-sm font-bold font-mono">{v}</span>
-                  {isQ1 && <span className="text-[9px] font-bold text-teal-700 dark:text-teal-300">Q1</span>}
-                  {isQ2 && <span className="text-[9px] font-bold text-blue-700 dark:text-blue-300">Q2</span>}
-                  {isQ3 && <span className="text-[9px] font-bold text-purple-700 dark:text-purple-300">Q3</span>}
+                  <span className="text-xs text-on-surface font-mono">#{i + 1}</span>
+                  <span className="text-base font-bold font-mono text-black">{v}</span>
+                  {isQ1 && <span className="mt-1 px-1.5 py-0.5 rounded-full bg-primary-fixed text-xs font-bold text-black">Q1</span>}
+                  {isQ2 && <span className="mt-1 px-1.5 py-0.5 rounded-full bg-blue-100 text-xs font-bold text-black">Q2</span>}
+                  {isQ3 && <span className="mt-1 px-1.5 py-0.5 rounded-full bg-violet-100 text-xs font-bold text-black">Q3</span>}
                 </div>
               );
             })}
@@ -1478,11 +1478,11 @@ export const QuartilesIqrVisual: React.FC = () => {
 
         {/* IQR Bracket Display */}
         {highlighted === 'iqr' && (
-          <div className="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 rounded-xl text-xs space-y-1">
-            <div className="font-bold text-amber-900 dark:text-amber-200">
+          <div className="p-3 bg-secondary-fixed/40 border border-secondary-fixed-dim rounded-xl space-y-1">
+            <div className="text-sm font-bold text-black">
               Interquartile Range (IQR) = Q3 − Q1 = 34 − 18 = 16 menit
             </div>
-            <p className="text-amber-950/80 dark:text-amber-200/80 text-[11px] leading-relaxed">
+            <p className="text-sm text-on-surface leading-relaxed">
               Mewakili rentang sebaran 50% data di bagian tengah. IQR tidak terpengaruh oleh nilai ekstrem (outlier) seperti angka 55 menit.
             </p>
           </div>
@@ -1545,11 +1545,11 @@ export const FiveNumberSummaryVisual: React.FC = () => {
                     : 'bg-surface-container-low/40 border-outline-variant/30 opacity-40'
                 }`}
               >
-                <span className="text-[10px] font-bold text-primary uppercase">{c.label}</span>
-                <div className="text-xl sm:text-2xl font-extrabold font-mono text-slate-900 dark:text-slate-100">
+                <span className="text-xs font-bold text-primary uppercase">{c.label}</span>
+                <div className="text-xl sm:text-2xl font-extrabold font-mono text-black">
                   {isShown ? c.val : '...'}
                 </div>
-                <div className="text-[10px] text-on-surface-variant font-medium">{c.desc}</div>
+                <div className="text-xs text-on-surface-variant font-medium">{c.desc}</div>
               </div>
             );
           })}
@@ -1973,7 +1973,7 @@ export const CovarianceVisual: React.FC = () => {
         <div className="flex flex-wrap items-center justify-between gap-3 pb-2 border-b border-surface-container">
           <div>
             <span className="text-xs font-bold text-on-surface uppercase">Kovarians Sampel (cov(X, Y)):</span>
-            <div className="text-2xl font-extrabold font-mono text-slate-900 dark:text-slate-100">
+            <div className="text-2xl font-extrabold font-mono text-black">
               {covXY >= 0 ? `+${covXY.toFixed(2)}` : covXY.toFixed(2)}
             </div>
           </div>
