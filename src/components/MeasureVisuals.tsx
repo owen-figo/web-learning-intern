@@ -35,7 +35,7 @@ export const CalculationStepper: React.FC<StepperProps> = ({ steps }) => {
           <span className="text-xs font-bold text-on-surface uppercase tracking-wide">
             Lihat Cara Menghitungnya
           </span>
-          <span className="text-[11px] text-on-surface-variant font-medium">
+          <span className="text-xs text-on-surface-variant font-medium">
             (Langkah {currentStep + 1} dari {steps.length})
           </span>
         </div>
@@ -223,7 +223,7 @@ export const MeanMedianModeVisual: React.FC = () => {
             onClick={handleAddOutlier}
             className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all flex items-center gap-1.5 shadow-2xs ${
               hasOutlier
-                ? 'bg-rose-600 text-white hover:bg-rose-700'
+                ? 'bg-rose-700 text-white hover:bg-rose-700'
                 : 'bg-amber-400 text-black hover:bg-amber-300'
             }`}
           >
@@ -241,7 +241,7 @@ export const MeanMedianModeVisual: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border-2 border-teal-600/60 flex items-center justify-between shadow-2xs">
             <div>
-              <span className="text-[11px] font-extrabold text-black uppercase tracking-wider">
+              <span className="text-xs font-extrabold text-black uppercase tracking-wider">
                 Mean (Rata-rata)
               </span>
               <div className="text-xl sm:text-2xl font-black text-black font-mono mt-0.5">
@@ -254,7 +254,7 @@ export const MeanMedianModeVisual: React.FC = () => {
 
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border-2 border-blue-600/60 flex items-center justify-between shadow-2xs">
             <div>
-              <span className="text-[11px] font-extrabold text-black uppercase tracking-wider">
+              <span className="text-xs font-extrabold text-black uppercase tracking-wider">
                 Median (Nilai Tengah)
               </span>
               <div className="text-xl sm:text-2xl font-black text-black font-mono mt-0.5">
@@ -267,7 +267,7 @@ export const MeanMedianModeVisual: React.FC = () => {
 
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border-2 border-amber-600/60 flex items-center justify-between shadow-2xs">
             <div>
-              <span className="text-[11px] font-extrabold text-black uppercase tracking-wider">
+              <span className="text-xs font-extrabold text-black uppercase tracking-wider">
                 Modus (Paling Sering)
               </span>
               <div className="text-xl sm:text-2xl font-black text-black font-mono mt-0.5">
@@ -293,7 +293,7 @@ export const MeanMedianModeVisual: React.FC = () => {
                   style={{ left: `${pct}%` }}
                 >
                   <div className="w-0.5 h-3 bg-slate-500 dark:bg-slate-400" />
-                  <span className="text-[11px] font-mono font-bold text-black mt-1 select-none">
+                  <span className="text-xs font-mono font-bold text-black mt-1 select-none">
                     {tick}
                   </span>
                 </div>
@@ -334,14 +334,14 @@ export const MeanMedianModeVisual: React.FC = () => {
                   <div
                     className={`w-7 h-7 rounded-full flex items-center justify-center font-bold text-xs shadow-md border-2 transition-transform hover:scale-125 ${
                       val >= 55
-                        ? 'bg-rose-500 border-white text-white animate-pulse'
+                        ? 'bg-rose-700 border-white text-white animate-pulse'
                         : 'bg-teal-700 border-white text-white'
                     }`}
                   >
                     {val}
                   </div>
                   {/* Tooltip on hover */}
-                  <div className="opacity-0 group-hover:opacity-100 absolute -bottom-6 left-1/2 -translate-x-1/2 text-[10px] bg-slate-900 text-white px-1.5 py-0.5 rounded whitespace-nowrap pointer-events-none transition-opacity">
+                  <div className="opacity-0 group-hover:opacity-100 absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs bg-slate-900 text-white px-1.5 py-0.5 rounded whitespace-nowrap pointer-events-none transition-opacity">
                     Titik #{idx + 1}
                   </div>
                 </div>
@@ -558,7 +558,7 @@ export const RangeVisual: React.FC = () => {
                 style={{ left: `${getPct(tick)}%` }}
               >
                 <div className="w-0.5 h-3 bg-slate-400 dark:bg-slate-500" />
-                <span className="text-[10px] font-mono font-medium text-slate-500 mt-1 select-none">
+                <span className="text-xs font-mono font-medium text-slate-600 mt-1 select-none">
                   {tick}
                 </span>
               </div>
@@ -572,7 +572,7 @@ export const RangeVisual: React.FC = () => {
                 width: `${getPct(maxVal) - getPct(minVal)}%`,
               }}
             >
-              <span className="text-[11px] font-bold text-primary bg-surface-container-lowest px-2 rounded-full border border-primary/30 shadow-2xs whitespace-nowrap">
+              <span className="text-xs font-bold text-primary bg-surface-container-lowest px-2 rounded-full border border-primary/30 shadow-2xs whitespace-nowrap">
                 Range = {range} menit
               </span>
             </div>
@@ -582,7 +582,7 @@ export const RangeVisual: React.FC = () => {
               className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
               style={{ left: `${getPct(minVal)}%` }}
             >
-              <div className="w-6 h-6 rounded-full bg-teal-600 border-2 border-white shadow-md flex items-center justify-center text-white text-[10px] font-bold cursor-pointer">
+              <div className="w-6 h-6 rounded-full bg-teal-700 border-2 border-white shadow-md flex items-center justify-center text-white text-xs font-bold cursor-pointer">
                 MIN
               </div>
             </div>
@@ -592,7 +592,7 @@ export const RangeVisual: React.FC = () => {
               className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 z-20"
               style={{ left: `${getPct(maxVal)}%` }}
             >
-              <div className="w-6 h-6 rounded-full bg-blue-600 border-2 border-white shadow-md flex items-center justify-center text-white text-[10px] font-bold cursor-pointer">
+              <div className="w-6 h-6 rounded-full bg-blue-600 border-2 border-white shadow-md flex items-center justify-center text-white text-xs font-bold cursor-pointer">
                 MAX
               </div>
             </div>
@@ -710,7 +710,7 @@ export const VarianceSdVisual: React.FC = () => {
             <span className="text-xs font-bold text-on-surface uppercase tracking-wide">
               Pengatur Sebaran Data (Simulasi):
             </span>
-            <p className="text-[11px] text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant">
               Tarik slider untuk melihat bagaimana penyebaran titik memengaruhi S dan S² secara langsung
             </p>
           </div>
@@ -736,7 +736,7 @@ export const VarianceSdVisual: React.FC = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <div className="p-3 bg-surface-container-lowest rounded-xl border border-primary/30 flex items-center justify-between">
             <div>
-              <span className="text-[11px] font-bold text-black uppercase">
+              <span className="text-xs font-bold text-black uppercase">
                 Sample Variance (S²)
               </span>
               <div className="text-xl font-extrabold text-black font-mono">
@@ -749,7 +749,7 @@ export const VarianceSdVisual: React.FC = () => {
 
           <div className="p-3 bg-surface-container-lowest rounded-xl border border-teal-500/30 flex items-center justify-between">
             <div>
-              <span className="text-[11px] font-bold text-black uppercase">
+              <span className="text-xs font-bold text-black uppercase">
                 Standard Deviation (S)
               </span>
               <div className="text-xl font-extrabold text-black font-mono">
@@ -860,7 +860,7 @@ export const CoefficientOfVariationVisual: React.FC = () => {
             <span className="text-xs font-bold text-black uppercase tracking-wide">
               Studi Kasus Dua Satuan Berbeda:
             </span>
-            <p className="text-[11px] text-black font-medium">
+            <p className="text-xs text-black font-medium">
               Tinggi badan (cm) vs Berat badan (kg)
             </p>
           </div>
@@ -880,7 +880,7 @@ export const CoefficientOfVariationVisual: React.FC = () => {
             <div className="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-black">Tinggi Badan Mahasiswa</span>
-                <span className="text-[11px] font-mono text-black font-bold">cm</span>
+                <span className="text-xs font-mono text-black font-bold">cm</span>
               </div>
               <div className="text-sm font-mono space-y-1 text-black">
                 <div>Mean (X̄) = <strong className="text-black font-bold">165 cm</strong></div>
@@ -895,7 +895,7 @@ export const CoefficientOfVariationVisual: React.FC = () => {
             <div className="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-black">Berat Badan Mahasiswa</span>
-                <span className="text-[11px] font-mono text-black font-bold">kg</span>
+                <span className="text-xs font-mono text-black font-bold">kg</span>
               </div>
               <div className="text-sm font-mono space-y-1 text-black">
                 <div>Mean (X̄) = <strong className="text-black font-bold">60 kg</strong></div>
@@ -1002,7 +1002,7 @@ export const ZScoreVisual: React.FC = () => {
             <span className="text-xs font-bold text-on-surface">Pilih Nilai Ujian (X):</span>
             <div className="flex items-center gap-3 font-mono">
               <span className="text-sm font-bold text-on-surface">X = {valX}</span>
-              <span className={`text-sm font-bold px-2 py-0.5 rounded ${isOutlier ? 'bg-rose-600 text-white animate-pulse' : 'bg-primary text-on-primary'}`}>
+              <span className={`text-sm font-bold px-2 py-0.5 rounded ${isOutlier ? 'bg-rose-700 text-white animate-pulse' : 'bg-primary text-on-primary'}`}>
                 Z = {z >= 0 ? `+${z.toFixed(2)}` : z.toFixed(2)}
               </span>
             </div>
@@ -1024,13 +1024,13 @@ export const ZScoreVisual: React.FC = () => {
             {/* Outlier Hatched Regions (Z < -3 and Z > +3) */}
             {/* Left Outlier (X < 40) */}
             <rect x="20" y="40" width="70" height="110" fill="#fee2e2" opacity="0.6" />
-            <text x="55" y="30" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#dc2626">
+            <text x="55" y="30" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#b91c1c">
               Outlier (Z &lt; −3)
             </text>
 
             {/* Right Outlier (X > 100) */}
             <rect x="410" y="40" width="70" height="110" fill="#fee2e2" opacity="0.6" />
-            <text x="445" y="30" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#dc2626">
+            <text x="445" y="30" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#b91c1c">
               Outlier (Z &gt; +3)
             </text>
 
@@ -1052,23 +1052,23 @@ export const ZScoreVisual: React.FC = () => {
             </text>
 
             {/* Marks for ±1, ±2, ±3 */}
-            <text x="317" y="165" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x="317" y="165" textAnchor="middle" fontSize="9" fill="#475569">
               80 (+1)
             </text>
-            <text x="383" y="165" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x="383" y="165" textAnchor="middle" fontSize="9" fill="#475569">
               90 (+2)
             </text>
-            <text x="445" y="165" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#dc2626">
+            <text x="445" y="165" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#b91c1c">
               100 (+3)
             </text>
 
-            <text x="183" y="165" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x="183" y="165" textAnchor="middle" fontSize="9" fill="#475569">
               60 (−1)
             </text>
-            <text x="117" y="165" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x="117" y="165" textAnchor="middle" fontSize="9" fill="#475569">
               50 (−2)
             </text>
-            <text x="55" y="165" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#dc2626">
+            <text x="55" y="165" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#b91c1c">
               40 (−3)
             </text>
 
@@ -1090,7 +1090,7 @@ export const ZScoreVisual: React.FC = () => {
                     textAnchor="middle"
                     fontSize="11"
                     fontWeight="bold"
-                    fill={isOutlier ? '#dc2626' : '#d97706'}
+                    fill={isOutlier ? '#b91c1c' : '#b45309'}
                     className="font-mono"
                   >
                     X = {valX} (Z = {z.toFixed(2)})
@@ -1104,7 +1104,7 @@ export const ZScoreVisual: React.FC = () => {
         {/* Outlier Alert */}
         {isOutlier && (
           <div className="p-2.5 rounded-xl bg-rose-100 border border-rose-300 text-xs font-bold text-rose-900 flex items-center gap-2">
-            <span className="material-symbols-outlined text-[18px]">warning</span>
+            <span className="material-symbols-outlined text-[20px]">warning</span>
             <span>Nilai X = {valX} menghasilkan |Z| = {Math.abs(z).toFixed(2)} &gt; 3: Terdeteksi sebagai Kemungkinan Outlier!</span>
           </div>
         )}
@@ -1154,7 +1154,7 @@ export const SkewnessVisual: React.FC = () => {
             <div className="text-xs font-bold text-on-surface mb-1">
               1. Negative (Left-Skewed)
             </div>
-            <div className="text-[11px] font-mono text-primary font-bold mb-2">
+            <div className="text-xs font-mono text-primary font-bold mb-2">
               Mean &lt; Median
             </div>
             {/* Mini SVG curve */}
@@ -1165,13 +1165,13 @@ export const SkewnessVisual: React.FC = () => {
                 <line x1="10" y1="70" x2="150" y2="70" stroke="#94a3b8" />
                 {/* Mean line solid */}
                 <line x1="95" y1="25" x2="95" y2="70" stroke="#0d9488" strokeWidth="2" />
-                <text x="95" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0d9488">Mean</text>
+                <text x="95" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0f766e">Mean</text>
                 {/* Median line dashed */}
                 <line x1="112" y1="20" x2="112" y2="70" stroke="#2563eb" strokeWidth="1.5" strokeDasharray="3 3" />
                 <text x="120" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#2563eb">Med</text>
               </svg>
             </div>
-            <p className="text-[10px] text-on-surface-variant leading-tight">
+            <p className="text-xs text-on-surface-variant leading-tight">
               Ekor memanjang ke arah kiri, mean ditarik ke kiri oleh amatan bernilai rendah.
             </p>
           </div>
@@ -1187,7 +1187,7 @@ export const SkewnessVisual: React.FC = () => {
             <div className="text-xs font-bold text-on-surface mb-1">
               2. Symmetrical (Simetris)
             </div>
-            <div className="text-[11px] font-mono text-primary font-bold mb-2">
+            <div className="text-xs font-mono text-primary font-bold mb-2">
               Mean = Median
             </div>
             <div className="h-20 w-full">
@@ -1196,10 +1196,10 @@ export const SkewnessVisual: React.FC = () => {
                 <line x1="10" y1="70" x2="150" y2="70" stroke="#94a3b8" />
                 {/* Both coincide */}
                 <line x1="80" y1="20" x2="80" y2="70" stroke="#0d9488" strokeWidth="2" />
-                <text x="80" y="15" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0d9488">Mean = Med</text>
+                <text x="80" y="15" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0f766e">Mean = Med</text>
               </svg>
             </div>
-            <p className="text-[10px] text-on-surface-variant leading-tight">
+            <p className="text-xs text-on-surface-variant leading-tight">
               Bentuk lonceng seimbang sempurna, garis mean dan median berimpit di tengah.
             </p>
           </div>
@@ -1215,7 +1215,7 @@ export const SkewnessVisual: React.FC = () => {
             <div className="text-xs font-bold text-on-surface mb-1">
               3. Positive (Right-Skewed)
             </div>
-            <div className="text-[11px] font-mono text-primary font-bold mb-2">
+            <div className="text-xs font-mono text-primary font-bold mb-2">
               Mean &gt; Median
             </div>
             <div className="h-20 w-full">
@@ -1227,10 +1227,10 @@ export const SkewnessVisual: React.FC = () => {
                 <text x="40" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#2563eb">Med</text>
                 {/* Mean solid */}
                 <line x1="65" y1="25" x2="65" y2="70" stroke="#0d9488" strokeWidth="2" />
-                <text x="65" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0d9488">Mean</text>
+                <text x="65" y="16" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0f766e">Mean</text>
               </svg>
             </div>
-            <p className="text-[10px] text-on-surface-variant leading-tight">
+            <p className="text-xs text-on-surface-variant leading-tight">
               Ekor memanjang ke arah kanan, mean ditarik ke kanan oleh amatan bernilai tinggi.
             </p>
           </div>
@@ -1317,7 +1317,7 @@ export const KurtosisVisual: React.FC = () => {
               );
             })()}
 
-            <text x="200" y="155" textAnchor="middle" fontSize="10" fill="#64748b">
+            <text x="200" y="155" textAnchor="middle" fontSize="10" fill="#475569">
               Pusat (Mean = Tetap)
             </text>
           </svg>
@@ -1621,7 +1621,7 @@ export const BoxplotVisual: React.FC = () => {
             <span className="text-xs font-bold text-on-surface uppercase tracking-wide">
               Diagram Kotak Garis (Boxplot):
             </span>
-            <p className="text-[11px] text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant">
               Tarik slider X largest ke kanan untuk melihat whisker kanan memanjang (Right-Skewed)
             </p>
           </div>
@@ -1645,7 +1645,7 @@ export const BoxplotVisual: React.FC = () => {
             {[10, 20, 30, 40, 50, 60].map((tick) => (
               <g key={tick}>
                 <line x1={getX(tick)} y1="130" x2={getX(tick)} y2="136" stroke="#64748b" />
-                <text x={getX(tick)} y="148" textAnchor="middle" fontSize="10" fill="#64748b" className="font-mono">
+                <text x={getX(tick)} y="148" textAnchor="middle" fontSize="10" fill="#475569" className="font-mono">
                   {tick}
                 </text>
               </g>
@@ -1746,35 +1746,35 @@ export const BoxplotVisual: React.FC = () => {
             <text x={getX(xMin)} y="118" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a">
               X smallest
             </text>
-            <text x={getX(xMin)} y="108" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x={getX(xMin)} y="108" textAnchor="middle" fontSize="9" fill="#475569">
               {xMin}
             </text>
 
             <text x={getX(q1)} y="118" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a">
               Q1
             </text>
-            <text x={getX(q1)} y="108" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x={getX(q1)} y="108" textAnchor="middle" fontSize="9" fill="#475569">
               {q1}
             </text>
 
             <text x={getX(med)} y="118" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a">
               Median (Q2)
             </text>
-            <text x={getX(med)} y="108" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x={getX(med)} y="108" textAnchor="middle" fontSize="9" fill="#475569">
               {med}
             </text>
 
             <text x={getX(q3)} y="118" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a">
               Q3
             </text>
-            <text x={getX(q3)} y="108" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x={getX(q3)} y="108" textAnchor="middle" fontSize="9" fill="#475569">
               {q3}
             </text>
 
             <text x={getX(xMax)} y="118" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a">
               X largest
             </text>
-            <text x={getX(xMax)} y="108" textAnchor="middle" fontSize="9" fill="#64748b">
+            <text x={getX(xMax)} y="108" textAnchor="middle" fontSize="9" fill="#475569">
               {xMax}
             </text>
           </svg>
@@ -1868,7 +1868,7 @@ export const PopulationMeasuresVisual: React.FC = () => {
         {/* Comparative Badges */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wide">
+            <span className="text-xs font-bold text-black uppercase tracking-wide">
               {isSample ? 'Mean Sampel (X̄)' : 'Mean Populasi (μ)'}
             </span>
             <div className="text-2xl font-extrabold font-mono text-black">
@@ -1878,7 +1878,7 @@ export const PopulationMeasuresVisual: React.FC = () => {
           </div>
 
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wide">
+            <span className="text-xs font-bold text-black uppercase tracking-wide">
               {isSample ? 'Variance Sampel (S²)' : 'Variance Populasi (σ²)'}
             </span>
             <div className="text-2xl font-extrabold font-mono text-black">
@@ -1891,7 +1891,7 @@ export const PopulationMeasuresVisual: React.FC = () => {
           </div>
 
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wide">
+            <span className="text-xs font-bold text-black uppercase tracking-wide">
               {isSample ? 'Simpangan Baku (S)' : 'Simpangan Baku (σ)'}
             </span>
             <div className="text-2xl font-extrabold font-mono text-black">
@@ -1980,11 +1980,11 @@ export const CovarianceVisual: React.FC = () => {
 
           <div className="flex items-center gap-3 text-xs">
             <span className="flex items-center gap-1 font-semibold text-teal-700">
-              <span className="w-3 h-3 rounded-full bg-teal-600 flex items-center justify-center text-white text-[9px] font-bold">+</span>
+              <span className="w-3 h-3 rounded-full bg-teal-700 flex items-center justify-center text-white text-xs font-bold">+</span>
               Produk Positif
             </span>
             <span className="flex items-center gap-1 font-semibold text-rose-700">
-              <span className="w-3 h-3 rounded-full bg-rose-600 flex items-center justify-center text-white text-[9px] font-bold">−</span>
+              <span className="w-3 h-3 rounded-full bg-rose-700 flex items-center justify-center text-white text-xs font-bold">−</span>
               Produk Negatif
             </span>
           </div>
@@ -2125,7 +2125,7 @@ export const CorrelationVisual: React.FC = () => {
               type="button"
               onClick={() => setPreset('strong-neg')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                preset === 'strong-neg' ? 'bg-rose-600 text-white shadow-2xs' : 'text-on-surface-variant hover:text-on-surface'
+                preset === 'strong-neg' ? 'bg-rose-700 text-white shadow-2xs' : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
               Negatif Kuat (−0.95)
@@ -2134,7 +2134,7 @@ export const CorrelationVisual: React.FC = () => {
               type="button"
               onClick={() => setPreset('none')}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                preset === 'none' ? 'bg-amber-600 text-white shadow-2xs' : 'text-on-surface-variant hover:text-on-surface'
+                preset === 'none' ? 'bg-amber-700 text-white shadow-2xs' : 'text-on-surface-variant hover:text-on-surface'
               }`}
             >
               Nol (r ≈ 0)
@@ -2173,7 +2173,7 @@ export const CorrelationVisual: React.FC = () => {
             )}
           </div>
 
-          <div className="flex justify-between text-[11px] font-mono text-on-surface-variant font-medium">
+          <div className="flex justify-between text-xs font-mono text-on-surface-variant font-medium">
             <span>−1.0 (Negatif Sempurna)</span>
             <span>0.0 (Tidak Ada Korelasi)</span>
             <span>+1.0 (Positif Sempurna)</span>
@@ -2181,7 +2181,7 @@ export const CorrelationVisual: React.FC = () => {
         </div>
 
         <div className="p-3 bg-teal-50 dark:bg-teal-950/40 rounded-xl border border-teal-200 dark:border-teal-800 text-xs text-teal-950 dark:text-teal-200 font-semibold flex items-center gap-2">
-          <span className="material-symbols-outlined text-[18px]">verified</span>
+          <span className="material-symbols-outlined text-[20px]">verified</span>
           <span>{current.label}</span>
         </div>
       </div>

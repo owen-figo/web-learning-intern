@@ -10,6 +10,7 @@ interface NavbarProps {
   recentXpGained?: number;
   recentXpKey?: number;
   onOpenActiveTopic?: () => void;
+  onOpenPractice?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -20,6 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   recentXpGained = 0,
   recentXpKey = 0,
   onOpenActiveTopic,
+  onOpenPractice,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(true);
@@ -65,7 +67,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-2.5 lg:gap-6 text-[13px] lg:text-sm font-medium text-on-surface-variant">
+          <nav className="hidden md:flex items-center gap-2.5 lg:gap-6 text-sm font-medium text-on-surface-variant">
             <button
               onClick={() => setActivePage('landing')}
               className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
@@ -87,13 +89,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               Topik Belajar
             </button>
             <button
-              onClick={() => {
-                if (onOpenActiveTopic) {
-                  onOpenActiveTopic();
-                } else {
-                  setActivePage('practice');
-                }
-              }}
+              onClick={() => (onOpenPractice ? onOpenPractice() : setActivePage('practice'))}
               className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'practice'
                   ? 'text-primary border-primary font-semibold'

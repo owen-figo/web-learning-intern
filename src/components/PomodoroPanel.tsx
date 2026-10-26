@@ -65,7 +65,7 @@ const Stepper: React.FC<{
   return (
     <div className="flex items-center gap-1.5">
       <button type="button" aria-label={`Kurangi ${label}`} disabled={value <= min} onClick={() => step(-1)} className={stepButton}>
-        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">remove</span>
+        <span aria-hidden="true" className="material-symbols-outlined text-[20px]">remove</span>
       </button>
       <input
         aria-label={label}
@@ -89,7 +89,7 @@ const Stepper: React.FC<{
         className="w-12 h-8 rounded-lg bg-surface-container-low text-center text-sm font-semibold font-code-formula text-on-surface focus:outline-2 focus:outline-primary"
       />
       <button type="button" aria-label={`Tambah ${label}`} disabled={value >= max} onClick={() => step(1)} className={stepButton}>
-        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span>
+        <span aria-hidden="true" className="material-symbols-outlined text-[20px]">add</span>
       </button>
     </div>
   );
@@ -195,7 +195,7 @@ export const PomodoroPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
                   }`}
                 >
                   <span className="block text-xs font-semibold leading-tight">{tab.label}</span>
-                  <span className="block text-[11px] text-outline leading-tight">{durationMs(tab.mode, settings) / 60_000} menit</span>
+                  <span className="block text-xs text-outline leading-tight">{durationMs(tab.mode, settings) / 60_000} menit</span>
                 </button>
               );
             })}
@@ -231,20 +231,20 @@ export const PomodoroPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
           {/* Kontrol */}
           <div className="mt-5 flex items-center justify-center gap-4">
             <button type="button" aria-label="Atur ulang fase ini" title="Atur ulang" onClick={p.reset} className={ICON_BUTTON}>
-              <span aria-hidden="true" className="material-symbols-outlined text-[22px]">restart_alt</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[24px]">restart_alt</span>
             </button>
             <button
               type="button"
               onClick={p.toggle}
               className="h-12 min-w-36 px-6 rounded-full bg-primary text-on-primary text-sm font-semibold flex items-center justify-center gap-2 shadow-sm hover:bg-primary-container transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
             >
-              <span aria-hidden="true" className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              <span aria-hidden="true" className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                 {mainIcon}
               </span>
               <span>{mainLabel}</span>
             </button>
             <button type="button" aria-label="Lewati ke fase berikutnya" title="Lewati" onClick={p.skip} className={ICON_BUTTON}>
-              <span aria-hidden="true" className="material-symbols-outlined text-[22px]">skip_next</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[24px]">skip_next</span>
             </button>
           </div>
 
@@ -269,7 +269,7 @@ export const PomodoroPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
 
           {p.lastEvent && (
             <p className="mt-4 flex items-start gap-2 rounded-lg bg-primary-fixed/30 px-3 py-2.5 text-xs leading-relaxed text-on-surface">
-              <span aria-hidden="true" className="material-symbols-outlined text-[18px] text-primary shrink-0">
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px] text-primary shrink-0">
                 check_circle
               </span>
               <span>{p.lastEvent.text}</span>

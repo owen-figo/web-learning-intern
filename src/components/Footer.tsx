@@ -22,7 +22,7 @@ export const Footer: React.FC<FooterProps> = ({
             onClick={() => setActivePage('landing')}
             className="text-lg font-semibold text-primary flex items-center justify-center sm:justify-start gap-1.5 hover:opacity-90"
           >
-            <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
               eco
             </span>
             <span>Ngerti</span>
@@ -38,7 +38,7 @@ export const Footer: React.FC<FooterProps> = ({
             onClick={onOpenFormula}
             className="text-primary font-medium hover:underline transition-colors duration-200 flex items-center gap-1"
           >
-            <span className="material-symbols-outlined text-sm">menu_book</span>
+            <span className="material-symbols-outlined text-[16px]">menu_book</span>
             <span>Panduan Formula</span>
           </button>
           <button

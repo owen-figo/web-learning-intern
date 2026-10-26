@@ -1,47 +1,82 @@
-import React, { useState } from 'react';
-import {
-  TabelRingkasanKontingensiVisual,
-  BarPieChartVisual,
-  ParetoChartVisual,
-  SideBySideBarVisual,
-  StemAndLeafVisual,
-  DistribusiFrekuensiVisual,
-  HistogramPolygonVisual,
-  OgiveCurveVisual,
-  ScatterTimeSeriesVisual,
-  MisleadingGraphsVisual,
-} from './OrganizingVisuals';
-import { MeasureVisuals } from './MeasureVisuals';
-import { ProbabilityVisuals } from './ProbabilityVisuals';
-import { DiscreteProbabilityVisuals } from './DiscreteProbabilityVisuals';
-import { ContinuousProbabilityVisuals } from './ContinuousProbabilityVisuals';
+import React, { Suspense, lazy, useState } from 'react';
+
+// =========================================================================
+// LAZY-LOADED VISUAL MODULES
+// Each topic's visuals live in their own file and are downloaded only when a
+// section of that topic is opened, so the first page load stays small.
+// =========================================================================
+type TypedVisual = React.ComponentType<{ type: string }>;
+
+const OrganizingVisual = lazy(() =>
+  import('./OrganizingVisuals').then((m) => {
+    const map: Record<string, React.FC> = {
+      'tabel-ringkasan-kontingensi': m.TabelRingkasanKontingensiVisual,
+      'bar-pie-chart': m.BarPieChartVisual,
+      'pareto-chart': m.ParetoChartVisual,
+      'side-by-side-bar': m.SideBySideBarVisual,
+      'stem-and-leaf': m.StemAndLeafVisual,
+      'distribusi-frekuensi': m.DistribusiFrekuensiVisual,
+      'histogram-polygon': m.HistogramPolygonVisual,
+      'ogive-curve': m.OgiveCurveVisual,
+      'scatter-timeseries': m.ScatterTimeSeriesVisual,
+      'misleading-graphs': m.MisleadingGraphsVisual,
+    };
+    const Router: React.FC<{ type: string }> = ({ type }) => {
+      const C = map[type];
+      return C ? <C /> : null;
+    };
+    return { default: Router };
+  }),
+);
+const MeasureVisuals = lazy(() => import('./MeasureVisuals').then((m) => ({ default: m.MeasureVisuals })));
+const ProbabilityVisuals = lazy(() => import('./ProbabilityVisuals').then((m) => ({ default: m.ProbabilityVisuals })));
+const DiscreteProbabilityVisuals = lazy(() => import('./DiscreteProbabilityVisuals').then((m) => ({ default: m.DiscreteProbabilityVisuals })));
+const ContinuousProbabilityVisuals = lazy(() => import('./ContinuousProbabilityVisuals').then((m) => ({ default: m.ContinuousProbabilityVisuals })));
+const SamplingDistributionVisuals = lazy(() => import('./SamplingDistributionVisuals').then((m) => ({ default: m.SamplingDistributionVisuals })));
+const ConfidenceIntervalVisuals = lazy(() => import('./ConfidenceIntervalVisuals').then((m) => ({ default: m.ConfidenceIntervalVisuals })));
+
+// visualType → module that renders it. Add new types here when adding visuals.
+const MODULE_TYPES: [TypedVisual, string[]][] = [
+  [
+    OrganizingVisual,
+    ['tabel-ringkasan-kontingensi', 'bar-pie-chart', 'pareto-chart', 'side-by-side-bar', 'stem-and-leaf', 'distribusi-frekuensi', 'histogram-polygon', 'ogive-curve', 'scatter-timeseries', 'misleading-graphs'],
+  ],
+  [
+    MeasureVisuals,
+    ['mean-median-mode', 'geometric-mean', 'range', 'variance-sd', 'coefficient-of-variation', 'z-score', 'skewness', 'kurtosis', 'quartiles-iqr', 'five-number-summary', 'boxplot', 'population-measures', 'covariance', 'correlation'],
+  ],
+  [ProbabilityVisuals, ['probability-scale', 'jenis-probabilitas', 'sample-space', 'contingency-probability', 'conditional-probability', 'decision-tree', 'independence', 'multiplication-rule']],
+  [DiscreteProbabilityVisuals, ['discrete-distribution', 'binomial-conditions', 'combination', 'binomial-distribution', 'binomial-mean-sd', 'poisson-distribution', 'poisson-area', 'hypergeometric']],
+  [ContinuousProbabilityVisuals, ['continuous-vs-discrete', 'pdf-area', 'normal-pdf', 'z-transformation', 'uniform-pdf', 'uniform-stats', 'exponential-pdf']],
+  [SamplingDistributionVisuals, ['sampling-distribution-concept', 'standard-error-mean', 'central-limit-theorem', 'sample-mean-z', 'sample-mean-interval', 'sample-proportion', 'proportion-z']],
+  [ConfidenceIntervalVisuals, ['ci-coverage', 'ci-sigma-known', 't-distribution', 'ci-sigma-unknown', 'ci-proportion', 'sample-size-mean', 'sample-size-proportion']],
+];
+const MODULE_OF: Record<string, TypedVisual> = Object.fromEntries(MODULE_TYPES.flatMap(([mod, types]) => types.map((t) => [t, mod])));
+
+export const VisualSkeleton: React.FC = () => (
+  <div className="w-full h-48 rounded-xl bg-surface-container-low animate-pulse flex items-center justify-center text-xs text-on-surface-variant">
+    Memuat visualisasi…
+  </div>
+);
 
 interface ConceptExplainerProps {
   type: string;
 }
 
 export const ConceptExplainer: React.FC<ConceptExplainerProps> = ({ type }) => {
+  const LazyModule = MODULE_OF[type];
   return (
-    <div className="w-full bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-4 sm:p-5 shadow-xs">
+    <div className="sim w-full bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-4 sm:p-5 shadow-xs">
       {type === 'jenis-variabel' && <JenisVariabelVisual />}
       {type === 'skala-pengukuran' && <SkalaPengukuranVisual />}
       {type === 'populasi-sampel' && <PopulasiSampelVisual />}
       {type === 'metode-sampling' && <MetodeSamplingVisual />}
       {type === 'jenis-error-sampling' && <JenisErrorSamplingVisual />}
-      {type === 'tabel-ringkasan-kontingensi' && <TabelRingkasanKontingensiVisual />}
-      {type === 'bar-pie-chart' && <BarPieChartVisual />}
-      {type === 'pareto-chart' && <ParetoChartVisual />}
-      {type === 'side-by-side-bar' && <SideBySideBarVisual />}
-      {type === 'stem-and-leaf' && <StemAndLeafVisual />}
-      {type === 'distribusi-frekuensi' && <DistribusiFrekuensiVisual />}
-      {type === 'histogram-polygon' && <HistogramPolygonVisual />}
-      {type === 'ogive-curve' && <OgiveCurveVisual />}
-      {type === 'scatter-timeseries' && <ScatterTimeSeriesVisual />}
-      {type === 'misleading-graphs' && <MisleadingGraphsVisual />}
-      <MeasureVisuals type={type} />
-      <ProbabilityVisuals type={type} />
-      <DiscreteProbabilityVisuals type={type} />
-      <ContinuousProbabilityVisuals type={type} />
+      {LazyModule && (
+        <Suspense fallback={<VisualSkeleton />}>
+          <LazyModule type={type} />
+        </Suspense>
+      )}
     </div>
   );
 };
@@ -148,7 +183,7 @@ const JenisVariabelVisual: React.FC = () => {
             <h4 className="text-xs sm:text-sm font-bold text-on-surface">
               Eksplorasi Interaktif: Pilah Jenis Variabel
             </h4>
-            <p className="text-[11px] text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant">
               Ketuk kartu variabel di bawah, lalu pilih keranjang yang tepat.
             </p>
           </div>
@@ -156,9 +191,9 @@ const JenisVariabelVisual: React.FC = () => {
         <button
           type="button"
           onClick={handleReset}
-          className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium"
+          className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
         >
-          <span className="material-symbols-outlined text-[14px]">refresh</span>
+          <span className="material-symbols-outlined text-[16px]">refresh</span>
           Reset
         </button>
       </div>
@@ -184,7 +219,7 @@ const JenisVariabelVisual: React.FC = () => {
               } ${isCorrect ? 'border border-primary/50 text-primary' : 'border border-outline-variant/40'}`}
             >
               {isCorrect && (
-                <span className="material-symbols-outlined text-[14px] text-primary">check_circle</span>
+                <span className="material-symbols-outlined text-[16px] text-primary">check_circle</span>
               )}
               <span>{chip.name}</span>
             </button>
@@ -199,7 +234,7 @@ const JenisVariabelVisual: React.FC = () => {
             Variabel aktif:{' '}
             <strong className="text-primary font-bold">{selectedChip.name}</strong>
           </span>
-          <span className="text-[11px] text-on-surface-variant">
+          <span className="text-xs text-on-surface-variant">
             Pilih keranjang di bawah 👇
           </span>
         </div>
@@ -221,7 +256,7 @@ const JenisVariabelVisual: React.FC = () => {
               label
             </span>
           </div>
-          <p className="text-[11px] text-on-surface-variant leading-tight">
+          <p className="text-xs text-on-surface-variant leading-tight">
             Data berupa label, teks, atau kategori non-angka.
           </p>
           <div className="pt-1 flex flex-wrap gap-1">
@@ -230,7 +265,7 @@ const JenisVariabelVisual: React.FC = () => {
               .map((c) => (
                 <span
                   key={c.id}
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${
+                  className={`text-xs px-2 py-0.5 rounded-md font-semibold ${
                     c.correctBucket === 'categorical'
                       ? 'bg-primary-fixed/60 text-primary'
                       : 'bg-amber-100 text-amber-800'
@@ -256,7 +291,7 @@ const JenisVariabelVisual: React.FC = () => {
               pin
             </span>
           </div>
-          <p className="text-[11px] text-on-surface-variant leading-tight">
+          <p className="text-xs text-on-surface-variant leading-tight">
             Hasil menghitung (mencacah), bilangan bulat utuh.
           </p>
           <div className="pt-1 flex flex-wrap gap-1">
@@ -265,7 +300,7 @@ const JenisVariabelVisual: React.FC = () => {
               .map((c) => (
                 <span
                   key={c.id}
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${
+                  className={`text-xs px-2 py-0.5 rounded-md font-semibold ${
                     c.correctBucket === 'discrete'
                       ? 'bg-primary-fixed/60 text-primary'
                       : 'bg-amber-100 text-amber-800'
@@ -291,7 +326,7 @@ const JenisVariabelVisual: React.FC = () => {
               straighten
             </span>
           </div>
-          <p className="text-[11px] text-on-surface-variant leading-tight">
+          <p className="text-xs text-on-surface-variant leading-tight">
             Hasil mengukur, berada dalam rentang desimal.
           </p>
           <div className="pt-1 flex flex-wrap gap-1">
@@ -300,7 +335,7 @@ const JenisVariabelVisual: React.FC = () => {
               .map((c) => (
                 <span
                   key={c.id}
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-semibold ${
+                  className={`text-xs px-2 py-0.5 rounded-md font-semibold ${
                     c.correctBucket === 'continuous'
                       ? 'bg-primary-fixed/60 text-primary'
                       : 'bg-amber-100 text-amber-800'
@@ -427,7 +462,7 @@ const SkalaPengukuranVisual: React.FC = () => {
             <h4 className="text-xs sm:text-sm font-bold text-on-surface">
               Eksplorasi Interaktif: Urutkan Tingkat Skala (NOIR)
             </h4>
-            <p className="text-[11px] text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant">
               Ketuk contoh data, lalu tempatkan ke skala pengukuran yang sesuai.
             </p>
           </div>
@@ -435,9 +470,9 @@ const SkalaPengukuranVisual: React.FC = () => {
         <button
           type="button"
           onClick={handleReset}
-          className="text-[11px] text-primary hover:underline flex items-center gap-1 font-medium"
+          className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
         >
-          <span className="material-symbols-outlined text-[14px]">refresh</span>
+          <span className="material-symbols-outlined text-[16px]">refresh</span>
           Reset
         </button>
       </div>
@@ -463,7 +498,7 @@ const SkalaPengukuranVisual: React.FC = () => {
               } ${isCorrect ? 'border border-primary/50 text-primary' : 'border border-outline-variant/40'}`}
             >
               {isCorrect && (
-                <span className="material-symbols-outlined text-[14px] text-primary">check_circle</span>
+                <span className="material-symbols-outlined text-[16px] text-primary">check_circle</span>
               )}
               <span>{chip.name}</span>
             </button>
@@ -477,7 +512,7 @@ const SkalaPengukuranVisual: React.FC = () => {
           <span>
             Data aktif: <strong className="text-primary font-bold">{selectedChip.name}</strong>
           </span>
-          <span className="text-[11px] text-on-surface-variant">Pilih skala NOIR di bawah 👇</span>
+          <span className="text-xs text-on-surface-variant">Pilih skala NOIR di bawah 👇</span>
         </div>
       )}
 
@@ -499,7 +534,7 @@ const SkalaPengukuranVisual: React.FC = () => {
               <div className="text-xs font-bold text-on-surface group-hover:text-primary transition-colors">
                 {item.label}
               </div>
-              <p className="text-[10px] text-on-surface-variant leading-tight">{item.desc}</p>
+              <p className="text-xs text-on-surface-variant leading-tight">{item.desc}</p>
             </div>
             <div className="pt-2 flex flex-wrap gap-1">
               {initialScaleChips
@@ -507,7 +542,7 @@ const SkalaPengukuranVisual: React.FC = () => {
                 .map((c) => (
                   <span
                     key={c.id}
-                    className={`text-[9px] px-1.5 py-0.5 rounded font-semibold ${
+                    className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
                       c.correctScale === item.key
                         ? 'bg-primary-fixed/60 text-primary'
                         : 'bg-amber-100 text-amber-800'
@@ -589,7 +624,7 @@ const PopulasiSampelVisual: React.FC = () => {
             <h4 className="text-xs sm:text-sm font-bold text-on-surface">
               Simulasi Interaktif: Populasi vs Sampel
             </h4>
-            <p className="text-[11px] text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant">
               Ambil sampel acak 10 responden dari populasi 60 mahasiswa untuk melihat fluktuasi statistik.
             </p>
           </div>
@@ -610,15 +645,15 @@ const PopulasiSampelVisual: React.FC = () => {
         <div className="p-3 rounded-xl bg-surface-container-low border border-outline-variant/50 space-y-1">
           <div className="flex items-center justify-between text-xs text-on-surface-variant">
             <span className="font-semibold">Populasi (N = 60)</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-bold uppercase">
+            <span className="text-xs px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-bold uppercase">
               Tetap
             </span>
           </div>
           <div className="text-lg sm:text-xl font-bold text-on-surface flex items-baseline gap-1.5">
             <span>μ = {POPULATION_PARAM}</span>
-            <span className="text-[11px] font-normal text-on-surface-variant">IPK Rata-rata</span>
+            <span className="text-xs font-normal text-on-surface-variant">IPK Rata-rata</span>
           </div>
-          <p className="text-[11px] text-primary font-semibold">
+          <p className="text-xs text-primary font-semibold">
             Parameter (Nilai Sebenarnya dari Populasi)
           </p>
         </div>
@@ -626,15 +661,15 @@ const PopulasiSampelVisual: React.FC = () => {
         <div className="p-3 rounded-xl bg-primary/10 border border-primary/30 space-y-1">
           <div className="flex items-center justify-between text-xs text-on-surface-variant">
             <span className="font-semibold text-primary">Sampel (n = 10)</span>
-            <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-on-primary font-bold uppercase">
+            <span className="text-xs px-1.5 py-0.5 rounded bg-primary text-on-primary font-bold uppercase">
               Berfluktuasi
             </span>
           </div>
           <div className="text-lg sm:text-xl font-bold text-primary flex items-baseline gap-1.5">
             <span>x̄ = {sampleStatistic}</span>
-            <span className="text-[11px] font-normal text-on-surface-variant">IPK Rata-rata</span>
+            <span className="text-xs font-normal text-on-surface-variant">IPK Rata-rata</span>
           </div>
-          <p className="text-[11px] text-primary font-semibold">
+          <p className="text-xs text-primary font-semibold">
             Statistic (Perkiraan dari 10 Responden Terpilih)
           </p>
         </div>
@@ -642,7 +677,7 @@ const PopulasiSampelVisual: React.FC = () => {
 
       {/* Population Grid of 60 Dots */}
       <div className="p-4 rounded-xl bg-surface-container-low/70 border border-outline-variant/40 space-y-2">
-        <div className="flex items-center justify-between text-[11px] text-on-surface-variant pb-1">
+        <div className="flex items-center justify-between text-xs text-on-surface-variant pb-1">
           <span>Grid Populasi (Titik hijau menandai 10 sampel yang terpilih saat ini):</span>
           <span>Selisih estimasi: {Math.abs(Number(sampleStatistic) - Number(POPULATION_PARAM)).toFixed(2)}</span>
         </div>
@@ -653,10 +688,10 @@ const PopulasiSampelVisual: React.FC = () => {
               <div
                 key={idx}
                 title={`Responden #${idx + 1} • IPK: ${val}`}
-                className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${
+                className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-300 ${
                   isSample
                     ? 'bg-primary text-on-primary scale-125 ring-2 ring-primary ring-offset-2 shadow-xs z-10'
-                    : 'bg-surface-container-high text-on-surface-variant/70 opacity-60'
+                    : 'bg-surface-container-high text-on-surface-variant'
                 }`}
               >
                 {isSample ? '✓' : idx + 1}
@@ -704,7 +739,7 @@ const MetodeSamplingVisual: React.FC = () => {
             <h4 className="text-xs sm:text-sm font-bold text-on-surface">
               Perbandingan: Probability vs Nonprobability Sampling
             </h4>
-            <p className="text-[11px] text-on-surface-variant">
+            <p className="text-xs text-on-surface-variant">
               Bandingkan bagaimana objek populasi ditarik untuk mewakili keseluruhan.
             </p>
           </div>
@@ -743,7 +778,7 @@ const MetodeSamplingVisual: React.FC = () => {
           <span className="font-semibold text-on-surface">
             Pola Penyebaran Sampel Terpilih:
           </span>
-          <span className="text-[11px] text-on-surface-variant">
+          <span className="text-xs text-on-surface-variant">
             {method === 'probability'
               ? 'Tersebar merata di seluruh populasi (Peluang diketahui)'
               : 'Terkumpul hanya di pojok yang mudah dijangkau (Convenience)'}
@@ -756,12 +791,12 @@ const MetodeSamplingVisual: React.FC = () => {
             return (
               <div
                 key={idx}
-                className={`w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold transition-all duration-300 ${
+                className={`w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold transition-all duration-300 ${
                   isPicked
                     ? method === 'probability'
                       ? 'bg-primary text-on-primary scale-110 shadow-xs ring-2 ring-primary ring-offset-1'
-                      : 'bg-amber-600 text-white scale-110 shadow-xs ring-2 ring-amber-600 ring-offset-1'
-                    : 'bg-surface-container text-on-surface-variant/50 opacity-40'
+                      : 'bg-amber-700 text-white scale-110 shadow-xs ring-2 ring-amber-600 ring-offset-1'
+                    : 'bg-surface-container text-on-surface-variant'
                 }`}
               >
                 {isPicked ? '✓' : idx + 1}
@@ -789,7 +824,7 @@ const MetodeSamplingVisual: React.FC = () => {
               : 'Tidak Dapat Digeneralisasi ke Seluruh Populasi'}
           </span>
         </div>
-        <p className="text-[11px] text-on-surface-variant leading-relaxed">
+        <p className="text-xs text-on-surface-variant leading-relaxed">
           {method === 'probability' ? (
             <>
               Karena setiap elemen memiliki probabilitas yang diketahui untuk terpilih, sampel ini merepresentasikan seluruh lapisan populasi. <strong>Hanya probability sample yang memungkinkan peneliti membuat kesimpulan (inference) mengenai karakteristik population.</strong>
@@ -827,7 +862,7 @@ const JenisErrorSamplingVisual: React.FC = () => {
           <h4 className="text-xs sm:text-sm font-bold text-on-surface">
             Simulasi 4 Jenis Error dalam Pengumpulan Data
           </h4>
-          <p className="text-[11px] text-on-surface-variant">
+          <p className="text-xs text-on-surface-variant">
             Pilih salah satu jenis error untuk melihat ilustrasi konkretnya.
           </p>
         </div>
@@ -865,33 +900,33 @@ const JenisErrorSamplingVisual: React.FC = () => {
               <span className="font-bold text-on-surface">
                 Sampling Frame Lebih Kecil dari Populasi Sebenarnya
               </span>
-              <span className="text-[11px] text-amber-600 font-medium">Ada yang tertinggal</span>
+              <span className="text-xs text-amber-700 font-medium">Ada yang tertinggal</span>
             </div>
 
             <div className="relative p-6 rounded-2xl bg-surface-container-lowest border border-outline-variant/60 flex items-center justify-center min-h-[180px]">
               {/* Big Outer Circle: Population */}
               <div className="relative w-64 h-48 rounded-full border-2 border-dashed border-outline-variant flex items-center justify-center bg-surface-container/20">
-                <span className="absolute top-2 left-4 text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">
+                <span className="absolute top-2 left-4 text-xs font-bold text-on-surface-variant uppercase tracking-wider">
                   Seluruh Populasi Mahasiswa
                 </span>
 
                 {/* Leftover dots outside sampling frame */}
                 <div className="absolute top-6 right-6 flex flex-col items-center">
                   <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <span className="text-[9px] text-red-500 font-bold">Tak terdaftar</span>
+                  <span className="text-xs text-red-700 font-bold">Tak terdaftar</span>
                 </div>
                 <div className="absolute bottom-6 left-6 flex flex-col items-center">
                   <div className="w-3 h-3 rounded-full bg-red-400"></div>
-                  <span className="text-[9px] text-red-500 font-bold">Email keliru</span>
+                  <span className="text-xs text-red-700 font-bold">Email keliru</span>
                 </div>
 
                 {/* Inner Circle: Sampling Frame */}
                 <div className="w-40 h-32 rounded-full border-2 border-primary bg-primary/10 flex flex-col items-center justify-center text-center p-2">
                   <span className="text-xs font-bold text-primary">Daftar Email Kampus</span>
-                  <span className="text-[10px] text-on-surface-variant leading-tight">
+                  <span className="text-xs text-on-surface-variant leading-tight">
                     (Sampling Frame)
                   </span>
-                  <span className="text-[9px] text-primary font-medium mt-1">
+                  <span className="text-xs text-primary font-medium mt-1">
                     Hanya bagian ini yang bisa terpilih
                   </span>
                 </div>
@@ -921,7 +956,7 @@ const JenisErrorSamplingVisual: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/60 space-y-3">
-              <div className="flex items-center justify-between text-[11px] text-on-surface-variant">
+              <div className="flex items-center justify-between text-xs text-on-surface-variant">
                 <span>Total 20 orang terpilih sebagai sampel:</span>
                 <span className="font-semibold text-primary">
                   {nonresponseSubmitted ? '8 Mengisi (Aktif) • 12 Tidak Mengisi (Fade)' : 'Menunggu pengiriman survei...'}
@@ -977,7 +1012,7 @@ const JenisErrorSamplingVisual: React.FC = () => {
                 onChange={(e) => setSampleSize(Number(e.target.value))}
                 className="w-full accent-primary cursor-pointer"
               />
-              <div className="flex justify-between text-[10px] text-on-surface-variant">
+              <div className="flex justify-between text-xs text-on-surface-variant">
                 <span>n = 5 (Variasi besar / Error tinggi)</span>
                 <span>n = 100 (Variasi kecil / Error rendah)</span>
               </div>
@@ -985,7 +1020,7 @@ const JenisErrorSamplingVisual: React.FC = () => {
 
             {/* Visual Margin of Error spread */}
             <div className="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/60 space-y-2">
-              <div className="text-[11px] font-semibold text-on-surface flex justify-between">
+              <div className="text-xs font-semibold text-on-surface flex justify-between">
                 <span>Rentang Sebaran Rata-rata Sampel (Margin of Error):</span>
                 <span className="text-primary font-bold">
                   ±{(15 / Math.sqrt(sampleSize)).toFixed(1)}%
@@ -1000,7 +1035,7 @@ const JenisErrorSamplingVisual: React.FC = () => {
                     width: `${Math.max(12, Math.min(100, (100 / Math.sqrt(sampleSize)) * 3))}%`,
                   }}
                 />
-                <span className="absolute text-[10px] font-bold text-primary">
+                <span className="absolute text-xs font-bold text-primary">
                   Pusat Parameter (μ)
                 </span>
               </div>
@@ -1019,7 +1054,7 @@ const JenisErrorSamplingVisual: React.FC = () => {
               <span className="font-bold text-on-surface">
                 Data Tidak Akurat karena Instrumen atau Pertanyaan Kurang Tepat
               </span>
-              <span className="text-[11px] text-red-500 font-semibold">Bias Sistematis</span>
+              <span className="text-xs text-red-700 font-semibold">Bias Sistematis</span>
             </div>
 
             <div className="p-4 rounded-2xl bg-surface-container-lowest border border-outline-variant/60 flex flex-col sm:flex-row items-center gap-6 justify-center">
@@ -1042,10 +1077,10 @@ const JenisErrorSamplingVisual: React.FC = () => {
                   <span className="material-symbols-outlined text-[16px]">gps_off</span>
                   <span>Tembakan Meleset Terus-Menerus ke Satu Arah</span>
                 </div>
-                <p className="text-[11px] text-on-surface-variant leading-relaxed">
+                <p className="text-xs text-on-surface-variant leading-relaxed">
                   Titik merah selalu meleset dari pusat target hijau karena alat ukur atau pertanyaan survei mengandung bias sejak awal.
                 </p>
-                <div className="p-2 rounded-lg bg-surface-container-low text-[11px] text-on-surface">
+                <div className="p-2 rounded-lg bg-surface-container-low text-xs text-on-surface">
                   Contoh pertanyaan ambigu: <em>&ldquo;Seberapa sering kamu belajar per minggu?&rdquo;</em> (tanpa menyebutkan hitungan jam atau hari). Responden A menjawab &ldquo;Sering&rdquo; (2 jam), sedangkan Responden B menjawab &ldquo;Jarang&rdquo; (5 jam).
                 </div>
               </div>

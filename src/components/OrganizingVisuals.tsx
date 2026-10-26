@@ -59,12 +59,12 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
 
         {activeTab === 'ringkasan' ? (
           <div className="flex items-center gap-1 text-xs">
-            <span className="text-on-surface-variant font-medium text-[11px] mr-1">Tampilkan:</span>
+            <span className="text-on-surface-variant font-medium text-xs mr-1">Tampilkan:</span>
             {(['semua', 'frekuensi', 'persen'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setDisplayMode(m)}
-                className={`px-2.5 py-1 rounded-md capitalize font-medium text-[11px] transition-colors ${
+                className={`px-2.5 py-1 rounded-md capitalize font-medium text-xs transition-colors ${
                   displayMode === m
                     ? 'bg-primary text-on-primary'
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
@@ -76,7 +76,7 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
           </div>
         ) : (
           <div className="flex flex-wrap items-center gap-1 text-xs">
-            <span className="text-on-surface-variant font-medium text-[11px] mr-1">Nilai Sel:</span>
+            <span className="text-on-surface-variant font-medium text-xs mr-1">Nilai Sel:</span>
             {[
               { id: 'frekuensi', label: 'Jumlah (f)' },
               { id: 'persen-total', label: '% Total' },
@@ -86,7 +86,7 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
               <button
                 key={cm.id}
                 onClick={() => setContingencyMode(cm.id as any)}
-                className={`px-2 py-1 rounded-md font-medium text-[11px] transition-colors ${
+                className={`px-2 py-1 rounded-md font-medium text-xs transition-colors ${
                   contingencyMode === cm.id
                     ? 'bg-primary text-on-primary'
                     : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
@@ -150,7 +150,7 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
                   {(displayMode === 'semua' || displayMode === 'persen') && (
                     <td className="py-2.5 px-3 text-right font-mono text-primary">100.0%</td>
                   )}
-                  <td className="py-2.5 px-3 text-[11px] text-on-surface-variant font-normal">
+                  <td className="py-2.5 px-3 text-xs text-on-surface-variant font-normal">
                     Lengkap &amp; Tuntas (100%)
                   </td>
                 </tr>
@@ -186,7 +186,7 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
                     Total Baris
                   </th>
                 </tr>
-                <tr className="bg-surface-container-low/70 text-on-surface-variant text-[11px] border-b border-outline-variant/60">
+                <tr className="bg-surface-container-low/70 text-on-surface-variant text-xs border-b border-outline-variant/60">
                   {contingencyData.metode.map((m, i) => (
                     <th key={i} className="py-1.5 px-2.5 font-medium">
                       {m}
@@ -249,10 +249,10 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
 
           <div className="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 text-xs text-on-surface-variant space-y-1">
             <div className="flex items-center gap-1.5 font-semibold text-primary">
-              <span className="material-symbols-outlined text-[15px]">info</span>
+              <span className="material-symbols-outlined text-[16px]">info</span>
               <span>Intisari Tabel Kontingensi:</span>
             </div>
-            <p className="leading-relaxed text-[11px]">
+            <p className="leading-relaxed text-xs">
               {contingencyMode === 'persen-baris' &&
                 '💡 Persentase Baris: Memperlihatkan bahwa 50% Pelanggan Baru memakai E-Wallet, sedangkan Pelanggan Setia lebih banyak memakai Virtual Account (35%) dan Kartu Kredit (30%).'}
               {contingencyMode === 'persen-kolom' &&
@@ -270,19 +270,361 @@ export const TabelRingkasanKontingensiVisual: React.FC = () => {
 };
 
 // =========================================================================
+// 2a. BAR & PIE STEP-BY-STEP BUILDER
+// =========================================================================
+interface BuilderCategory {
+  label: string;
+  count: number;
+  pct: number;
+  color: string;
+  degrees: number;
+}
+
+const BAR_BUILD_STEPS = [
+  { title: 'Susun tabel ringkasan', desc: 'Hitung frekuensi tiap merek lalu ubah ke persentase: (f / n) × 100%.' },
+  { title: 'Gambar sumbu Y mulai dari 0', desc: 'Nilai tertinggi 30% → skala 0% sampai 35% dengan garis bantu tiap 10%.' },
+  { title: 'Gambar sumbu X (kategori)', desc: 'Tulis nama merek dengan jarak sama, diurutkan dari frekuensi terbesar.' },
+  { title: 'Gambar batang dengan celah', desc: 'Lebar batang sama, tinggi sesuai persentase, dan ada celah antarbatang.' },
+  { title: 'Beri label, nama sumbu, dan judul', desc: 'Tulis nilai di atas batang, nama sumbu, dan judul diagram.' },
+];
+
+const PIE_BUILD_STEPS = [
+  { title: 'Susun tabel ringkasan', desc: 'Hitung frekuensi dan persentase tiap merek.' },
+  { title: 'Ubah ke sudut derajat', desc: 'Sudut = (f / n) × 360°. Contoh Asus: 45/150 × 360° = 108°.' },
+  { title: 'Periksa total = 360°', desc: '108° + 96° + 84° + 48° + 24° = 360°.' },
+  { title: 'Gambar lingkaran & garis awal', desc: 'Tarik jari-jari dari pusat ke arah jam 12 sebagai titik 0°.' },
+  { title: 'Gambar juring searah jarum jam', desc: 'Ukur sudut tiap merek berurutan; ujung juring sebelumnya menjadi awal juring berikutnya.' },
+  { title: 'Beri warna, label, legenda & judul', desc: 'Tulis persentase pada tiap juring dan lengkapi legenda serta judul.' },
+];
+
+export const LAPTOP_CATEGORIES: BuilderCategory[] = [
+  { label: 'Asus', count: 45, pct: 30.0, color: '#0d9488', degrees: 108 },
+  { label: 'Lenovo', count: 40, pct: 26.7, color: '#14b8a6', degrees: 96 },
+  { label: 'Apple (Mac)', count: 35, pct: 23.3, color: '#0284c7', degrees: 84 },
+  { label: 'HP', count: 20, pct: 13.3, color: '#f59e0b', degrees: 48 },
+  { label: 'Lainnya', count: 10, pct: 6.7, color: '#6b7280', degrees: 24 },
+];
+
+type ChartKind = 'bar' | 'pie';
+
+const withRanges = (categories: BuilderCategory[]) => {
+  let acc = 0;
+  return categories.map((c) => {
+    const start = acc;
+    acc += c.degrees;
+    return { ...c, start, end: acc };
+  });
+};
+
+// Summary table as it looks at a given step (pie adds degree / range columns as steps progress)
+const BarPieTable: React.FC<{ chartType: ChartKind; step: number; categories: BuilderCategory[] }> = ({ chartType, step, categories }) => {
+  const total = categories.reduce((s, c) => s + c.count, 0);
+  const slices = withRanges(categories);
+  const showDeg = chartType === 'pie' && step >= 2;
+  const showRange = chartType === 'pie' && step >= 5;
+  const showColor = (chartType === 'bar' && step >= 4) || (chartType === 'pie' && step >= 5);
+
+  return (
+    <div className="overflow-x-auto rounded-xl border border-outline-variant/60 bg-surface-container-lowest">
+      <table className="w-full text-xs text-left border-collapse">
+        <thead>
+          <tr className="bg-surface-container text-black">
+            <th className="py-2 px-3 font-bold">Merek</th>
+            <th className="py-2 px-3 font-bold">f</th>
+            <th className="py-2 px-3 font-bold">Persentase</th>
+            {showDeg && <th className="py-2 px-3 font-bold">Sudut</th>}
+            {showRange && <th className="py-2 px-3 font-bold">Rentang Juring</th>}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-surface-container">
+          {slices.map((c) => (
+            <tr key={c.label} className="text-black">
+              <td className="py-1.5 px-3 font-semibold">
+                <span className="inline-flex items-center gap-1.5">
+                  {showColor && <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: c.color }} />}
+                  {c.label}
+                </span>
+              </td>
+              <td className="py-1.5 px-3 font-mono">{c.count}</td>
+              <td className="py-1.5 px-3 font-mono">
+                {c.count}/{total} = {c.pct.toFixed(1)}%
+              </td>
+              {showDeg && (
+                <td className="py-1.5 px-3 font-mono font-bold text-primary">
+                  {c.count}/{total} × 360° = {c.degrees}°
+                </td>
+              )}
+              {showRange && (
+                <td className="py-1.5 px-3 font-mono">
+                  {c.start}°–{c.end}°
+                </td>
+              )}
+            </tr>
+          ))}
+          <tr className="bg-surface-container-low font-bold text-black">
+            <td className="py-1.5 px-3">Total</td>
+            <td className="py-1.5 px-3 font-mono">{total}</td>
+            <td className="py-1.5 px-3 font-mono">100%</td>
+            {showDeg && <td className={`py-1.5 px-3 font-mono ${step >= 3 ? 'text-primary' : ''}`}>{step >= 3 ? '360° ✓' : '?'}</td>}
+            {showRange && <td className="py-1.5 px-3" />}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+// Chart drawing as it looks at a given step
+const BarPieCanvas: React.FC<{ chartType: ChartKind; step: number; categories: BuilderCategory[] }> = ({ chartType, step, categories }) => {
+  if (chartType === 'bar') {
+    const slot = (520 - 45) / categories.length;
+    return (
+      <svg viewBox="0 0 540 270" className="w-full h-auto overflow-visible select-none">
+        {step >= 5 && (
+          <text x="285" y="14" textAnchor="middle" fontSize="13" fontWeight="bold" fill="#0f172a">
+            Preferensi Merek Laptop 150 Mahasiswa
+          </text>
+        )}
+        {step >= 2 && (
+          <g>
+            {[0, 10, 20, 30, 35].map((val) => {
+              const y = 210 - (val / 35) * 180;
+              return (
+                <g key={val}>
+                  {val > 0 && <line x1="45" y1={y} x2="520" y2={y} stroke="#cbd5e1" strokeDasharray="3 3" />}
+                  <text x="38" y={y + 4} textAnchor="end" fontSize="10" fill="#334155" fontFamily="monospace">
+                    {val}%
+                  </text>
+                </g>
+              );
+            })}
+            <line x1="45" y1="25" x2="45" y2="210" stroke={step === 2 ? '#ba1a1a' : '#475569'} strokeWidth={step === 2 ? 3 : 1.5} />
+            {step >= 5 && (
+              <text x="12" y="118" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#0f172a" transform="rotate(-90 12 118)">
+                Persentase (%)
+              </text>
+            )}
+          </g>
+        )}
+        {step >= 3 && (
+          <g>
+            <line x1="45" y1="210" x2="525" y2="210" stroke={step === 3 ? '#ba1a1a' : '#475569'} strokeWidth={step === 3 ? 3 : 1.5} />
+            {categories.map((cat, idx) => (
+              <text key={cat.label} x={45 + (idx + 0.5) * slot} y="228" textAnchor="middle" fontSize="11" fontWeight="600" fill="#334155">
+                {cat.label}
+              </text>
+            ))}
+            {step >= 5 && (
+              <text x="285" y="255" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#0f172a">
+                Merek Laptop
+              </text>
+            )}
+          </g>
+        )}
+        {step >= 4 &&
+          categories.map((cat, idx) => {
+            const centerX = 45 + (idx + 0.5) * slot;
+            const h = (cat.pct / 35) * 180;
+            return (
+              <g key={cat.label}>
+                <rect x={centerX - 26} y={210 - h} width="52" height={h} rx="4" fill={cat.color} />
+                {step >= 5 && (
+                  <text x={centerX} y={204 - h} textAnchor="middle" fontSize="11" fontWeight="bold" fill="#0f172a" fontFamily="monospace">
+                    {cat.pct.toFixed(1)}%
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        {step === 4 && (
+          <g>
+            <text x={45 + slot} y="245" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ba1a1a">
+              ↑ celah antarbatang
+            </text>
+          </g>
+        )}
+        {step === 1 && (
+          <text x="270" y="130" textAnchor="middle" fontSize="13" fill="#475569">
+            Kanvas masih kosong: siapkan tabel terlebih dahulu.
+          </text>
+        )}
+      </svg>
+    );
+  }
+
+  const cx = 120;
+  const cy = 115;
+  const r = 85;
+  const polar = (deg: number, radius = r) => {
+    const rad = (deg * Math.PI) / 180;
+    return { x: cx + radius * Math.sin(rad), y: cy - radius * Math.cos(rad) };
+  };
+  const slices = withRanges(categories);
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+      <div className={step >= 6 ? 'md:col-span-7' : 'md:col-span-12'}>
+        <svg viewBox="0 0 240 240" className="w-full max-w-[260px] mx-auto h-auto overflow-visible select-none">
+          {step >= 6 && (
+            <text x="120" y="12" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#0f172a">
+              Merek Laptop 150 Mahasiswa
+            </text>
+          )}
+          {step < 4 && (
+            <text x="120" y="120" textAnchor="middle" fontSize="11" fill="#475569">
+              {step === 1 ? 'Siapkan tabel dulu' : step === 2 ? 'Hitung sudut tiap merek' : 'Total sudut sudah 360°'}
+            </text>
+          )}
+          {step >= 4 && (
+            <g>
+              {step >= 5 &&
+                slices.map((s) => {
+                  const a = polar(s.start);
+                  const b = polar(s.end);
+                  const large = s.degrees > 180 ? 1 : 0;
+                  return (
+                    <path
+                      key={s.label}
+                      d={`M ${cx} ${cy} L ${a.x} ${a.y} A ${r} ${r} 0 ${large} 1 ${b.x} ${b.y} Z`}
+                      fill={step >= 6 ? s.color : '#ffffff'}
+                      stroke="#0f172a"
+                      strokeWidth="1.5"
+                    />
+                  );
+                })}
+              <circle cx={cx} cy={cy} r={r} fill="none" stroke="#0f172a" strokeWidth="1.5" />
+              <circle cx={cx} cy={cy} r="2.5" fill="#0f172a" />
+              <line x1={cx} y1={cy} x2={cx} y2={cy - r} stroke="#ba1a1a" strokeWidth="2.5" />
+              <text x={cx + 6} y={cy - r - 4} fontSize="10" fontWeight="bold" fill="#ba1a1a">
+                0°
+              </text>
+              {step === 5 &&
+                slices.map((s) => {
+                  const p = polar(s.end, r + 12);
+                  return (
+                    <text key={s.label} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a" fontFamily="monospace">
+                      {s.end}°
+                    </text>
+                  );
+                })}
+              {step >= 6 &&
+                slices.map((s) => {
+                  const p = polar((s.start + s.end) / 2, r * 0.62);
+                  return (
+                    <text key={s.label} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" paintOrder="stroke" fontFamily="monospace">
+                      {s.pct.toFixed(1)}%
+                    </text>
+                  );
+                })}
+            </g>
+          )}
+        </svg>
+      </div>
+      {step >= 6 && (
+        <div className="md:col-span-5 space-y-1.5">
+          {slices.map((s) => (
+            <div key={s.label} className="flex items-center gap-2 text-xs text-black">
+              <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: s.color }} />
+              <span className="font-semibold">{s.label}</span>
+              <span className="font-mono ml-auto">{s.pct.toFixed(1)}%</span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * Compact illustration for one step card in the reading text.
+ * Table-only steps show the table; drawing steps show the chart as it looks after that step.
+ */
+export const BarPieStepSnapshot: React.FC<{ chartType: ChartKind; step: number }> = ({ chartType, step }) => {
+  const tableStep = chartType === 'bar' ? step === 1 : step <= 3;
+  return (
+    <div className="p-2.5 rounded-xl bg-surface-container-low/60 border border-outline-variant/40">
+      {tableStep ? (
+        <BarPieTable chartType={chartType} step={step} categories={LAPTOP_CATEGORIES} />
+      ) : (
+        <BarPieCanvas chartType={chartType} step={step} categories={LAPTOP_CATEGORIES} />
+      )}
+    </div>
+  );
+};
+
+const BarPieStepBuilder: React.FC<{ chartType: ChartKind; categories: BuilderCategory[] }> = ({ chartType, categories }) => {
+  const steps = chartType === 'bar' ? BAR_BUILD_STEPS : PIE_BUILD_STEPS;
+  const [step, setStep] = useState<number>(1);
+  const current = steps[step - 1];
+
+  return (
+    <div className="space-y-4">
+      {/* Stepper header */}
+      <div className="flex flex-wrap items-center gap-2">
+        {steps.map((s, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={() => setStep(i + 1)}
+            aria-label={`Langkah ${i + 1}: ${s.title}`}
+            className={`w-8 h-8 rounded-full text-xs font-bold transition-all ${
+              i + 1 === step
+                ? 'bg-primary text-on-primary scale-110 shadow-xs'
+                : i + 1 < step
+                  ? 'bg-primary-fixed text-black'
+                  : 'bg-surface-container text-on-surface-variant'
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+      </div>
+
+      <div className="p-3 rounded-xl bg-primary-fixed/30 border border-primary/30 space-y-1">
+        <div className="text-xs font-bold text-primary uppercase">
+          Langkah {step} dari {steps.length}: {current.title}
+        </div>
+        <p className="text-sm text-black leading-relaxed">{current.desc}</p>
+      </div>
+
+      <BarPieTable chartType={chartType} step={step} categories={categories} />
+
+      <div className="p-3 sm:p-4 rounded-2xl bg-surface-container-low/60 border border-outline-variant/40">
+        <BarPieCanvas chartType={chartType} step={step} categories={categories} />
+      </div>
+
+      {/* Prev / Next */}
+      <div className="flex items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={() => setStep((s) => Math.max(1, s - 1))}
+          disabled={step === 1}
+          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-surface-container text-on-surface hover:bg-surface-container-high disabled:opacity-40"
+        >
+          ← Sebelumnya
+        </button>
+        <button
+          type="button"
+          onClick={() => setStep((s) => Math.min(steps.length, s + 1))}
+          disabled={step === steps.length}
+          className="px-3 py-1.5 rounded-xl text-xs font-bold bg-primary text-on-primary shadow-xs disabled:opacity-40"
+        >
+          Berikutnya →
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// =========================================================================
 // 2. BAR CHART & PIE CHART VISUAL
 // =========================================================================
 export const BarPieChartVisual: React.FC = () => {
   const [chartType, setChartType] = useState<'bar' | 'pie'>('bar');
+  const [viewMode, setViewMode] = useState<'result' | 'steps'>('steps');
   const [activeItem, setActiveItem] = useState<number | null>(null);
 
-  const categories = [
-    { label: 'Asus', count: 45, pct: 30.0, color: '#0d9488', degrees: 108 },
-    { label: 'Lenovo', count: 40, pct: 26.7, color: '#14b8a6', degrees: 96 },
-    { label: 'Apple (Mac)', count: 35, pct: 23.3, color: '#0284c7', degrees: 84 },
-    { label: 'HP', count: 20, pct: 13.3, color: '#f59e0b', degrees: 48 },
-    { label: 'Lainnya', count: 10, pct: 6.7, color: '#6b7280', degrees: 24 },
-  ];
+  const categories = LAPTOP_CATEGORIES;
 
   // Cumulative angles for SVG pie chart rendering
   let cumulativeAngle = 0;
@@ -335,18 +677,46 @@ export const BarPieChartVisual: React.FC = () => {
           </button>
         </div>
 
-        <span className="text-[11px] text-on-surface-variant font-medium hidden sm:inline">
+        <span className="text-xs text-on-surface-variant font-medium hidden sm:inline">
           Data: Merek Laptop 150 Mahasiswa
         </span>
       </div>
 
+      {/* View mode: step-by-step builder vs finished chart */}
+      <div className="flex flex-wrap gap-2">
+        {(
+          [
+            { id: 'steps', label: 'Langkah demi Langkah', icon: 'format_list_numbered' },
+            { id: 'result', label: 'Hasil Akhir', icon: 'check_circle' },
+          ] as const
+        ).map((m) => (
+          <button
+            key={m.id}
+            type="button"
+            onClick={() => setViewMode(m.id)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-colors ${
+              viewMode === m.id
+                ? 'bg-primary text-on-primary shadow-xs'
+                : 'bg-surface-container text-on-surface hover:bg-surface-container-high'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[16px]">{m.icon}</span>
+            <span>
+              Cara Membuat {chartType === 'bar' ? 'Bar Chart' : 'Pie Chart'}: {m.label}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {viewMode === 'steps' && <BarPieStepBuilder key={chartType} chartType={chartType} categories={categories} />}
+
       {/* BAR CHART VIEW */}
-      {chartType === 'bar' && (
+      {viewMode === 'result' && chartType === 'bar' && (
         <div className="space-y-4">
           <div className="p-4 sm:p-5 rounded-2xl bg-surface-container-low/60 border border-outline-variant/40 space-y-4">
             <div className="flex items-center justify-between text-xs text-on-surface-variant">
               <span className="font-semibold text-on-surface">Sumbu Y: Persentase (%) / Frekuensi (n)</span>
-              <span className="text-[11px] text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+              <span className="text-xs text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
                 Ada celah spasi antarbatang (variabel kategorikal terpisah)
               </span>
             </div>
@@ -381,7 +751,7 @@ export const BarPieChartVisual: React.FC = () => {
                         y={y + 4}
                         textAnchor="end"
                         fontSize="10"
-                        fill="#64748b"
+                        fill="#475569"
                         className="font-mono font-medium"
                       >
                         {val}%
@@ -448,7 +818,7 @@ export const BarPieChartVisual: React.FC = () => {
                         y="242"
                         textAnchor="middle"
                         fontSize="9"
-                        fill="#64748b"
+                        fill="#475569"
                         className="font-medium"
                       >
                         n = {cat.count}
@@ -472,7 +842,7 @@ export const BarPieChartVisual: React.FC = () => {
       )}
 
       {/* PIE CHART VIEW */}
-      {chartType === 'pie' && (
+      {viewMode === 'result' && chartType === 'pie' && (
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-4 rounded-2xl bg-surface-container-low/60 border border-outline-variant/40">
           {/* SVG Pie */}
           <div className="md:col-span-6 flex flex-col items-center justify-center">
@@ -494,7 +864,7 @@ export const BarPieChartVisual: React.FC = () => {
                 <circle cx="100" cy="100" r="30" fill="currentColor" className="text-surface-container-lowest" />
               </svg>
             </div>
-            <span className="text-[11px] text-on-surface-variant mt-2 font-medium">
+            <span className="text-xs text-on-surface-variant mt-2 font-medium">
               Total 1 Lingkaran = 360° (100%)
             </span>
           </div>
@@ -525,7 +895,7 @@ export const BarPieChartVisual: React.FC = () => {
                       />
                       <span className="font-semibold text-on-surface">{cat.label}</span>
                     </div>
-                    <div className="flex items-center gap-3 font-mono text-[11px]">
+                    <div className="flex items-center gap-3 font-mono text-xs">
                       <span className="text-on-surface-variant">{cat.pct.toFixed(1)}%</span>
                       <span className="font-bold text-primary">
                         {(cat.pct * 3.6).toFixed(0)}°
@@ -535,7 +905,7 @@ export const BarPieChartVisual: React.FC = () => {
                 );
               })}
             </div>
-            <p className="text-[11px] text-on-surface-variant pt-2 leading-relaxed">
+            <p className="text-xs text-on-surface-variant pt-2 leading-relaxed">
               <strong>Rumus sudut:</strong> Sudut = (Persentase / 100) × 360°. Misalnya Asus: 30% × 360° = 108°.
             </p>
           </div>
@@ -570,7 +940,7 @@ export const ParetoChartVisual: React.FC = () => {
             <span className="material-symbols-outlined text-[16px]">troubleshoot</span>
             <span>Analisis Pareto: Keluhan Pengiriman (Total n = 200)</span>
           </div>
-          <p className="text-[11px] text-on-surface-variant">
+          <p className="text-xs text-on-surface-variant">
             Batang terurut menurun (sumbu kiri) dipadu garis persentase kumulatif (sumbu kanan).
           </p>
         </div>
@@ -603,11 +973,11 @@ export const ParetoChartVisual: React.FC = () => {
                 <g key={level}>
                   <line x1="35" y1={y} x2="465" y2={y} stroke="#94a3b8" strokeDasharray="3 3" opacity="0.3" />
                   {/* Left Axis label (f) */}
-                  <text x="30" y={y + 3} textAnchor="end" fontSize="9" fill="#64748b">
+                  <text x="30" y={y + 3} textAnchor="end" fontSize="9" fill="#475569">
                     {(level * maxF) / 100}
                   </text>
                   {/* Right Axis label (%) */}
-                  <text x="470" y={y + 3} textAnchor="start" fontSize="9" fill="#0d9488">
+                  <text x="470" y={y + 3} textAnchor="start" fontSize="9" fill="#0f766e">
                     {level}%
                   </text>
                 </g>
@@ -626,7 +996,7 @@ export const ParetoChartVisual: React.FC = () => {
                   strokeWidth="2"
                   strokeDasharray="4 4"
                 />
-                <text x="250" y={200 - (80 / 100) * 180 - 6} textAnchor="middle" fontSize="10" fill="#e11d48" fontWeight="bold">
+                <text x="250" y={200 - (80 / 100) * 180 - 6} textAnchor="middle" fontSize="10" fill="#be123c" fontWeight="bold">
                   Batas 80% (Prinsip Pareto)
                 </text>
               </g>
@@ -698,7 +1068,7 @@ export const ParetoChartVisual: React.FC = () => {
                     return (
                       <g key={i}>
                         <circle cx={cx} cy={cy} r="4.5" fill="#0284c7" stroke="#ffffff" strokeWidth="2" />
-                        <text x={cx} y={cy - 8} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0284c7">
+                        <text x={cx} y={cy - 8} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0369a1">
                           {d.cumPct.toFixed(0)}%
                         </text>
                       </g>
@@ -718,7 +1088,7 @@ export const ParetoChartVisual: React.FC = () => {
             <span className="material-symbols-outlined text-[16px]">verified</span>
             <span>Vital Few (20% Penyebab Kunci)</span>
           </div>
-          <p className="text-teal-900/80 dark:text-teal-200/80 text-[11px] leading-relaxed">
+          <p className="text-teal-900/80 dark:text-teal-200/80 text-xs leading-relaxed">
             Hanya dengan menyelesaikan 2 masalah pertama (<strong>Kemasan Rusak &amp; Pengiriman Terlambat</strong>), perusahaan sudah menuntaskan <strong>72.0%</strong> dari seluruh keluhan pelanggan!
           </p>
         </div>
@@ -728,7 +1098,7 @@ export const ParetoChartVisual: React.FC = () => {
             <span className="material-symbols-outlined text-[16px]">checklist</span>
             <span>Trivial Many (Masalah Sisa)</span>
           </div>
-          <p className="text-on-surface-variant text-[11px] leading-relaxed">
+          <p className="text-on-surface-variant text-xs leading-relaxed">
             3 kategori sisanya hanya menyumbang 28.0% keluhan. Diagram Pareto memastikan tim bisnis tidak membuang energi berlebih pada faktor-faktor minor terlebih dahulu.
           </p>
         </div>
@@ -782,7 +1152,7 @@ export const SideBySideBarVisual: React.FC = () => {
         <div className="flex items-center gap-1 text-xs">
           <button
             onClick={() => setMetric('percent')}
-            className={`px-2.5 py-1 rounded-md font-medium text-[11px] transition-colors ${
+            className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors ${
               metric === 'percent'
                 ? 'bg-primary text-on-primary'
                 : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
@@ -792,7 +1162,7 @@ export const SideBySideBarVisual: React.FC = () => {
           </button>
           <button
             onClick={() => setMetric('count')}
-            className={`px-2.5 py-1 rounded-md font-medium text-[11px] transition-colors ${
+            className={`px-2.5 py-1 rounded-md font-medium text-xs transition-colors ${
               metric === 'count'
                 ? 'bg-primary text-on-primary'
                 : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container'
@@ -837,7 +1207,7 @@ export const SideBySideBarVisual: React.FC = () => {
                     y={y + 4}
                     textAnchor="end"
                     fontSize="11"
-                    fill="#64748b"
+                    fill="#475569"
                     className="font-mono font-medium"
                   >
                     {val}
@@ -948,7 +1318,7 @@ export const SideBySideBarVisual: React.FC = () => {
                     y={332}
                     textAnchor="middle"
                     fontSize="10"
-                    fill="#64748b"
+                    fill="#475569"
                     className="font-medium"
                   >
                     n = 100 mhs / angkatan
@@ -1036,7 +1406,7 @@ export const StemAndLeafVisual: React.FC = () => {
         <div className="p-5 rounded-2xl bg-surface-container-low/70 border border-outline-variant/60 space-y-3">
           <div className="text-xs font-semibold text-on-surface flex items-center justify-between">
             <span>20 Angka Nilai Ujian (Belum Terurut):</span>
-            <span className="text-[11px] text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+            <span className="text-xs text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
               Sulit melihat bentuk sebaran dan rentang nilai
             </span>
           </div>
@@ -1076,7 +1446,7 @@ export const StemAndLeafVisual: React.FC = () => {
               </span>
             ))}
           </div>
-          <p className="text-[11px] text-on-surface-variant">
+          <p className="text-xs text-on-surface-variant">
             Data sudah terurut, namun jika jumlah amatan mencapai ratusan, daftar angka panjang ini tetap sulit dicerna tanpa perangkuman visual.
           </p>
         </div>
@@ -1128,7 +1498,7 @@ export const StemAndLeafVisual: React.FC = () => {
               <div className="inline-flex items-center gap-1.5 bg-surface-container-lowest px-2.5 py-1 rounded-md border border-outline-variant/60 font-mono font-bold text-primary">
                 Kunci: 7 | 5 = 75
               </div>
-              <span className="text-[11px] text-on-surface-variant font-medium">
+              <span className="text-xs text-on-surface-variant font-medium">
                 Klik salah satu digit daun di atas
               </span>
             </div>
@@ -1137,7 +1507,7 @@ export const StemAndLeafVisual: React.FC = () => {
           {/* Interactive Inspection Card */}
           <div className="md:col-span-5 p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-3">
             <div className="flex items-center gap-2 text-xs font-bold text-primary">
-              <span className="material-symbols-outlined text-[17px]">search</span>
+              <span className="material-symbols-outlined text-[20px]">search</span>
               <span>Pemeriksaan Titik Data</span>
             </div>
 
@@ -1146,7 +1516,7 @@ export const StemAndLeafVisual: React.FC = () => {
                 <div className="text-2xl font-bold font-mono text-on-surface">
                   Nilai: {selectedLeaf.stem * 10 + selectedLeaf.leaf}
                 </div>
-                <div className="space-y-1 text-on-surface-variant text-[11px] leading-relaxed">
+                <div className="space-y-1 text-on-surface-variant text-xs leading-relaxed">
                   <div>
                     • <strong>Digit Batang (Stem):</strong> {selectedLeaf.stem} (Puluhan = {selectedLeaf.stem * 10})
                   </div>
@@ -1222,13 +1592,13 @@ export const DistribusiFrekuensiVisual: React.FC = () => {
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 pb-3 border-b border-surface-container">
         <div>
           <span className="text-xs font-bold text-on-surface">Data: Waktu Layanan Tiket (n = 50 amatan)</span>
-          <p className="text-[11px] text-on-surface-variant font-mono">
+          <p className="text-xs text-on-surface-variant font-mono">
             Nilai Min = 120 detik, Nilai Maks = 320 detik (Range = 200 detik)
           </p>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-[11px] text-on-surface-variant font-medium">Pilih Jumlah Kelas (k):</span>
+          <span className="text-xs text-on-surface-variant font-medium">Pilih Jumlah Kelas (k):</span>
           <div className="flex items-center gap-1 p-1 bg-surface-container rounded-xl">
             {[4, 5, 6].map((k) => (
               <button
@@ -1252,7 +1622,7 @@ export const DistribusiFrekuensiVisual: React.FC = () => {
         <span className="font-semibold text-primary">
           Perhitungan Lebar Kelas: w = Range / k = 200 / {numClasses} = {currentCfg.width} detik
         </span>
-        <span className="text-[11px] text-on-surface-variant">
+        <span className="text-xs text-on-surface-variant">
           Semua kelas memiliki interval sama tanpa jeda kosong
         </span>
       </div>
@@ -1349,7 +1719,7 @@ export const HistogramPolygonVisual: React.FC = () => {
           </button>
         </div>
 
-        <span className="text-[11px] text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
+        <span className="text-xs text-teal-700 bg-teal-50 px-2.5 py-1 rounded-md border border-teal-200">
           Batang saling menempel tanpa celah (data kontinu)
         </span>
       </div>
@@ -1364,7 +1734,7 @@ export const HistogramPolygonVisual: React.FC = () => {
               return (
                 <g key={val}>
                   <line x1="40" y1={y} x2="480" y2={y} stroke="#cbd5e1" strokeDasharray="3 3" opacity="0.6" />
-                  <text x="35" y={y + 3} textAnchor="end" fontSize="9" fill="#64748b">
+                  <text x="35" y={y + 3} textAnchor="end" fontSize="9" fill="#475569">
                     {val}
                   </text>
                 </g>
@@ -1401,7 +1771,7 @@ export const HistogramPolygonVisual: React.FC = () => {
                       f = {c.f}
                     </text>
                     {/* Class boundary mark */}
-                    <text x={x} y="214" textAnchor="middle" fontSize="8" fill="#64748b">
+                    <text x={x} y="214" textAnchor="middle" fontSize="8" fill="#475569">
                       {120 + i * 40}
                     </text>
                   </g>
@@ -1409,7 +1779,7 @@ export const HistogramPolygonVisual: React.FC = () => {
               })}
 
             {/* End boundary label for last bar */}
-            <text x={50 + 5 * 80} y="214" textAnchor="middle" fontSize="8" fill="#64748b">
+            <text x={50 + 5 * 80} y="214" textAnchor="middle" fontSize="8" fill="#475569">
               320
             </text>
 
@@ -1435,7 +1805,7 @@ export const HistogramPolygonVisual: React.FC = () => {
                     return (
                       <g key={i}>
                         <circle cx={cx} cy={cy} r="4" fill="#0284c7" stroke="#ffffff" strokeWidth="2" />
-                        <text x={cx} y="228" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0284c7">
+                        <text x={cx} y="228" textAnchor="middle" fontSize="8" fontWeight="bold" fill="#0369a1">
                           M={c.mid}
                         </text>
                       </g>
@@ -1519,7 +1889,7 @@ export const OgiveCurveVisual: React.FC = () => {
               return (
                 <g key={pct}>
                   <line x1="45" y1={y} x2="465" y2={y} stroke="#cbd5e1" strokeDasharray="3 3" opacity="0.6" />
-                  <text x="40" y={y + 3} textAnchor="end" fontSize="9" fill="#64748b">
+                  <text x="40" y={y + 3} textAnchor="end" fontSize="9" fill="#475569">
                     {pct}%
                   </text>
                 </g>
@@ -1562,7 +1932,7 @@ export const OgiveCurveVisual: React.FC = () => {
                   <line x1="45" y1={y50} x2={x50} y2={y50} stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" />
                   <line x1={x50} y1={y50} x2={x50} y2="200" stroke="#e11d48" strokeWidth="2" strokeDasharray="4 4" />
                   <circle cx={x50} cy={y50} r="6" fill="#e11d48" />
-                  <text x={x50 + 8} y={y50 - 8} fontSize="10" fontWeight="bold" fill="#e11d48">
+                  <text x={x50 + 8} y={y50 - 8} fontSize="10" fontWeight="bold" fill="#be123c">
                     Median = 200 detik
                   </text>
                 </g>
@@ -1577,7 +1947,7 @@ export const OgiveCurveVisual: React.FC = () => {
                   <line x1="45" y1={y25} x2={x25} y2={y25} stroke="#0284c7" strokeWidth="2" strokeDasharray="4 4" />
                   <line x1={x25} y1={y25} x2={x25} y2="200" stroke="#0284c7" strokeWidth="2" strokeDasharray="4 4" />
                   <circle cx={x25} cy={y25} r="6" fill="#0284c7" />
-                  <text x={x25 + 8} y={y25 - 8} fontSize="10" fontWeight="bold" fill="#0284c7">
+                  <text x={x25 + 8} y={y25 - 8} fontSize="10" fontWeight="bold" fill="#0369a1">
                     Q1 ≈ 172 detik (25%)
                   </text>
                 </g>
@@ -1592,7 +1962,7 @@ export const OgiveCurveVisual: React.FC = () => {
                   <line x1="45" y1={y75} x2={x75} y2={y75} stroke="#d97706" strokeWidth="2" strokeDasharray="4 4" />
                   <line x1={x75} y1={y75} x2={x75} y2="200" stroke="#d97706" strokeWidth="2" strokeDasharray="4 4" />
                   <circle cx={x75} cy={y75} r="6" fill="#d97706" />
-                  <text x={x75 + 8} y={y75 - 8} fontSize="10" fontWeight="bold" fill="#d97706">
+                  <text x={x75 + 8} y={y75 - 8} fontSize="10" fontWeight="bold" fill="#b45309">
                     Q3 ≈ 236 detik (75%)
                   </text>
                 </g>
@@ -1681,24 +2051,24 @@ export const ScatterTimeSeriesVisual: React.FC = () => {
           <div className="flex items-center gap-1 text-xs">
             <button
               onClick={() => setScatterType('positif')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                scatterType === 'positif' ? 'bg-teal-600 text-white' : 'bg-surface-container-low text-on-surface-variant'
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                scatterType === 'positif' ? 'bg-teal-700 text-white' : 'bg-surface-container-low text-on-surface-variant'
               }`}
             >
               Korelasi Positif (+)
             </button>
             <button
               onClick={() => setScatterType('negatif')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                scatterType === 'negatif' ? 'bg-rose-600 text-white' : 'bg-surface-container-low text-on-surface-variant'
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                scatterType === 'negatif' ? 'bg-rose-700 text-white' : 'bg-surface-container-low text-on-surface-variant'
               }`}
             >
               Korelasi Negatif (-)
             </button>
             <button
               onClick={() => setScatterType('nol')}
-              className={`px-2.5 py-1 rounded-md text-[11px] font-medium transition-colors ${
-                scatterType === 'nol' ? 'bg-amber-600 text-white' : 'bg-surface-container-low text-on-surface-variant'
+              className={`px-2.5 py-1 rounded-md text-xs font-medium transition-colors ${
+                scatterType === 'nol' ? 'bg-amber-700 text-white' : 'bg-surface-container-low text-on-surface-variant'
               }`}
             >
               Tanpa Hubungan (0)
@@ -1775,7 +2145,7 @@ export const ScatterTimeSeriesVisual: React.FC = () => {
                   return (
                     <g key={val}>
                       <line x1="35" y1={y} x2="480" y2={y} stroke="#e2e8f0" strokeDasharray="3 3" />
-                      <text x="30" y={y + 3} textAnchor="end" fontSize="9" fill="#94a3b8">
+                      <text x="30" y={y + 3} textAnchor="end" fontSize="9" fill="#475569">
                         {val}
                       </text>
                     </g>
@@ -1903,7 +2273,7 @@ const BarCompare: React.FC<BarCompareProps> = ({
                 return (
                   <div
                     key={tick}
-                    className="absolute right-2 font-mono text-[12px] tabular-nums text-slate-500 -translate-y-1/2 leading-none"
+                    className="absolute right-2 font-mono text-xs tabular-nums text-slate-600 -translate-y-1/2 leading-none"
                     style={{ bottom: `${bottomPct}%` }}
                   >
                     {tick}
@@ -2129,7 +2499,7 @@ export const MisleadingGraphsVisual: React.FC = () => {
                 </span>
                 <div className="space-y-0.5">
                   <div className="text-xs font-bold text-on-surface">{item.title}</div>
-                  <p className="text-[11px] text-on-surface-variant leading-relaxed">{item.desc}</p>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">{item.desc}</p>
                 </div>
               </div>
             ))}

@@ -39,7 +39,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
             onClick={onClose}
             className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-on-surface-variant hover:text-primary transition-colors py-1.5 px-3 rounded-lg hover:bg-surface-container-low"
           >
-            <span className="material-symbols-outlined text-[18px]">arrow_back</span>
+            <span className="material-symbols-outlined text-[20px]">arrow_back</span>
             <span>Kembali ke Beranda</span>
           </button>
         </header>
@@ -187,7 +187,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 text-outline hover:text-on-surface p-0.5 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">
+                <span className="material-symbols-outlined text-[20px]">
                   {showPassword ? 'visibility_off' : 'visibility'}
                 </span>
               </button>
@@ -209,7 +209,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
               className="w-full py-2.5 sm:py-3 px-6 rounded-lg bg-primary-container hover:bg-primary text-on-primary text-xs sm:text-sm font-semibold transition-all duration-200 card-calm-shadow active:scale-[0.99] flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>{tab === 'login' ? 'Masuk ke Ruang Belajar' : 'Daftar & Mulai Belajar Gratis'}</span>
-              <span className="material-symbols-outlined text-[18px]">
+              <span className="material-symbols-outlined text-[20px]">
                 {tab === 'login' ? 'arrow_forward' : 'favorite'}
               </span>
             </button>

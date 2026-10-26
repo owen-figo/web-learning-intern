@@ -24,7 +24,7 @@ export const InfoModal: React.FC<InfoModalProps> = ({ type, onClose }) => {
             onClick={onClose}
             className="p-1 rounded-lg text-outline hover:text-on-surface transition-colors"
           >
-            <span className="material-symbols-outlined text-lg">close</span>
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 

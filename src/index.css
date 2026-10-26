@@ -1,5 +1,77 @@
 @import "tailwindcss";
 
+/* The site has a single light theme. Tailwind v4 enables `dark:` classes from the
+   OS colour scheme by default, which flipped only some boxes to dark colours on a
+   light page (unreadable text). `dark:` now applies only under a `.dark` class,
+   which the app never sets — add it to <html> if a full dark theme is built later. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* -------------------------------------------------------------------------
+   Clickable affordance
+   Base layer (whole site): pointer cursor + keyboard focus ring.
+   Components layer (inside `.sim`, the interactive simulation panels): a
+   default "button" look for anything clickable — outline, key shadow, lift on
+   hover, press on click. Because Tailwind utilities live in a later layer, a
+   button's own classes (selected colours, borders, shadows) still win; these
+   rules only fill in what a flat button is missing.
+   ------------------------------------------------------------------------- */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='switch'],
+  [role='tab'] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :where(button, a, [role='button'], [role='switch'], [role='tab'], [tabindex]):focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .sim button:not(:disabled) {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(25 28 28 / 0.24);
+    box-shadow:
+      0 1px 0 rgb(25 28 28 / 0.16),
+      0 1px 3px rgb(25 28 28 / 0.08);
+    transition:
+      translate 0.12s ease,
+      box-shadow 0.12s ease,
+      border-color 0.12s ease,
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .sim button:not(:disabled):hover {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 2px 0 rgb(0 97 77 / 0.28),
+      0 4px 10px rgb(25 28 28 / 0.1);
+    translate: 0 -1px;
+  }
+  .sim button:not(:disabled):active {
+    translate: 0 1px;
+    box-shadow: 0 0 0 rgb(0 0 0 / 0);
+  }
+
+  /* Clickable table cells / rows and SVG shapes inside simulations */
+  .sim :is(td, tr).cursor-pointer {
+    box-shadow: inset 0 0 0 1px rgb(0 97 77 / 0.28);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .sim :is(td, tr).cursor-pointer:hover {
+    background-color: color-mix(in srgb, var(--color-primary-fixed) 45%, transparent);
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+  }
+  .sim svg .cursor-pointer:hover {
+    filter: drop-shadow(0 0 3px rgb(0 97 77 / 0.55));
+  }
+}
+
 @theme {
   --color-primary: #00614d;
   --color-primary-container: #0e7c63;
@@ -111,6 +183,19 @@ body {
 
 .pomodoro-ring {
   transition: stroke-dashoffset 0.3s linear, stroke 0.3s ease;
+}
+
+/* Karusel XP: bilah waktu menuju kartu berikutnya. Kartu berganti saat animasi ini selesai. */
+@keyframes xp-carousel-timer {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.xp-carousel-timer {
+  transform-origin: left center;
+  animation-name: xp-carousel-timer;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
 }
 
 @media (prefers-reduced-motion: reduce) {

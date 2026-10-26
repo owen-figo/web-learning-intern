@@ -41,13 +41,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                   className="inline-flex items-center justify-center gap-2 bg-primary text-on-primary hover:bg-primary-container px-6 py-3.5 rounded-lg text-sm sm:text-base font-semibold transition-all card-gentle active:scale-95 shadow-sm"
                 >
                   <span>Mulai Latihan Bebas (Gratis)</span>
-                  <span className="material-symbols-outlined text-lg">arrow_forward</span>
+                  <span className="material-symbols-outlined text-[20px]">arrow_forward</span>
                 </button> */}
                 <button
                   onClick={() => setActivePage('topics')}
                   className="inline-flex items-center justify-center gap-2 bg-surface-container-low text-primary hover:bg-surface-container-high border border-outline-variant px-5 py-3.5 rounded-lg text-sm sm:text-base font-medium transition-colors"
                 >
-                  <span className="material-symbols-outlined text-lg">menu_book</span>
+                  <span className="material-symbols-outlined text-[20px]">menu_book</span>
                   <span>Jelajahi Topik</span>
                 </button>
               </div>
@@ -65,21 +65,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               {/* Title / Badge */}
               <div className="flex items-center gap-2.5 shrink-0 lg:pr-6 lg:border-r lg:border-outline-variant">
                 <span className="w-9 h-9 rounded-xl bg-secondary/15 flex items-center justify-center text-secondary shrink-0">
-                  <span className="material-symbols-outlined text-xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+                  <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                     emoji_events
                   </span>
                 </span>
                 <div>
                   <h3 className="text-xs sm:text-sm font-bold text-on-surface">Apa gunanya XP?</h3>
-                  <p className="text-[11px] text-on-surface-variant hidden sm:block">Apresiasi konsistensimu</p>
+                  <p className="text-xs text-on-surface-variant hidden sm:block">Apresiasi konsistensimu</p>
                 </div>
               </div>
 
               {/* 3 items in grid / flex */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1">
-                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-[11px] sm:text-xs space-y-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-xs space-y-1">
                   <p className="font-semibold text-primary flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm">trending_up</span>
+                    <span className="material-symbols-outlined text-[16px]">trending_up</span>
                     <span>Naik Rank</span>
                   </p>
                   <p className="text-on-surface-variant leading-relaxed">
@@ -87,9 +87,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-[11px] sm:text-xs space-y-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-xs space-y-1">
                   <p className="font-semibold text-primary flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm">military_tech</span>
+                    <span className="material-symbols-outlined text-[16px]">military_tech</span>
                     <span>Buka Achievement</span>
                   </p>
                   <p className="text-on-surface-variant leading-relaxed">
@@ -97,9 +97,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-[11px] sm:text-xs space-y-1">
+                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-xs space-y-1">
                   <p className="font-semibold text-primary flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-sm">local_fire_department</span>
+                    <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
                     <span>Jaga Streak</span>
                   </p>
                   <p className="text-on-surface-variant leading-relaxed">
@@ -130,7 +130,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-primary flex items-center justify-center">
-                    <span className="material-symbols-outlined text-2xl">functions</span>
+                    <span className="material-symbols-outlined text-[24px]">functions</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-on-surface">Trauma Rumus Panjang</h3>
                   <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
@@ -139,7 +139,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 </div>
                 <div className="pt-4 mt-4 border-t border-surface-container-high">
                   <span className="text-xs text-primary font-medium flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">checklist</span>
+                    <span className="material-symbols-outlined text-[16px]">checklist</span>
                     <span>Dekomposisi Logika</span>
                   </span>
                 </div>
@@ -149,7 +149,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-primary flex items-center justify-center">
-                    <span className="material-symbols-outlined text-2xl">mood</span>
+                    <span className="material-symbols-outlined text-[24px]">mood</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-on-surface">Takut Salah Menjawab</h3>
                   <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
@@ -158,7 +158,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 </div>
                 <div className="pt-4 mt-4 border-t border-surface-container-high">
                   <span className="text-xs text-primary font-medium flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">thumb_up</span>
+                    <span className="material-symbols-outlined text-[16px]">thumb_up</span>
                     <span>Ruang Eksplorasi Aman</span>
                   </span>
                 </div>
@@ -168,7 +168,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-primary flex items-center justify-center">
-                    <span className="material-symbols-outlined text-2xl">self_improvement</span>
+                    <span className="material-symbols-outlined text-[24px]">self_improvement</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-on-surface">Beban Kompetisi &amp; Nilai</h3>
                   <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
@@ -177,7 +177,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 </div>
                 <div className="pt-4 mt-4 border-t border-surface-container-high">
                   <span className="text-xs text-primary font-medium flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">pace</span>
+                    <span className="material-symbols-outlined text-[16px]">pace</span>
                     <span>Ritme Belajar Pribadi</span>
                   </span>
                 </div>
@@ -187,7 +187,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-secondary flex items-center justify-center">
-                    <span className="material-symbols-outlined text-2xl">tips_and_updates</span>
+                    <span className="material-symbols-outlined text-[24px]">tips_and_updates</span>
                   </div>
                   <h3 className="text-base sm:text-lg font-semibold text-on-surface">Buntu di Tengah Jalan</h3>
                   <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
@@ -196,7 +196,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 </div>
                 <div className="pt-4 mt-4 border-t border-surface-container-high">
                   <span className="text-xs text-secondary font-medium flex items-center gap-1">
-                    <span className="material-symbols-outlined text-sm">support</span>
+                    <span className="material-symbols-outlined text-[16px]">support</span>
                     <span>Bantuan Tanpa Bocoran</span>
                   </span>
                 </div>

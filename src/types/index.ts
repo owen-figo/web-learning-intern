@@ -11,7 +11,8 @@ export interface LeaderboardEntry {
 
 export type DifficultyTier = 'mudah' | 'sedang' | 'sulit' | 'sangat_sulit';
 
-export type TopicStatus = 'selesai' | 'aktif' | 'terkunci';
+/** 'terbuka' = would be locked, but opened by the admin unlock-all switch. */
+export type TopicStatus = 'selesai' | 'aktif' | 'terbuka' | 'terkunci';
 
 export interface Concept {
   id: string;
@@ -22,37 +23,25 @@ export interface Concept {
   binusContext?: string;
 }
 
-export interface ChoiceOption {
-  id: string;
-  label: string;
-  text: string;
-}
-
-export interface Question {
+/** One Latihan Mandiri question (multiple choice, 4 options shown as A–D). */
+export interface PracticeQuestion {
+  /** e.g. 'T3-L04' = topic 3, tier Sulit (L), question 4 */
   id: string;
   topicId: string;
-  topicName: string;
-  code: string;
-  title: string;
-  narrative: string;
-  dataHighlight?: string;
+  tier: DifficultyTier;
+  /** Question text; supports **bold** and line breaks. */
+  prompt: string;
+  /** Optional data block (table, list of values), shown in monospace. */
+  data?: string;
+  options: string[];
+  /** Index (0–3) of the correct option. */
+  answer: number;
+  /** Worked solution shown after checking the answer. */
+  explanation: string;
+  hint?: string;
+  formula?: string;
+  /** Optional link to a glossary concept in data/concepts.ts. */
   conceptId?: string;
-  conceptIds?: string[];
-  formulaGuide?: {
-    formula: string;
-    note: string;
-  };
-  options: ChoiceOption[];
-  correctOptionId: string;
-  hintStep1?: string;
-  reflectionQuestion: string;
-  reflectionConfirmationText: string;
-  reflectionRecalculateText: string;
-  positiveFeedback: {
-    title: string;
-    description: string;
-    bonusXp: number;
-  };
 }
 
 export interface TheoryExample {
@@ -60,10 +49,17 @@ export interface TheoryExample {
   text: string;
 }
 
+/** Picture shown under a step card; `type` is a key in components/StepVisuals.tsx. */
+export interface StepVisualRef {
+  type: string;
+  step: number;
+}
+
 export interface HowToMakeStep {
   step: number;
   title: string;
   instruction: string;
+  stepVisual?: StepVisualRef;
 }
 
 export interface FormulaSymbol {
@@ -84,6 +80,13 @@ export interface CalculationStep {
   instruction: string;
   subSteps?: string[];
   substituted?: string;
+  stepVisual?: StepVisualRef;
+}
+
+export interface HowToMakeGroup {
+  title: string;
+  icon?: string;
+  steps: CalculationStep[];
 }
 
 export interface SummaryTableRow {
@@ -108,6 +111,7 @@ export interface TheorySection {
     title?: string;
     steps: HowToMakeStep[];
   };
+  howToMakeGroups?: HowToMakeGroup[];
   steps?: CalculationStep[];
   examples?: TheoryExample[];
   terms?: { term: string; definition: string; example?: string }[];
@@ -170,13 +174,26 @@ export interface TheorySection {
     | 'uniform-pdf'
     | 'uniform-stats'
     | 'exponential-pdf'
+    | 'sampling-distribution-concept'
+    | 'standard-error-mean'
+    | 'central-limit-theorem'
+    | 'sample-mean-z'
+    | 'sample-mean-interval'
+    | 'sample-proportion'
+    | 'proportion-z'
+    | 'ci-coverage'
+    | 'ci-sigma-known'
+    | 't-distribution'
+    | 'ci-sigma-unknown'
+    | 'ci-proportion'
+    | 'sample-size-mean'
+    | 'sample-size-proportion'
     | string;
 }
 
 export interface TheoryContent {
   topicId: string;
   topicTitle: string;
-  estimatedReadMinutes: number;
   completionXp: number;
   sections: TheorySection[];
 }
@@ -194,6 +211,8 @@ export interface Topic {
   progressLabel: string;
   unlockedTiers?: DifficultyTier[];
   modulesCount: number;
+  /** Reading time shown on the topic card and the reading page. */
+  estimatedReadMinutes?: number;
   iconName: string;
   statusAction: 'lanjut' | 'pelajari' | 'mulai' | 'ulang';
   excelSpssAvailable?: boolean;

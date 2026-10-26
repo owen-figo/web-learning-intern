@@ -111,7 +111,7 @@ export const ProbabilityScaleVisual: React.FC = () => {
         {/* Big Live Value Display */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-outline-variant/60 shadow-2xs space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wide">
+            <span className="text-xs font-bold text-black uppercase tracking-wide">
               Bentuk Pecahan (X / T)
             </span>
             <div className="text-2xl font-extrabold text-black font-mono">
@@ -120,7 +120,7 @@ export const ProbabilityScaleVisual: React.FC = () => {
           </div>
 
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-teal-600/40 shadow-2xs space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wide">
+            <span className="text-xs font-bold text-black uppercase tracking-wide">
               Nilai Desimal P(A)
             </span>
             <div className="text-2xl font-extrabold text-teal-800 dark:text-teal-300 font-mono">
@@ -129,7 +129,7 @@ export const ProbabilityScaleVisual: React.FC = () => {
           </div>
 
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-amber-500/40 shadow-2xs space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wide">
+            <span className="text-xs font-bold text-black uppercase tracking-wide">
               Persentase Peluang
             </span>
             <div className="text-2xl font-extrabold text-amber-700 dark:text-amber-400 font-mono">
@@ -172,12 +172,12 @@ export const ProbabilityScaleVisual: React.FC = () => {
           {/* Left & Right Scale End Labels */}
           <div className="flex justify-between items-center text-xs sm:text-sm font-bold text-black pt-8">
             <div className="flex items-center gap-1.5 text-rose-800 dark:text-rose-400 font-extrabold">
-              <span className="material-symbols-outlined text-[18px]">cancel</span>
+              <span className="material-symbols-outlined text-[20px]">cancel</span>
               <span>0.0 (Impossible Event / Mustahil)</span>
             </div>
             <div className="flex items-center gap-1.5 text-teal-800 dark:text-teal-400 font-extrabold">
               <span>1.0 (Certain Event / Pasti)</span>
-              <span className="material-symbols-outlined text-[18px]">check_circle</span>
+              <span className="material-symbols-outlined text-[20px]">check_circle</span>
             </div>
           </div>
         </div>
@@ -397,7 +397,7 @@ export const JenisProbabilitasVisual: React.FC = () => {
           {/* Header Row */}
           <div className="space-y-1.5 pb-3 border-b border-surface-container">
             <div className="flex items-center gap-3">
-              <span className="w-8 h-8 rounded-xl bg-amber-600 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
+              <span className="w-8 h-8 rounded-xl bg-amber-700 text-white font-bold text-sm flex items-center justify-center shrink-0 shadow-2xs">
                 3
               </span>
               <h3 className="text-xl font-bold text-[#1B2430]">
@@ -565,13 +565,13 @@ export const SampleSpaceVisual: React.FC = () => {
                       ? isBoth
                         ? 'bg-amber-100 dark:bg-amber-950/70 border-amber-600 scale-105 shadow-md'
                         : 'bg-teal-100 dark:bg-teal-950/70 border-teal-700 scale-105 shadow-md'
-                      : 'bg-surface-container-lowest border-outline-variant/40 opacity-40'
+                      : 'bg-surface-container-lowest border-outline-variant/40 opacity-60'
                   }`}
                 >
                   <span className="text-2xl sm:text-3xl font-extrabold font-mono text-black">
                     {d.value}
                   </span>
-                  <span className="text-[10px] font-bold text-black mt-1">
+                  <span className="text-xs font-bold text-black mt-1">
                     {d.isEven ? 'Genap' : 'Ganjil'}
                   </span>
                 </div>
@@ -587,7 +587,7 @@ export const SampleSpaceVisual: React.FC = () => {
               <span
                 className={`px-2 py-0.5 rounded text-xs font-bold ${
                   isBoth
-                    ? 'bg-amber-600 text-white'
+                    ? 'bg-amber-700 text-white'
                     : isSingle
                     ? 'bg-teal-700 text-white'
                     : 'bg-surface-container text-black'
@@ -607,7 +607,7 @@ export const SampleSpaceVisual: React.FC = () => {
           </div>
 
           <div className="text-right">
-            <span className="text-[11px] font-bold text-black uppercase">Peluang Event P(A):</span>
+            <span className="text-xs font-bold text-black uppercase">Peluang Event P(A):</span>
             <div className="text-2xl font-extrabold text-black font-mono">
               {count} / {total} = {prob.toFixed(2)} ({(prob * 100).toFixed(0)}%)
             </div>
@@ -708,7 +708,7 @@ export const ContingencyProbabilityVisual: React.FC = () => {
               onClick={() => setSelectedCell('complement')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 selectedCell === 'complement'
-                  ? 'bg-amber-600 text-white shadow-2xs'
+                  ? 'bg-amber-700 text-white shadow-2xs'
                   : 'bg-surface-container text-black hover:bg-surface-container-high'
               }`}
             >
@@ -736,7 +736,7 @@ export const ContingencyProbabilityVisual: React.FC = () => {
                   onClick={() => setSelectedCell('joint-lolos')}
                   className={`py-2.5 px-3 font-mono font-bold cursor-pointer transition-colors ${
                     selectedCell === 'joint-lolos'
-                      ? 'bg-teal-600 text-white shadow-inner scale-105'
+                      ? 'bg-teal-700 text-white shadow-inner scale-105'
                       : 'hover:bg-surface-container-low text-black'
                   }`}
                 >
@@ -764,7 +764,7 @@ export const ContingencyProbabilityVisual: React.FC = () => {
                   onClick={() => setSelectedCell('complement')}
                   className={`py-2.5 px-3 font-mono font-extrabold cursor-pointer ${
                     selectedCell === 'complement'
-                      ? 'bg-amber-600 text-white shadow-inner'
+                      ? 'bg-amber-700 text-white shadow-inner'
                       : 'bg-surface-container-low/40 text-black hover:bg-surface-container-high'
                   }`}
                 >
@@ -789,7 +789,7 @@ export const ContingencyProbabilityVisual: React.FC = () => {
         <div className="p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/60 space-y-2">
           {selectedCell === 'joint-lolos' && (
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wide">
+              <span className="text-xs font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wide">
                 Joint Probability: P(Rutin and ≥70)
               </span>
               <div className="text-xl font-mono font-extrabold text-black">
@@ -803,7 +803,7 @@ export const ContingencyProbabilityVisual: React.FC = () => {
 
           {selectedCell === 'marginal-rutin' && (
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-primary uppercase tracking-wide">
+              <span className="text-xs font-bold text-primary uppercase tracking-wide">
                 Marginal Probability: P(Rutin)
               </span>
               <div className="text-xl font-mono font-extrabold text-black">
@@ -817,7 +817,7 @@ export const ContingencyProbabilityVisual: React.FC = () => {
 
           {selectedCell === 'complement' && (
             <div className="space-y-1">
-              <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide">
+              <span className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wide">
                 Complement Rule: P(A′) = 1 − P(A)
               </span>
               <div className="text-xl font-mono font-extrabold text-black">
@@ -947,7 +947,7 @@ export const ConditionalProbabilityVisual: React.FC = () => {
               onClick={() => setReversed(!reversed)}
               className="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs shadow-2xs hover:bg-amber-400 transition-colors flex items-center gap-1.5 ml-2"
             >
-              <span className="material-symbols-outlined text-[15px]">swap_horiz</span>
+              <span className="material-symbols-outlined text-[16px]">swap_horiz</span>
               <span>Tukar Urutan P(A|B) vs P(B|A)</span>
             </button>
           </div>
@@ -961,14 +961,14 @@ export const ConditionalProbabilityVisual: React.FC = () => {
                 <th className="py-2.5 px-3 text-left">Kebiasaan Belajar</th>
                 <th
                   className={`py-2.5 px-3 transition-opacity ${
-                    condition === 'gagal' ? 'opacity-30 bg-surface-container-low' : ''
+                    condition === 'gagal' ? 'opacity-60 bg-surface-container-low' : ''
                   }`}
                 >
                   Nilai ≥ 70
                 </th>
                 <th
                   className={`py-2.5 px-3 transition-opacity ${
-                    condition === 'lolos' ? 'opacity-30 bg-surface-container-low' : ''
+                    condition === 'lolos' ? 'opacity-60 bg-surface-container-low' : ''
                   }`}
                 >
                   Nilai &lt; 70
@@ -981,7 +981,7 @@ export const ConditionalProbabilityVisual: React.FC = () => {
               <tr
                 className={`transition-all ${
                   condition === 'tidak-rutin'
-                    ? 'opacity-25 bg-surface-container-low'
+                    ? 'opacity-60 bg-surface-container-low'
                     : 'bg-teal-50 dark:bg-teal-950/30'
                 }`}
               >
@@ -1006,7 +1006,7 @@ export const ConditionalProbabilityVisual: React.FC = () => {
               {/* Row 2: Tidak Rutin */}
               <tr
                 className={`transition-all ${
-                  condition === 'rutin' ? 'opacity-25 bg-surface-container-low' : ''
+                  condition === 'rutin' ? 'opacity-60 bg-surface-container-low' : ''
                 }`}
               >
                 <td className="py-2.5 px-3 font-bold text-left text-black">Tidak Rutin</td>
@@ -1032,14 +1032,14 @@ export const ConditionalProbabilityVisual: React.FC = () => {
                 <td className="py-2.5 px-3 text-left text-black font-extrabold">Total Kolom</td>
                 <td
                   className={`py-2.5 px-3 font-mono font-extrabold text-black ${
-                    condition === 'gagal' ? 'opacity-25' : ''
+                    condition === 'gagal' ? 'opacity-60' : ''
                   }`}
                 >
                   {totalLolos}
                 </td>
                 <td
                   className={`py-2.5 px-3 font-mono font-extrabold text-black ${
-                    condition === 'lolos' ? 'opacity-25' : ''
+                    condition === 'lolos' ? 'opacity-60' : ''
                   }`}
                 >
                   {totalGagal}
@@ -1056,7 +1056,7 @@ export const ConditionalProbabilityVisual: React.FC = () => {
             <span className="text-xs font-bold text-teal-800 dark:text-teal-300 uppercase tracking-wide">
               {reversed ? 'Probabilitas Bersyarat Terbalik:' : 'Perhitungan Probabilitas Bersyarat:'}
             </span>
-            <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200">
+            <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-teal-100 text-teal-900 dark:bg-teal-950 dark:text-teal-200">
               {reversed ? 'P(Rutin | ≥70)' : 'P(≥70 | Rutin)'}
             </span>
           </div>
@@ -1463,17 +1463,17 @@ export const DecisionTreeVisual: React.FC = () => {
         {/* Verification & Branch Inspector */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-teal-700/40 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase">Verifikasi Jumlah Daun (Leaves):</span>
+            <span className="text-xs font-bold text-black uppercase">Verifikasi Jumlah Daun (Leaves):</span>
             <div className="text-base font-mono font-extrabold text-black">
               {isCoinMode ? '0.25 + 0.25 + 0.25 + 0.25 = 1.00' : `${leaf1.toFixed(3)} + ${leaf2.toFixed(3)} + ${leaf3.toFixed(3)} + ${leaf4.toFixed(3)} = ${totalLeafSum.toFixed(2)}`}
             </div>
-            <p className="text-[11px] text-teal-800 dark:text-teal-300 font-bold">
+            <p className="text-xs text-teal-800 dark:text-teal-300 font-bold">
               ✓ Jumlah seluruh peluang di ujung pohon selalu tepat 1.00 (100%).
             </p>
           </div>
 
           <div className="p-3.5 bg-surface-container-lowest rounded-xl border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase">Info Cabang yang Diklik:</span>
+            <span className="text-xs font-bold text-black uppercase">Info Cabang yang Diklik:</span>
             <p className="text-xs text-black font-bold">
               {clickedBranchInfo || 'Klik salah satu garis cabang pohon di atas untuk melihat status probabilitasnya.'}
             </p>
@@ -1655,7 +1655,7 @@ export const IndependenceVisual: React.FC = () => {
             </span>
             <span
               className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide shadow-2xs ${
-                isIndependent ? 'bg-teal-700 text-white' : 'bg-amber-600 text-white'
+                isIndependent ? 'bg-teal-700 text-white' : 'bg-amber-700 text-white'
               }`}
             >
               {isIndependent ? '✓ INDEPENDENT' : '✕ TIDAK INDEPENDENT (DEPENDEN)'}
@@ -1664,14 +1664,14 @@ export const IndependenceVisual: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/60">
-              <span className="text-[11px] font-bold text-black uppercase">Peluang Marginal: P(≥70)</span>
+              <span className="text-xs font-bold text-black uppercase">Peluang Marginal: P(≥70)</span>
               <div className="text-xl font-mono font-extrabold text-black">
                 {totalLolos} / {grandTotal} = {pLolos.toFixed(3)}
               </div>
             </div>
 
             <div className="p-3 bg-surface-container-lowest rounded-lg border border-outline-variant/60">
-              <span className="text-[11px] font-bold text-black uppercase">Peluang Bersyarat: P(≥70 | Rutin)</span>
+              <span className="text-xs font-bold text-black uppercase">Peluang Bersyarat: P(≥70 | Rutin)</span>
               <div className="text-xl font-mono font-extrabold text-black">
                 {cellData.rutinLolos} / {totalRutin} = {pLolosGivenRutin.toFixed(3)}
               </div>
@@ -1741,7 +1741,7 @@ export const MultiplicationRuleVisual: React.FC = () => {
               onClick={() => setFormOrder(formOrder === 'A-given-B' ? 'B-given-A' : 'A-given-B')}
               className="px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high text-xs font-bold text-black transition-colors flex items-center gap-1.5 shadow-2xs"
             >
-              <span className="material-symbols-outlined text-[15px]">sync_alt</span>
+              <span className="material-symbols-outlined text-[16px]">sync_alt</span>
               <span>Ganti Bentuk Ekivalen</span>
             </button>
           </div>
@@ -1749,7 +1749,7 @@ export const MultiplicationRuleVisual: React.FC = () => {
 
         {/* Formula Display & Calculation */}
         <div className="p-4 bg-surface-container-lowest rounded-xl border border-teal-700/40 space-y-3">
-          <span className="text-[11px] font-bold text-black uppercase">Substitusi Angka Nyata (Tabel A):</span>
+          <span className="text-xs font-bold text-black uppercase">Substitusi Angka Nyata (Tabel A):</span>
           {formOrder === 'A-given-B' ? (
             <div className="text-base sm:text-lg font-mono font-extrabold text-black">
               P(Rutin and ≥70) = P(≥70 | Rutin) × P(Rutin) = 0.75 × 0.60 = 0.45
@@ -1762,7 +1762,7 @@ export const MultiplicationRuleVisual: React.FC = () => {
 
           {/* Direct verification */}
           <div className="flex items-center gap-2 pt-2 border-t border-outline-variant/40 text-xs font-bold text-black">
-            <span className="material-symbols-outlined text-teal-700 text-[18px]">verified</span>
+            <span className="material-symbols-outlined text-teal-700 text-[20px]">verified</span>
             <span>Cek dengan menghitung langsung dari tabel: 90 / 200 = 0.45</span>
           </div>
         </div>
@@ -1786,7 +1786,7 @@ export const MultiplicationRuleVisual: React.FC = () => {
               onClick={() => setActivePreset('tableA')}
               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-2xs ${
                 activePreset === 'tableA'
-                  ? 'bg-amber-600 text-white font-extrabold'
+                  ? 'bg-amber-700 text-white font-extrabold'
                   : 'bg-surface-container text-black hover:bg-surface-container-high'
               }`}
             >
@@ -1821,16 +1821,16 @@ export const MultiplicationRuleVisual: React.FC = () => {
         <div className="p-4 bg-surface-container-lowest rounded-xl border border-outline-variant/60 space-y-3">
           {activePreset === 'tableA' && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-amber-700 dark:text-amber-400 uppercase">
+              <span className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase">
                 Hasil Uji pada Tabel A (Data Dependen):
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
                 <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
-                  <span className="text-[11px] font-bold text-black block">Perkalian Cepat P(A) × P(B):</span>
+                  <span className="text-xs font-bold text-black block">Perkalian Cepat P(A) × P(B):</span>
                   <div className="text-lg font-bold text-black mt-1">0.60 × 0.55 = 0.33</div>
                 </div>
                 <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
-                  <span className="text-[11px] font-bold text-black block">Nilai Joint Sebenarnya P(A and B):</span>
+                  <span className="text-xs font-bold text-black block">Nilai Joint Sebenarnya P(A and B):</span>
                   <div className="text-lg font-bold text-black mt-1">90 / 200 = 0.45</div>
                 </div>
               </div>
@@ -1842,16 +1842,16 @@ export const MultiplicationRuleVisual: React.FC = () => {
 
           {activePreset === 'tableB' && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-teal-800 dark:text-teal-300 uppercase">
+              <span className="text-xs font-bold text-teal-800 dark:text-teal-300 uppercase">
                 Hasil Uji pada Tabel B (Data Independen):
               </span>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm font-mono">
                 <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
-                  <span className="text-[11px] font-bold text-black block">Perkalian Cepat P(A) × P(B):</span>
+                  <span className="text-xs font-bold text-black block">Perkalian Cepat P(A) × P(B):</span>
                   <div className="text-lg font-bold text-black mt-1">0.60 × 0.55 = 0.33</div>
                 </div>
                 <div className="p-3 rounded-lg bg-surface-container-low border border-outline-variant/40">
-                  <span className="text-[11px] font-bold text-black block">Nilai Joint Sebenarnya P(A and B):</span>
+                  <span className="text-xs font-bold text-black block">Nilai Joint Sebenarnya P(A and B):</span>
                   <div className="text-lg font-bold text-black mt-1">66 / 200 = 0.33</div>
                 </div>
               </div>
@@ -1863,7 +1863,7 @@ export const MultiplicationRuleVisual: React.FC = () => {
 
           {activePreset === 'coin' && (
             <div className="space-y-2">
-              <span className="text-[11px] font-bold text-blue-700 dark:text-blue-300 uppercase">
+              <span className="text-xs font-bold text-blue-700 dark:text-blue-300 uppercase">
                 Contoh Koin Independen:
               </span>
               <div className="text-sm font-mono font-bold text-black">

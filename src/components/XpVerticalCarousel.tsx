@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface XpSlide {
   title: string;
@@ -40,9 +40,30 @@ function transformFor(d: number): React.CSSProperties {
   return { transform: `translateY(${Math.sign(d) * (STEP + 48)}px) scale(0.5)`, opacity: 0, zIndex: 10, pointerEvents: 'none' };
 }
 
+/** Lama tiap kartu tampil saat berganti otomatis (ms). */
+const AUTOPLAY_MS = 4500;
+
+function prefersReducedMotion(): boolean {
+  return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
+}
+
 export const XpVerticalCarousel: React.FC = () => {
   const total = SLIDES.length;
   const [current, setCurrent] = useState(0);
+  // Berganti otomatis, kecuali pengguna meminta gerakan dikurangi. Tombol jeda/putar mengubahnya.
+  const [playing, setPlaying] = useState(() => !prefersReducedMotion());
+  // Jeda sementara saat kursor di atas karusel atau fokus keyboard ada di dalamnya, agar teks sempat dibaca.
+  const [hovered, setHovered] = useState(false);
+  const [focused, setFocused] = useState(false);
+  const [tabHidden, setTabHidden] = useState(() => typeof document !== 'undefined' && document.hidden);
+
+  useEffect(() => {
+    const onVisibility = () => setTabHidden(document.hidden);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => document.removeEventListener('visibilitychange', onVisibility);
+  }, []);
+
+  const running = playing && !hovered && !focused && !tabHidden;
 
   const goPrev = () => setCurrent((c) => (c - 1 + total) % total);
   const goNext = () => setCurrent((c) => (c + 1) % total);
@@ -67,12 +88,21 @@ export const XpVerticalCarousel: React.FC = () => {
     'w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
 
   return (
-    <div className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#00614d_0%,#0e7c63_58%,#2f9a82_100%)] p-4 sm:p-5 text-white shadow-lg">
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      // Hanya fokus keyboard yang menjeda; klik mouse pada tombol tidak membuat karusel berhenti selamanya.
+      onFocus={(e) => setFocused((e.target as HTMLElement).matches(':focus-visible'))}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
+      }}
+      className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#00614d_0%,#0e7c63_58%,#2f9a82_100%)] p-4 sm:p-5 text-white shadow-lg"
+    >
       {/* Kepala: judul, penghitung, dan tombol atas/bawah */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-1.5 text-primary-fixed text-xs font-semibold uppercase tracking-wider mb-0.5">
-            <span aria-hidden="true" className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
               stars
             </span>
             <span>Sistem Apresiasi Usaha</span>
@@ -85,11 +115,20 @@ export const XpVerticalCarousel: React.FC = () => {
           <span className="px-2.5 py-1 rounded-full bg-white/15 border border-white/25 text-xs font-bold tabular-nums">
             {current + 1} / {total}
           </span>
+          <button
+            type="button"
+            onClick={() => setPlaying((p) => !p)}
+            aria-label={playing ? 'Jeda pergantian otomatis' : 'Putar pergantian otomatis'}
+            title={playing ? 'Jeda' : 'Putar otomatis'}
+            className={arrowButton}
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">{playing ? 'pause' : 'play_arrow'}</span>
+          </button>
           <button type="button" onClick={goPrev} aria-label="Hadiah sebelumnya" className={arrowButton}>
-            <span aria-hidden="true" className="material-symbols-outlined text-xl">keyboard_arrow_up</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">keyboard_arrow_up</span>
           </button>
           <button type="button" onClick={goNext} aria-label="Hadiah berikutnya" className={arrowButton}>
-            <span aria-hidden="true" className="material-symbols-outlined text-xl">keyboard_arrow_down</span>
+            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">keyboard_arrow_down</span>
           </button>
         </div>
       </div>
@@ -136,21 +175,21 @@ export const XpVerticalCarousel: React.FC = () => {
 
               <div className="h-full pl-12 pr-3 py-2.5 sm:pl-14 sm:pr-4 sm:py-3 flex flex-col justify-center gap-1 min-w-0">
                 <h3
-                  className={`text-[15px] sm:text-lg font-bold leading-snug line-clamp-2 sm:line-clamp-1 transition-colors duration-500 motion-reduce:transition-none ${
+                  className={`text-sm sm:text-lg font-bold leading-snug line-clamp-2 sm:line-clamp-1 transition-colors duration-500 motion-reduce:transition-none ${
                     active ? 'text-on-surface' : 'text-white'
                   }`}
                 >
                   {slide.title}
                 </h3>
                 <p
-                  className={`text-[13px] sm:text-sm leading-snug line-clamp-3 sm:line-clamp-2 transition-colors duration-500 motion-reduce:transition-none ${
+                  className={`text-sm sm:text-sm leading-snug line-clamp-3 sm:line-clamp-2 transition-colors duration-500 motion-reduce:transition-none ${
                     active ? 'text-on-surface-variant' : 'text-white/75'
                   }`}
                 >
                   {slide.desc}
                 </p>
                 <span
-                  className={`inline-flex w-fit px-2.5 py-0.5 rounded-lg border text-[11px] sm:text-xs font-extrabold font-code-formula whitespace-nowrap transition-opacity duration-500 motion-reduce:transition-none ${
+                  className={`inline-flex w-fit px-2.5 py-0.5 rounded-lg border text-xs sm:text-xs font-extrabold font-code-formula whitespace-nowrap transition-opacity duration-500 motion-reduce:transition-none ${
                     active ? 'bg-primary/10 text-primary border-primary/20 opacity-100' : 'bg-white/10 text-white border-white/20 opacity-0'
                   }`}
                 >
@@ -162,8 +201,20 @@ export const XpVerticalCarousel: React.FC = () => {
         })}
       </div>
 
-      {/* Pembaca layar diberi tahu kartu mana yang sedang aktif */}
-      <p className="sr-only" aria-live="polite" aria-atomic="true">
+      {/* Bilah waktu: penuh berarti kartu berganti. Berhenti saat dijeda. */}
+      <div className="mt-3 h-1 rounded-full bg-white/20 overflow-hidden" aria-hidden="true">
+        {playing && (
+          <div
+            key={current}
+            className="xp-carousel-timer h-full rounded-full bg-white/80"
+            style={{ animationDuration: `${AUTOPLAY_MS}ms`, animationPlayState: running ? 'running' : 'paused' }}
+            onAnimationEnd={goNext}
+          />
+        )}
+      </div>
+
+      {/* Pembaca layar diberi tahu kartu mana yang aktif, tapi tidak saat berganti otomatis agar tidak mengganggu */}
+      <p className="sr-only" aria-live={playing ? 'off' : 'polite'} aria-atomic="true">
         Hadiah {current + 1} dari {total}: {SLIDES[current].title}, {SLIDES[current].xp}. {SLIDES[current].desc}
       </p>
     </div>

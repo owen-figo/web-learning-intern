@@ -3,20 +3,44 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { useState, useEffect, useRef } from 'react';
+import { Suspense, lazy, useState, useEffect, useRef } from 'react';
 import { ActivePage, Topic, TopicStatus, UserProfile } from './types';
-import { initialUserProfile, mockTopics, theoryContents, mockLeaderboardEntries } from './data/mockData';
+import { initialUserProfile, mockTopics, mockLeaderboardEntries } from './data/mockData';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { TopicsPage } from './pages/TopicsPage';
-import { PracticePage } from './pages/PracticePage';
-import { ProfilePage } from './pages/ProfilePage';
-import { TheoryPage } from './pages/TheoryPage';
-import { LeaderboardPage } from './pages/LeaderboardPage';
 import { AuthModal } from './components/AuthModal';
 import { FormulaModal } from './components/FormulaModal';
 import { InfoModal } from './components/InfoModal';
+
+// Pages other than the landing and topic list are code-split: they download on first visit.
+const PracticePage = lazy(() => import('./pages/PracticePage').then((m) => ({ default: m.PracticePage })));
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })));
+const TheoryRoute = lazy(() => import('./pages/TheoryRoute').then((m) => ({ default: m.TheoryRoute })));
+const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage').then((m) => ({ default: m.LeaderboardPage })));
+
+// Admin "buka semua topik" switch. Front-end only: it changes what this browser
+// shows, it is not access control. The switch is shown when the page is opened
+// with ?admin in the URL (or once admin mode has been turned on in this browser).
+const ADMIN_UNLOCK_KEY = 'ngerti.adminUnlockAll';
+
+function readAdminUnlock(): boolean {
+  try {
+    return window.localStorage.getItem(ADMIN_UNLOCK_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function writeAdminUnlock(on: boolean) {
+  try {
+    if (on) window.localStorage.setItem(ADMIN_UNLOCK_KEY, '1');
+    else window.localStorage.removeItem(ADMIN_UNLOCK_KEY);
+  } catch {
+    /* penyimpanan diblokir: mode admin tetap berlaku sampai halaman dimuat ulang */
+  }
+}
 
 export default function App() {
   const [activePage, setActivePage] = useState<ActivePage>('landing');
@@ -34,6 +58,17 @@ export default function App() {
     'mendefinisikan-mengumpulkan-data'
   );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [adminUnlockAll, setAdminUnlockAll] = useState<boolean>(readAdminUnlock);
+  const [showAdminSwitch] = useState<boolean>(
+    () => readAdminUnlock() || new URLSearchParams(window.location.search).has('admin')
+  );
+
+  const toggleAdminUnlock = () => {
+    setAdminUnlockAll((prev) => {
+      writeAdminUnlock(!prev);
+      return !prev;
+    });
+  };
 
   const sortedTopics = [...mockTopics].sort((a, b) => a.order - b.order);
   const activeTopic = sortedTopics.find((t) => !completedTopicIds.includes(t.id)) || sortedTopics[0];
@@ -68,7 +103,7 @@ export default function App() {
     if (allLowerCompleted) {
       return 'aktif';
     }
-    return 'terkunci';
+    return adminUnlockAll ? 'terbuka' : 'terkunci';
   };
 
   const handleSelectTopic = (topicId: string) => {
@@ -122,15 +157,16 @@ export default function App() {
     }
   };
 
-  const handleCompletePractice = (topicId: string) => {
-    if (!completedTopicIds.includes(topicId)) {
-      const updated = [...completedTopicIds, topicId];
-      setCompletedTopicIds(updated);
-      setUser((prev) => ({
-        ...prev,
-        masteredTopics: updated.length,
-      }));
-    }
+  // Latihan Mandiri: open practice on the requested topic, falling back to the
+  // currently selected topic and then the active (next) topic if it is locked.
+  const handleOpenPractice = (topicId?: string) => {
+    const isOpen = (id?: string | null) => {
+      const t = id ? mockTopics.find((x) => x.id === id) : undefined;
+      return Boolean(t && getTopicStatus(t) !== 'terkunci');
+    };
+    const target = isOpen(topicId) ? topicId! : isOpen(selectedTopicId) ? selectedTopicId! : activeTopic.id;
+    setSelectedTopicId(target);
+    setActivePage('practice');
   };
 
   const handleUpdateUser = (updated: Partial<UserProfile>) => {
@@ -170,11 +206,20 @@ export default function App() {
           recentXpGained={recentXpGained}
           recentXpKey={recentXpKey}
           onOpenActiveTopic={handleOpenActiveTopic}
+          onOpenPractice={() => handleOpenPractice()}
         />
       )}
 
       {/* Main Pages */}
       <main className="flex-1 flex flex-col">
+        <Suspense
+          fallback={
+            <div className="flex-1 flex items-center justify-center py-24" role="status" aria-live="polite">
+              <span className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+              <span className="sr-only">Memuat halaman…</span>
+            </div>
+          }
+        >
         {activePage === 'landing' && (
           <LandingPage
             setActivePage={setActivePage}
@@ -189,7 +234,11 @@ export default function App() {
             onSelectTopic={handleSelectTopic}
             completedTopicIds={completedTopicIds}
             getTopicStatus={getTopicStatus}
+            adminUnlockAll={adminUnlockAll}
+            showAdminSwitch={showAdminSwitch}
+            onToggleAdminUnlock={toggleAdminUnlock}
             onOpenActiveTopic={handleOpenActiveTopic}
+            onOpenPractice={handleOpenPractice}
             onShowToast={showToast}
           />
         )}
@@ -198,17 +247,17 @@ export default function App() {
           <PracticePage
             setActivePage={setActivePage}
             onAddXp={handleAddXp}
-            selectedTopicId={selectedTopicId || activeTopic.id}
-            onCompleteTopic={handleCompletePractice}
+            initialTopicId={selectedTopicId || activeTopic.id}
+            onTopicChange={setSelectedTopicId}
+            getTopicStatus={getTopicStatus}
+            adminUnlockAll={adminUnlockAll}
             user={user}
           />
         )}
 
         {activePage === 'teori' && (
-          <TheoryPage
-            theoryContent={
-              theoryContents.find((t) => t.topicId === selectedTopicId) || theoryContents[0]
-            }
+          <TheoryRoute
+            topicId={selectedTopicId}
             onComplete={handleCompleteTheory}
             setActivePage={setActivePage}
             isCompleted={Boolean(selectedTopicId && completedTopicIds.includes(selectedTopicId))}
@@ -228,6 +277,7 @@ export default function App() {
             mockEntries={mockLeaderboardEntries}
           />
         )}
+        </Suspense>
       </main>
 
       {/* Shared Footer (Shown on landing, topics, profile, practice) */}
@@ -249,7 +299,7 @@ export default function App() {
         >
           <div className="bg-surface-container-highest text-on-surface border border-outline-variant/80 px-4 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 backdrop-blur-sm">
             <div className="w-8 h-8 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[18px]">lock</span>
+              <span className="material-symbols-outlined text-[20px]">lock</span>
             </div>
             <p className="text-xs sm:text-sm text-on-surface leading-snug flex-1">
               {toastMessage}
@@ -259,7 +309,7 @@ export default function App() {
               className="text-outline hover:text-on-surface p-1 rounded-lg transition-colors"
               aria-label="Tutup pesan"
             >
-              <span className="material-symbols-outlined text-base">close</span>
+              <span className="material-symbols-outlined text-[16px]">close</span>
             </button>
           </div>
         </div>

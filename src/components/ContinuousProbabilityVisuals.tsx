@@ -157,7 +157,7 @@ export const ContinuousVsDiscreteVisual: React.FC = () => {
                     <span>P(X = {contPoint}) =</span>
                     <span className="font-mono text-sm">0.0000 (0%)</span>
                   </div>
-                  <p className="text-[11px] text-on-surface-variant">
+                  <p className="text-xs text-on-surface-variant">
                     Lebar garis titik tunggal adalah nol (Δx = 0), sehingga tidak memiliki luas area sama sekali.
                   </p>
                 </div>
@@ -171,7 +171,7 @@ export const ContinuousVsDiscreteVisual: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <label className="text-[11px] text-on-surface-variant">Batas Bawah (c):</label>
+                    <label className="text-xs text-on-surface-variant">Batas Bawah (c):</label>
                     <input
                       type="range"
                       min="5"
@@ -183,7 +183,7 @@ export const ContinuousVsDiscreteVisual: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-on-surface-variant">Batas Atas (d):</label>
+                    <label className="text-xs text-on-surface-variant">Batas Atas (d):</label>
                     <input
                       type="range"
                       min={contLow + 0.5}
@@ -202,7 +202,7 @@ export const ContinuousVsDiscreteVisual: React.FC = () => {
                       {contProbInterval.toFixed(4)} ({(contProbInterval * 100).toFixed(1)}%)
                     </span>
                   </div>
-                  <p className="text-[11px] text-on-surface-variant">
+                  <p className="text-xs text-on-surface-variant">
                     Luas area persegi = tinggi (0.10) × lebar ({contHigh - contLow}) = {contProbInterval.toFixed(2)}.
                   </p>
                 </div>
@@ -1060,13 +1060,13 @@ export const UniformStatsVisual: React.FC = () => {
             <div className="h-2 w-full bg-surface-container-high rounded-full relative">
               {/* Bracket for [a, b] */}
               <div
-                className="absolute -top-5 text-[11px] font-mono font-bold text-on-surface"
+                className="absolute -top-5 text-xs font-mono font-bold text-on-surface"
                 style={{ left: '5%' }}
               >
                 a = {a}
               </div>
               <div
-                className="absolute -top-5 text-[11px] font-mono font-bold text-on-surface"
+                className="absolute -top-5 text-xs font-mono font-bold text-on-surface"
                 style={{ right: '5%' }}
               >
                 b = {b}
@@ -1077,10 +1077,10 @@ export const UniformStatsVisual: React.FC = () => {
                 className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 flex flex-col items-center z-10"
                 style={{ left: '50%' }}
               >
-                <div className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-[10px] font-bold shadow-xs">
+                <div className="w-5 h-5 rounded-full bg-primary text-on-primary flex items-center justify-center text-xs font-bold shadow-xs">
                   μ
                 </div>
-                <span className="text-[11px] font-bold text-primary font-mono mt-1">
+                <span className="text-xs font-bold text-primary font-mono mt-1">
                   {mean.toFixed(1)}
                 </span>
               </div>

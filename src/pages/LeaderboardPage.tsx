@@ -65,14 +65,14 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
         <div>
           <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
             <span
-              className="material-symbols-outlined text-base"
+              className="material-symbols-outlined text-[16px]"
               style={{ fontVariationSettings: "'FILL' 1" }}
             >
               leaderboard
             </span>
             <span>Peringkat Belajar</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-on-surface">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
             Leaderboard
           </h1>
           <p className="text-sm sm:text-base text-on-surface-variant mt-1">
@@ -274,7 +274,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
                         {entry.name}
                       </span>
                       {entry.isCurrentUser && (
-                        <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-primary text-on-primary shrink-0">
+                        <span className="px-1.5 py-0.2 rounded-full text-xs font-bold bg-primary text-on-primary shrink-0">
                           Kamu
                         </span>
                       )}
@@ -305,7 +305,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
       {/* Ranks 4 to 10 List */}
       <section aria-label="Peringkat 4 hingga 10" className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-bold text-on-surface">
+          <h2 className="text-lg sm:text-xl font-bold text-on-surface">
             Peringkat Lainnya
           </h2>
           <span className="text-xs sm:text-sm text-on-surface-variant">
@@ -351,7 +351,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
 
               <div className="shrink-0 flex items-center gap-1.5">
                 <span
-                  className="material-symbols-outlined text-primary text-base select-none"
+                  className="material-symbols-outlined text-primary text-[16px] select-none"
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
                   stars
