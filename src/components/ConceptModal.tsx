@@ -56,7 +56,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
               <span className="material-symbols-outlined text-[20px]">menu_book</span>
             </div>
             <div>
-              <span className="text-[11px] font-semibold text-primary uppercase tracking-wider block">
+              <span className="text-xs font-semibold text-primary uppercase tracking-wider block">
                 Glosarium Konsep Statistika BINUS
               </span>
               <h2 id="concept-modal-title" className="text-base sm:text-lg font-bold text-on-surface">
@@ -71,14 +71,14 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
             aria-label="Tutup jendela penjelasan"
             className="w-8 h-8 rounded-lg flex items-center justify-center text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
           >
-            <span className="material-symbols-outlined text-xl">close</span>
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
         {/* Search & Topic Selector Bar */}
         <div className="p-3 sm:px-5 border-b border-surface-container-high bg-surface-bright flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
           <div className="relative flex-1">
-            <span className="material-symbols-outlined text-outline absolute left-3 top-2.5 text-lg pointer-events-none">
+            <span className="material-symbols-outlined text-outline absolute left-3 top-2.5 text-[20px] pointer-events-none">
               search
             </span>
             <input
@@ -106,7 +106,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
                 key={c.id}
                 type="button"
                 onClick={() => setActiveConceptId(c.id)}
-                className={`text-[11px] px-2 py-1 rounded-md shrink-0 whitespace-nowrap transition-colors ${
+                className={`text-xs px-2 py-1 rounded-md shrink-0 whitespace-nowrap transition-colors ${
                   activeConceptId === c.id
                     ? 'bg-primary text-on-primary font-medium'
                     : 'bg-surface-container text-on-surface-variant hover:bg-surface-container-high'
@@ -136,7 +136,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
           {/* Bahasa Manusia / Summary */}
           <div className="bg-surface-container-low/70 border border-outline-variant/60 rounded-xl p-4 sm:p-5 space-y-1.5">
             <div className="flex items-center gap-2 text-primary font-semibold text-xs sm:text-sm">
-              <span className="material-symbols-outlined text-lg">psychology</span>
+              <span className="material-symbols-outlined text-[20px]">psychology</span>
               <span>Penjelasan Inti (Bahasa Manusia)</span>
             </div>
             <p className="text-xs sm:text-sm text-on-surface leading-relaxed">
@@ -151,7 +151,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
                 <span className="text-xs font-semibold text-on-surface-variant uppercase tracking-wide">
                   Bentuk Rumus / Notasi
                 </span>
-                <span className="text-[11px] text-primary bg-primary-fixed/30 px-2 py-0.5 rounded">
+                <span className="text-xs text-primary bg-primary-fixed/30 px-2 py-0.5 rounded">
                   Pahami logikanya, jangan dihafal buta
                 </span>
               </div>
@@ -165,7 +165,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
           {currentConcept.example && (
             <div className="bg-secondary-fixed/20 border border-secondary-fixed-dim/50 rounded-xl p-4 space-y-1.5">
               <div className="flex items-center gap-2 text-secondary font-semibold text-xs sm:text-sm">
-                <span className="material-symbols-outlined text-lg" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                   lightbulb
                 </span>
                 <span>Contoh Nyata Sehari-hari</span>
@@ -180,7 +180,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
           {currentConcept.binusContext && (
             <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-4 space-y-1.5">
               <div className="flex items-center gap-2 text-primary font-semibold text-xs sm:text-sm">
-                <span className="material-symbols-outlined text-lg">school</span>
+                <span className="material-symbols-outlined text-[20px]">school</span>
                 <span>Konteks Mahasiswa BINUS (Perkuliahan &amp; Skripsi)</span>
               </div>
               <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
@@ -219,7 +219,7 @@ export const ConceptModal: React.FC<ConceptModalProps> = ({
         {/* Footer */}
         <div className="p-3.5 sm:px-6 border-t border-surface-container bg-surface-container-low/40 flex items-center justify-between text-xs text-outline">
           <div className="flex items-center gap-1.5">
-            <span className="material-symbols-outlined text-base text-primary">spa</span>
+            <span className="material-symbols-outlined text-[16px] text-primary">spa</span>
             <span>Ngerti • Belajar statistika dengan tempo tenang</span>
           </div>
           <button

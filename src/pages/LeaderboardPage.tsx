@@ -1,53 +1,43 @@
-import React, { useState, useMemo } from 'react';
-import { UserProfile, LeaderboardEntry } from '../types';
+import React, { useEffect, useMemo, useState } from 'react';
+import { initialsOf, loadLeaderboard, type LeaderboardRow } from '../lib/account';
 
 interface LeaderboardPageProps {
-  user: UserProfile;
-  mockEntries: LeaderboardEntry[];
+  /** The signed-in student's id, to highlight their row ("Kamu"). */
+  currentUserId: string | null;
 }
 
-export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntries }) => {
-  const [timeframe, setTimeframe] = useState<'weekly' | 'all-time'>('weekly');
+export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ currentUserId }) => {
+  const [rows, setRows] = useState<LeaderboardRow[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState<number>(0);
 
-  // Compute full leaderboard including current user
-  const rankedEntries = useMemo(() => {
-    const currentUserEntry: LeaderboardEntry = {
-      id: 'current-user',
-      name: user.name,
-      initials: user.initials,
-      avatarColor: user.avatarColor || '#0e7c63',
-      xp: user.xp,
-      weeklyXp: user.weeklyXp ?? Math.min(user.xp, Math.max(40, user.xp - 50)),
+  useEffect(() => {
+    let cancelled = false;
+    setRows(null);
+    setLoadError(null);
+    loadLeaderboard()
+      .then((r) => {
+        if (!cancelled) setRows(r.entries);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setLoadError(err instanceof Error ? err.message : 'Peringkat belum bisa dimuat.');
+      });
+    return () => {
+      cancelled = true;
     };
+  }, [reloadKey]);
 
-    // Combine mock entries with current user (ensure no duplicates)
-    const all = [
-      ...mockEntries.filter((item) => item.id !== 'current-user'),
-      currentUserEntry,
-    ];
-
-    // Sort according to active timeframe
-    const sorted = all.sort((a, b) => {
-      if (timeframe === 'weekly') {
-        if (b.weeklyXp !== a.weeklyXp) {
-          return b.weeklyXp - a.weeklyXp;
-        }
-        return b.xp - a.xp;
-      } else {
-        if (b.xp !== a.xp) {
-          return b.xp - a.xp;
-        }
-        return b.weeklyXp - a.weeklyXp;
-      }
-    });
-
-    return sorted.map((entry, index) => ({
-      ...entry,
-      rank: index + 1,
-      isCurrentUser: entry.id === 'current-user',
-      displayXp: timeframe === 'weekly' ? entry.weeklyXp : entry.xp,
-    }));
-  }, [user, mockEntries, timeframe]);
+  // Global ranking by total XP (sorted by the server).
+  const rankedEntries = useMemo(
+    () =>
+      (rows ?? []).map((row) => ({
+        ...row,
+        initials: row.initials ?? initialsOf(row.name),
+        isCurrentUser: row.id === currentUserId,
+        displayXp: row.xp,
+      })),
+    [rows, currentUserId]
+  );
 
   const top3 = rankedEntries.slice(0, 3);
   const ranks4To10 = rankedEntries.slice(3, 10);
@@ -60,60 +50,52 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
 
   return (
     <div className="py-8 md:py-12 px-4 sm:px-6 lg:px-10 max-w-7xl mx-auto w-full space-y-8 pb-24">
-      {/* Header & Period Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-outline-variant/60">
-        <div>
-          <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
-            <span
-              className="material-symbols-outlined text-base"
-              style={{ fontVariationSettings: "'FILL' 1" }}
-            >
-              leaderboard
-            </span>
-            <span>Peringkat Belajar</span>
-          </div>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-on-surface">
-            Leaderboard
-          </h1>
-          <p className="text-sm sm:text-base text-on-surface-variant mt-1">
-            Lihat siapa yang sedang rajin belajar minggu ini.
-          </p>
-        </div>
-
-        {/* Segmented Toggle */}
-        <div
-          className="inline-flex p-1 rounded-xl bg-surface-container-low border border-outline-variant shrink-0 self-start sm:self-auto"
-          role="tablist"
-          aria-label="Periode Leaderboard"
-        >
-          <button
-            type="button"
-            role="tab"
-            aria-selected={timeframe === 'weekly'}
-            onClick={() => setTimeframe('weekly')}
-            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 ${
-              timeframe === 'weekly'
-                ? 'bg-primary text-on-primary shadow-xs'
-                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
-            }`}
+      {/* Header */}
+      <div className="pb-6 border-b border-outline-variant/60">
+        <div className="flex items-center gap-1.5 text-primary text-xs font-semibold uppercase tracking-wider mb-1">
+          <span
+            className="material-symbols-outlined text-[16px]"
+            style={{ fontVariationSettings: "'FILL' 1" }}
           >
-            Minggu Ini
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={timeframe === 'all-time'}
-            onClick={() => setTimeframe('all-time')}
-            className={`px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 ${
-              timeframe === 'all-time'
-                ? 'bg-primary text-on-primary shadow-xs'
-                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high'
-            }`}
-          >
-            Sepanjang Waktu
-          </button>
+            leaderboard
+          </span>
+          <span>Peringkat Global</span>
         </div>
+        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
+          Leaderboard
+        </h1>
+        <p className="text-sm sm:text-base text-on-surface-variant mt-1">
+          Peringkat semua pelajar Ngerti berdasarkan total XP.
+        </p>
       </div>
+
+      {loadError ? (
+        <div role="alert" className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-8 text-center space-y-3">
+          <span aria-hidden="true" className="material-symbols-outlined text-[32px] text-outline">cloud_off</span>
+          <p className="text-sm font-semibold text-on-surface">Peringkat belum bisa dimuat</p>
+          <p className="text-sm text-on-surface-variant max-w-md mx-auto">{loadError}</p>
+          <button
+            type="button"
+            onClick={() => setReloadKey((k) => k + 1)}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">refresh</span>
+            <span>Coba lagi</span>
+          </button>
+        </div>
+      ) : !rows ? (
+        <div className="flex items-center justify-center py-20" role="status">
+          <span className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+          <span className="sr-only">Memuat peringkat…</span>
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-8 text-center space-y-2">
+          <span aria-hidden="true" className="text-3xl">🌱</span>
+          <p className="text-sm font-semibold text-on-surface">Belum ada pelajar di papan peringkat</p>
+          <p className="text-sm text-on-surface-variant">Selesaikan materi atau latihan untuk mengumpulkan XP pertamamu.</p>
+        </div>
+      ) : (
+      <>
 
       {/* Top 3 Podium (Desktop: 3 Podium Cards with Center Raised; Mobile: Vertical List) */}
       <section aria-label="3 Besar">
@@ -274,7 +256,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
                         {entry.name}
                       </span>
                       {entry.isCurrentUser && (
-                        <span className="px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-primary text-on-primary shrink-0">
+                        <span className="px-1.5 py-0.2 rounded-full text-xs font-bold bg-primary text-on-primary shrink-0">
                           Kamu
                         </span>
                       )}
@@ -303,9 +285,10 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
       </section>
 
       {/* Ranks 4 to 10 List */}
+      {ranks4To10.length > 0 && (
       <section aria-label="Peringkat 4 hingga 10" className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-base sm:text-lg font-bold text-on-surface">
+          <h2 className="text-lg sm:text-xl font-bold text-on-surface">
             Peringkat Lainnya
           </h2>
           <span className="text-xs sm:text-sm text-on-surface-variant">
@@ -351,7 +334,7 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
 
               <div className="shrink-0 flex items-center gap-1.5">
                 <span
-                  className="material-symbols-outlined text-primary text-base select-none"
+                  className="material-symbols-outlined text-primary text-[16px] select-none"
                   style={{ fontVariationSettings: "'FILL' 1" }}
                 >
                   stars
@@ -364,6 +347,9 @@ export const LeaderboardPage: React.FC<LeaderboardPageProps> = ({ user, mockEntr
           ))}
         </div>
       </section>
+      )}
+      </>
+      )}
 
       {/* Supportive Warm Note (Anti-Shaming, Mindful Learning) */}
       <div className="p-4 sm:p-5 rounded-2xl bg-surface-container-low/60 border border-outline-variant/60 flex items-start gap-3.5 text-on-surface-variant">

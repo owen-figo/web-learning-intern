@@ -1,4 +1,78 @@
 @import "tailwindcss";
+/* The backend (separate Next.js app) has no frontend classes; don't scan it. */
+@source not "../backend";
+
+/* The site has a single light theme. Tailwind v4 enables `dark:` classes from the
+   OS colour scheme by default, which flipped only some boxes to dark colours on a
+   light page (unreadable text). `dark:` now applies only under a `.dark` class,
+   which the app never sets — add it to <html> if a full dark theme is built later. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* -------------------------------------------------------------------------
+   Clickable affordance
+   Base layer (whole site): pointer cursor + keyboard focus ring.
+   Components layer (inside `.sim`, the interactive simulation panels): a
+   default "button" look for anything clickable — outline, key shadow, lift on
+   hover, press on click. Because Tailwind utilities live in a later layer, a
+   button's own classes (selected colours, borders, shadows) still win; these
+   rules only fill in what a flat button is missing.
+   ------------------------------------------------------------------------- */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [role='switch'],
+  [role='tab'] {
+    cursor: pointer;
+  }
+  button:disabled {
+    cursor: not-allowed;
+  }
+  :where(button, a, [role='button'], [role='switch'], [role='tab'], [tabindex]):focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  .sim button:not(:disabled) {
+    border-width: 1px;
+    border-style: solid;
+    border-color: rgb(25 28 28 / 0.24);
+    box-shadow:
+      0 1px 0 rgb(25 28 28 / 0.16),
+      0 1px 3px rgb(25 28 28 / 0.08);
+    transition:
+      translate 0.12s ease,
+      box-shadow 0.12s ease,
+      border-color 0.12s ease,
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .sim button:not(:disabled):hover {
+    border-color: var(--color-primary);
+    box-shadow:
+      0 2px 0 rgb(0 97 77 / 0.28),
+      0 4px 10px rgb(25 28 28 / 0.1);
+    translate: 0 -1px;
+  }
+  .sim button:not(:disabled):active {
+    translate: 0 1px;
+    box-shadow: 0 0 0 rgb(0 0 0 / 0);
+  }
+
+  /* Clickable table cells / rows and SVG shapes inside simulations */
+  .sim :is(td, tr).cursor-pointer {
+    box-shadow: inset 0 0 0 1px rgb(0 97 77 / 0.28);
+    transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  }
+  .sim :is(td, tr).cursor-pointer:hover {
+    background-color: color-mix(in srgb, var(--color-primary-fixed) 45%, transparent);
+    box-shadow: inset 0 0 0 2px var(--color-primary);
+  }
+  .sim svg .cursor-pointer:hover {
+    filter: drop-shadow(0 0 3px rgb(0 97 77 / 0.55));
+  }
+}
 
 @theme {
   --color-primary: #00614d;
@@ -113,7 +187,142 @@ body {
   transition: stroke-dashoffset 0.3s linear, stroke 0.3s ease;
 }
 
+/* Karusel XP: bilah waktu menuju kartu berikutnya. Kartu berganti saat animasi ini selesai. */
+@keyframes xp-carousel-timer {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.xp-carousel-timer {
+  transform-origin: left center;
+  animation-name: xp-carousel-timer;
+  animation-timing-function: linear;
+  animation-fill-mode: forwards;
+}
+
+/* Pergantian halaman (View Transitions API): halaman lama naik sedikit dan memudar,
+   halaman baru muncul dari bawah dengan perlambatan lembut. Header tetap diam. */
+@keyframes page-out {
+  to { opacity: 0; transform: translateY(-8px) scale(0.995); }
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(16px); }
+}
+
+::view-transition-old(root) {
+  animation: page-out 180ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+::view-transition-new(root) {
+  animation: page-in 420ms cubic-bezier(0.22, 1, 0.36, 1) 60ms both;
+}
+
+/* Cadangan untuk browser tanpa View Transitions: halaman baru tetap muncul dengan lembut. */
+.page-enter {
+  animation: page-in 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Garis latar hero Beranda: memudar di tepi kiri/kanan dan atas, lalu tergambar sekali saat halaman dibuka. */
+.hero-lines {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
+    linear-gradient(to bottom, transparent, #000 30%);
+  -webkit-mask-composite: source-in;
+  mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent),
+    linear-gradient(to bottom, transparent, #000 30%);
+  mask-composite: intersect;
+}
+
+/* Garis kedua di pojok kanan bawah: paling jelas di pojok, memudar ke arah kiri atas. */
+.hero-lines-corner {
+  -webkit-mask-image: radial-gradient(ellipse 100% 100% at 100% 100%, #000 35%, transparent 80%);
+  mask-image: radial-gradient(ellipse 100% 100% at 100% 100%, #000 35%, transparent 80%);
+}
+
+@keyframes hero-line-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+.hero-line-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: hero-line-draw 2.4s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+/* Kalkulator: panel muncul dari sisi kanan. (Tailwind v4 memakai properti `translate`,
+   jadi animasi `transform` ini tidak bentrok dengan posisi panel.) */
+@keyframes calc-panel-in {
+  from { opacity: 0; transform: translateX(16px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+
+.calc-panel-in {
+  animation: calc-panel-in 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Tombol selesai belajar: centang tergambar, lalu tombol "memantul" sekali. */
+@keyframes check-draw {
+  from { stroke-dashoffset: 24; }
+  to { stroke-dashoffset: 0; }
+}
+
+.check-draw {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: check-draw 360ms cubic-bezier(0.65, 0, 0.35, 1) 120ms forwards;
+}
+
+@keyframes complete-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+.complete-pop {
+  animation: complete-pop 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes complete-ring {
+  from { opacity: 0.55; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.35); }
+}
+
+.complete-ring {
+  animation: complete-ring 700ms ease-out forwards;
+}
+
+/* XP di navbar: angka "melompat" kecil saat bertambah. */
+@keyframes xp-bump {
+  0% { transform: scale(1); }
+  35% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+
+.xp-bump {
+  animation: xp-bump 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes xp-float-in {
+  from { opacity: 0; transform: translate(-50%, 6px) scale(0.9); }
+  to { opacity: 1; transform: translate(-50%, 0) scale(1); }
+}
+
+.xp-float-in {
+  animation: xp-float-in 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root),
+  .page-enter,
+  .complete-pop,
+  .calc-panel-in,
+  .complete-ring,
+  .xp-bump { animation: none; }
+  .xp-float-in { animation: none; transform: translateX(-50%); }
+  .check-draw,
+  .hero-line-draw { animation: none; stroke-dashoffset: 0; }
   .pomodoro-popover { animation: none; }
   .pomodoro-ring { transition: none; }
 }

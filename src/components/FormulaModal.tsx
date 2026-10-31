@@ -17,7 +17,7 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
         <div className="flex items-center justify-between pb-4 border-b border-surface-container">
           <div className="flex items-center gap-2.5">
             <div className="w-10 h-10 rounded-xl bg-primary-fixed/40 flex items-center justify-center text-primary">
-              <span className="material-symbols-outlined text-2xl">menu_book</span>
+              <span className="material-symbols-outlined text-[24px]">menu_book</span>
             </div>
             <div>
               <h2 className="text-lg md:text-xl font-semibold text-on-surface">Panduan Formula Santai</h2>
@@ -28,7 +28,7 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
             onClick={onClose}
             className="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors"
           >
-            <span className="material-symbols-outlined text-xl">close</span>
+            <span className="material-symbols-outlined text-[20px]">close</span>
           </button>
         </div>
 
@@ -84,7 +84,7 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
 
                 <div className="space-y-2.5 bg-surface-container-lowest p-3 rounded-lg border border-outline-variant/40 text-xs">
                   <div>
-                    <span className="font-semibold text-on-surface block mb-1 text-[11px] uppercase tracking-wide">
+                    <span className="font-semibold text-on-surface block mb-1 text-xs uppercase tracking-wide">
                       Jenis Variabel:
                     </span>
                     <ul className="space-y-1 text-on-surface-variant pl-1">
@@ -101,7 +101,7 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
                   </div>
 
                   <div className="pt-2 border-t border-surface-container">
-                    <span className="font-semibold text-on-surface block mb-1 text-[11px] uppercase tracking-wide">
+                    <span className="font-semibold text-on-surface block mb-1 text-xs uppercase tracking-wide">
                       4 Skala Pengukuran (NOIR):
                     </span>
                     <ul className="space-y-1 text-on-surface-variant pl-1">
@@ -248,7 +248,7 @@ export const FormulaModal: React.FC<FormulaModalProps> = ({ isOpen, onClose }) =
         {/* Footer */}
         <div className="pt-3 border-t border-surface-container flex items-center justify-between">
           <span className="text-xs text-outline flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm text-primary">spa</span>
+            <span className="material-symbols-outlined text-[16px] text-primary">spa</span>
             <span>Bebas cemas: semua rumus tersedia gratis saat latihan mandiri</span>
           </span>
           <button

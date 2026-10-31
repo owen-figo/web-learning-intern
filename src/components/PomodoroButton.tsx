@@ -73,7 +73,7 @@ export const PomodoroButton: React.FC = () => {
         title="Timer Pomodoro"
         className={
           active
-            ? `h-9 px-2 sm:pl-2.5 sm:pr-3 rounded-full flex items-center gap-1.5 transition-colors ${focusRing} ${MODE_STYLE[p.mode].chip} ${
+            ? `h-9 px-2 lg:pl-2.5 lg:pr-3 rounded-full flex items-center gap-1.5 transition-colors ${focusRing} ${MODE_STYLE[p.mode].chip} ${
                 open ? 'ring-2 ring-primary/40' : 'hover:brightness-95'
               }`
             : `p-2 rounded-lg transition-colors ${focusRing} ${
@@ -91,7 +91,7 @@ export const PomodoroButton: React.FC = () => {
               </span>
             ) : (
               <span
-                className={`hidden sm:block w-2 h-2 rounded-full motion-safe:animate-gentle-pulse ${MODE_STYLE[p.mode].dot}`}
+                className={`hidden lg:block w-2 h-2 rounded-full motion-safe:animate-gentle-pulse ${MODE_STYLE[p.mode].dot}`}
                 aria-hidden="true"
               />
             )}

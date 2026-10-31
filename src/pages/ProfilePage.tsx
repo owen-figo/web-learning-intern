@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserProfile, BadgeItem, LearningSession } from '../types';
 import { mockBadges, mockLearningSessions } from '../data/mockData';
 
@@ -9,12 +9,16 @@ interface ProfilePageProps {
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) => {
   const [showToast, setShowToast] = useState(true);
-  const [emailDigest, setEmailDigest] = useState(true);
-  const [whatsappPing, setWhatsappPing] = useState(true);
+  const [emailDigest, setEmailDigest] = useState(user.emailDigest ?? true);
+  const [whatsappPing, setWhatsappPing] = useState(user.whatsappPing ?? true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(user.name);
   const [tempInitials, setTempInitials] = useState(user.initials);
   const [savePrefNotice, setSavePrefNotice] = useState(false);
+
+  // The account's saved preferences can arrive after this page opened.
+  useEffect(() => setEmailDigest(user.emailDigest ?? true), [user.emailDigest]);
+  useEffect(() => setWhatsappPing(user.whatsappPing ?? true), [user.whatsappPing]);
 
   const colors = [
     { name: 'Teal', hex: '#0e7c63' },
@@ -24,17 +28,22 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
     { name: 'Terracotta', hex: '#c86452' },
   ];
 
+  const openEditor = () => {
+    setTempName(user.name);
+    setTempInitials(user.initials);
+    setIsEditingName(true);
+  };
+
   const handleSaveName = () => {
-    if (tempName.trim()) {
-      onUpdateUser({ name: tempName.trim() });
-    }
-    if (tempInitials.trim()) {
-      onUpdateUser({ initials: tempInitials.trim().substring(0, 2).toUpperCase() });
-    }
+    const updated: Partial<UserProfile> = {};
+    if (tempName.trim()) updated.name = tempName.trim();
+    if (tempInitials.trim()) updated.initials = tempInitials.trim().substring(0, 2).toUpperCase();
+    if (Object.keys(updated).length) onUpdateUser(updated);
     setIsEditingName(false);
   };
 
   const handleSavePreferences = () => {
+    onUpdateUser({ emailDigest, whatsappPing });
     setSavePrefNotice(true);
     setTimeout(() => setSavePrefNotice(false), 3000);
   };
@@ -59,7 +68,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                 <span className="text-outline">• Tanpa Beban</span>
               </div>
               <p className="text-on-surface-variant leading-relaxed">
-                🌿 Streak 5 harimu aktif! Luangkan 3 menit santai sebelum jam 23.59 untuk menjaga ritme belajar.
+                {user.streakDays > 0
+                  ? `🌿 Streak ${user.streakDays} harimu aktif! Luangkan 3 menit santai sebelum jam 23.59 untuk menjaga ritme belajar.`
+                  : '🌿 Mulai ritme belajarmu hari ini: satu materi atau beberapa soal sudah cukup.'}
               </p>
             </div>
             <button
@@ -67,7 +78,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               onClick={() => setShowToast(false)}
               className="absolute top-2.5 right-2.5 text-outline hover:text-on-surface p-1 rounded-md transition-colors"
             >
-              <span className="material-symbols-outlined text-[18px]">close</span>
+              <span className="material-symbols-outlined text-[20px]">close</span>
             </button>
           </div>
         </aside>
@@ -89,11 +100,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                 </span>
               </div>
               <button
-                onClick={() => setIsEditingName(true)}
+                onClick={openEditor}
                 title="Ubah Inisial & Nama"
                 className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary shadow-xs transition-all"
               >
-                <span className="material-symbols-outlined text-[18px]">palette</span>
+                <span className="material-symbols-outlined text-[20px]">palette</span>
               </button>
             </div>
 
@@ -104,18 +115,18 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                   {user.name}
                 </h1>
                 <button
-                  onClick={() => setIsEditingName(true)}
+                  onClick={openEditor}
                   className="p-1 text-outline hover:text-primary rounded transition-colors"
                   title="Ubah Nama"
                 >
-                  <span className="material-symbols-outlined text-[18px]">edit</span>
+                  <span className="material-symbols-outlined text-[20px]">edit</span>
                 </button>
               </div>
 
               <p className="text-xs sm:text-sm text-on-surface-variant flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-outline text-[18px]">school</span>
+                <span className="material-symbols-outlined text-outline text-[20px]">school</span>
                 <span>
-                  {user.major} • {user.university}
+                  {user.major ? `${user.major} • ${user.university}` : user.university}
                 </span>
               </p>
 
@@ -153,7 +164,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             </div>
 
             <button
-              onClick={() => setIsEditingName(true)}
+              onClick={openEditor}
               className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
             >
               <span className="material-symbols-outlined text-[16px]">edit_note</span>
@@ -217,7 +228,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             </div>
 
             <h2 className="text-lg sm:text-xl font-bold text-on-surface flex items-center gap-2">
-              <span className="material-symbols-outlined text-tertiary text-2xl">explore</span>
+              <span className="material-symbols-outlined text-tertiary text-[24px]">explore</span>
               <span>{user.levelTitle}</span>
             </h2>
 
@@ -259,7 +270,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm text-on-surface-variant font-medium">Ritme Harian</span>
               <div className="w-9 h-9 rounded-lg bg-secondary-fixed/40 flex items-center justify-center text-secondary">
-                <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                <span className="material-symbols-outlined text-[24px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                   local_fire_department
                 </span>
               </div>
@@ -275,12 +286,12 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm text-on-surface-variant font-medium">Latihan Mandiri</span>
               <div className="w-9 h-9 rounded-lg bg-surface-container-low flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[22px]">assignment</span>
+                <span className="material-symbols-outlined text-[24px]">assignment</span>
               </div>
             </div>
             <div className="text-2xl font-bold text-on-surface">{user.questionsDone} Soal</div>
             <div className="text-xs text-outline mt-1">
-              {user.selfCheckPercentage}% proses cek mandiri
+              {user.selfCheckPercentage}% dari semua soal latihan
             </div>
           </div>
 
@@ -289,14 +300,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm text-on-surface-variant font-medium">Topik Dikuasai</span>
               <div className="w-9 h-9 rounded-lg bg-primary-fixed/30 flex items-center justify-center text-primary">
-                <span className="material-symbols-outlined text-[22px]">menu_book</span>
+                <span className="material-symbols-outlined text-[24px]">menu_book</span>
               </div>
             </div>
             <div className="text-2xl font-bold text-on-surface">
               {user.masteredTopics} / {user.totalTopics} Topik
             </div>
             <div className="text-xs text-outline mt-1">
-              Distribusi Normal &amp; Regresi
+              Materi teori yang sudah tuntas
             </div>
           </div>
 
@@ -305,7 +316,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs sm:text-sm text-on-surface-variant font-medium">Pemahaman Konsep</span>
               <div className="w-9 h-9 rounded-lg bg-secondary-fixed/30 flex items-center justify-center text-secondary">
-                <span className="material-symbols-outlined text-[22px]">adjust</span>
+                <span className="material-symbols-outlined text-[24px]">adjust</span>
               </div>
             </div>
             <div className="text-2xl font-bold text-on-surface">{user.understandingScore}%</div>
@@ -361,7 +372,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                     </span>
                   </div>
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[11px] font-medium ${
+                    className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       badge.unlocked
                         ? 'bg-primary-fixed text-on-primary-fixed'
                         : 'bg-surface-container text-outline'
@@ -410,7 +421,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
           <div>
             <div className="flex items-center gap-2 mb-1">
               <span className="material-symbols-outlined text-primary text-[24px]">tune</span>
-              <h2 className="text-base sm:text-lg font-bold text-on-surface">Preferensi Pengingat Santai</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-on-surface">Preferensi Pengingat Santai</h2>
             </div>
             <p className="text-xs text-on-surface-variant leading-relaxed">
               Pilih bagaimana kamu ingin disapa. Kami berjanji tidak akan mengirim pesan yang menuntut atau membuat cemas.
@@ -420,7 +431,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               {/* Email Reminder */}
               <label className="flex items-start justify-between p-3.5 rounded-xl border border-outline-variant/60 hover:bg-surface-container-low/30 cursor-pointer transition-colors">
                 <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-primary mt-0.5 text-xl">mail</span>
+                  <span className="material-symbols-outlined text-primary mt-0.5 text-[20px]">mail</span>
                   <div>
                     <span className="text-xs sm:text-sm text-on-surface font-semibold block">Surel Rekap Mingguan</span>
                     <span className="text-xs text-outline">Kirimkan catatan kemajuan tiap Minggu malam.</span>
@@ -437,7 +448,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               {/* WhatsApp Gentle Ping */}
               <label className="flex items-start justify-between p-3.5 rounded-xl border border-outline-variant/60 hover:bg-surface-container-low/30 cursor-pointer transition-colors">
                 <div className="flex items-start gap-3">
-                  <span className="material-symbols-outlined text-primary mt-0.5 text-xl">chat</span>
+                  <span className="material-symbols-outlined text-primary mt-0.5 text-[20px]">chat</span>
                   <div>
                     <span className="text-xs sm:text-sm text-on-surface font-semibold block">Sapaan WhatsApp Santai</span>
                     <span className="text-xs text-outline">Hanya satu pesan lembut jika streak-mu hampir selesai.</span>
@@ -490,7 +501,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             <div className="flex items-center justify-between mb-4 border-b border-surface-container pb-3">
               <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-[24px]">history</span>
-                <h2 className="text-base sm:text-lg font-bold text-on-surface">Riwayat Sesi Belajar</h2>
+                <h2 className="text-lg sm:text-xl font-bold text-on-surface">Riwayat Sesi Belajar</h2>
               </div>
               <button
                 onClick={() => alert('Semua riwayat latihan mandiri tersimpan secara lokal dan otomatis.')}
@@ -544,7 +555,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
 
           {/* Encouraging Footer Note */}
           <div className="mt-5 pt-3 border-t border-surface-container flex items-center gap-2 text-xs text-outline">
-            <span className="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+            <span className="material-symbols-outlined text-primary text-[20px]">check_circle</span>
             <span>Setiap sesi disimpan otomatis. Kamu bisa berhenti dan lanjut kapan saja tanpa takut kehilangan kemajuan.</span>
           </div>
         </div>

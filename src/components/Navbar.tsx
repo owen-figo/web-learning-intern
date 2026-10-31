@@ -7,50 +7,118 @@ interface NavbarProps {
   setActivePage: (page: ActivePage) => void;
   user: UserProfile;
   onOpenAuth: () => void;
+  signedIn?: boolean;
+  onSignOut?: () => void;
   recentXpGained?: number;
   recentXpKey?: number;
   onOpenActiveTopic?: () => void;
+  onOpenPractice?: () => void;
 }
+
+/** Wait for the page transition before showing gained XP. */
+const XP_POP_DELAY_MS = 500;
+/** How long the "+N XP" badge stays before fading. */
+const XP_POP_HOLD_MS = 3000;
+/** Duration of the total XP count-up. */
+const XP_COUNT_MS = 900;
 
 export const Navbar: React.FC<NavbarProps> = ({
   activePage,
   setActivePage,
   user,
   onOpenAuth,
+  signedIn = false,
+  onSignOut,
   recentXpGained = 0,
   recentXpKey = 0,
   onOpenActiveTopic,
+  onOpenPractice,
 }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [unreadNotifications, setUnreadNotifications] = useState(true);
+  const notificationsRef = useRef<HTMLDivElement>(null);
 
-  // Transient XP popup state
+  // Close the notification box on a click/tap outside it (bell included in the wrapper) or Escape.
+  useEffect(() => {
+    if (!showNotifications) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!notificationsRef.current?.contains(e.target as Node)) setShowNotifications(false);
+    };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowNotifications(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [showNotifications]);
+
+  // Transient XP popup state. The popup waits for the page transition to finish, then the
+  // total counts up and the "+N XP" badge stays long enough to be noticed.
   const [visibleXp, setVisibleXp] = useState<number | null>(null);
   const [isFadingOut, setIsFadingOut] = useState<boolean>(false);
-  const fadeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [xpBump, setXpBump] = useState<boolean>(false);
+  const popTimersRef = useRef<number[]>([]);
 
+  const clearPopTimers = () => {
+    popTimersRef.current.forEach((t) => window.clearTimeout(t));
+    popTimersRef.current = [];
+  };
+  useEffect(() => clearPopTimers, []);
+
+  // Keyed on recentXpKey only: App resets recentXpGained to 0 later, which must not cancel the popup.
   useEffect(() => {
-    if (recentXpGained && recentXpGained > 0) {
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    if (!recentXpKey || recentXpGained <= 0) return;
+    clearPopTimers();
+    const at = (ms: number, fn: () => void) => popTimersRef.current.push(window.setTimeout(fn, ms));
+    at(XP_POP_DELAY_MS, () => {
       setVisibleXp(recentXpGained);
       setIsFadingOut(false);
-      fadeTimerRef.current = setTimeout(() => {
-        setIsFadingOut(true);
-      }, 1500);
-    } else {
-      setVisibleXp(null);
-      setIsFadingOut(false);
+      setXpBump(true);
+    });
+    at(XP_POP_DELAY_MS + 600, () => setXpBump(false));
+    at(XP_POP_DELAY_MS + XP_POP_HOLD_MS, () => setIsFadingOut(true));
+    at(XP_POP_DELAY_MS + XP_POP_HOLD_MS + 400, () => setVisibleXp(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recentXpKey]);
+
+  // Total XP counts up to the new value instead of jumping. When the navbar mounts right after
+  // XP was earned on a page without it (e.g. finishing a theory topic), it starts from the old total.
+  const [shownXp, setShownXp] = useState<number>(() => user.xp - (recentXpGained > 0 ? recentXpGained : 0));
+  const shownXpRef = useRef(shownXp);
+  useEffect(() => {
+    const from = shownXpRef.current;
+    const to = user.xp;
+    if (from === to) return;
+    if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      shownXpRef.current = to;
+      setShownXp(to);
+      return;
     }
-    return () => {
-      if (fadeTimerRef.current) clearTimeout(fadeTimerRef.current);
+    const start = performance.now() + XP_POP_DELAY_MS;
+    let raf = 0;
+    const tick = (now: number) => {
+      const p = Math.min(1, Math.max(0, (now - start) / XP_COUNT_MS));
+      const value = Math.round(from + (to - from) * (1 - Math.pow(1 - p, 3)));
+      shownXpRef.current = value;
+      setShownXp(value);
+      if (p < 1) raf = requestAnimationFrame(tick);
     };
-  }, [recentXpGained, recentXpKey]);
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [user.xp]);
 
   return (
-    <header className="bg-surface-container-lowest border-b border-outline-variant/60 sticky top-0 z-40 shadow-xs">
+    <header
+      className="bg-surface-container-lowest border-b border-outline-variant/60 sticky top-0 z-40 shadow-xs"
+      // Own view-transition layer so the header stays put while the page below animates.
+      style={{ viewTransitionName: 'site-header' }}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 h-16 flex items-center justify-between">
         {/* Brand & Nav Items */}
-        <div className="flex items-center gap-6 md:gap-8">
+        <div className="flex items-center gap-6 md:gap-2 lg:gap-8">
           <button
             onClick={() => setActivePage('landing')}
             className="flex items-center gap-2 text-primary font-semibold text-lg md:text-xl tracking-tight hover:opacity-90 transition-opacity"
@@ -61,14 +129,14 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </span>
             {/* Di layar sempit wordmark disembunyikan secara visual supaya ruang header cukup, tetap terbaca pembaca layar. */}
-            <span className="sr-only sm:not-sr-only">Ngerti</span>
+            <span className="sr-only xl:not-sr-only">Ngerti</span>
           </button>
 
           {/* Desktop Nav Links */}
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-on-surface-variant">
-              <button
+          <nav className="hidden md:flex items-center gap-2.5 lg:gap-6 text-sm font-medium text-on-surface-variant">
+            <button
               onClick={() => setActivePage('landing')}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'landing'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -78,7 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               onClick={() => setActivePage('topics')}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'topics'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -87,14 +155,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               Topik Belajar
             </button>
             <button
-              onClick={() => {
-                if (onOpenActiveTopic) {
-                  onOpenActiveTopic();
-                } else {
-                  setActivePage('practice');
-                }
-              }}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              onClick={() => (onOpenPractice ? onOpenPractice() : setActivePage('practice'))}
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'practice'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -104,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
             <button
               onClick={() => setActivePage('leaderboard')}
-              className={`pb-1 transition-colors duration-200 border-b-2 ${
+              className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
                 activePage === 'leaderboard'
                   ? 'text-primary border-primary font-semibold'
                   : 'border-transparent hover:text-primary'
@@ -112,18 +174,17 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               Leaderboard
             </button>
-
           </nav>
         </div>
 
         {/* Right Section: Streak, XP, Notifications, User */}
-        <div className="flex items-center gap-1 sm:gap-3.5">
+        <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-3.5">
           {/* Streak Indicator Pill: Only flame and number */}
           <div
             aria-label={`Streak ${user.streakDays} hari`}
-            className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+            className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base lg:text-lg font-bold select-none shrink-0"
           >
-            <span className="text-lg sm:text-xl leading-none">🔥</span>
+            <span className="text-lg lg:text-xl leading-none">🔥</span>
             <span className="leading-none">{user.streakDays}</span>
           </div>
 
@@ -131,15 +192,17 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="relative shrink-0">
             <div
               aria-label={`Total ${user.xp} XP`}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold transition-all duration-300"
+              className={`flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full text-primary text-base lg:text-lg font-bold transition-colors duration-500 ${
+                xpBump ? 'xp-bump bg-primary-fixed' : 'bg-primary-fixed/40'
+              }`}
             >
               <span
-                className="material-symbols-outlined text-primary text-[20px] sm:text-[24px]"
+                className="material-symbols-outlined text-primary text-[20px] lg:text-[24px]"
                 style={{ fontVariationSettings: "'FILL' 1" }}
               >
                 stars
               </span>
-              <span className="leading-none">{user.xp} XP</span>
+              <span className="leading-none tabular-nums">{shownXp} XP</span>
             </div>
 
             {/* XP-Gain Popup */}
@@ -147,10 +210,8 @@ export const Navbar: React.FC<NavbarProps> = ({
               <div
                 role="status"
                 aria-live="polite"
-                className={`pointer-events-none absolute left-1/2 -translate-x-1/2 top-full mt-2 z-50 px-3 py-1 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow-md shadow-primary/25 whitespace-nowrap transition-opacity duration-300 ${
-                  isFadingOut
-                    ? 'opacity-0'
-                    : 'opacity-100 animate-in fade-in motion-safe:slide-in-from-bottom-2 duration-200'
+                className={`xp-float-in pointer-events-none absolute left-1/2 top-full mt-2 z-50 px-3 py-1 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow-md shadow-primary/25 whitespace-nowrap transition-opacity duration-400 ${
+                  isFadingOut ? 'opacity-0' : 'opacity-100'
                 }`}
               >
                 +{visibleXp} XP
@@ -162,9 +223,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           <PomodoroButton />
 
           {/* Notification Button (disembunyikan hanya di layar < 340px agar avatar tidak terdorong keluar) */}
-          <div className="relative shrink-0 max-[339px]:hidden">
+          <div ref={notificationsRef} className="relative shrink-0 max-[339px]:hidden">
             <button
               aria-label="Notifikasi"
+              aria-expanded={showNotifications}
               onClick={() => {
                 setShowNotifications(!showNotifications);
                 setUnreadNotifications(false);
@@ -189,7 +251,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <p className="font-medium text-on-surface flex items-center gap-1">
                       <span>🌿</span> Pengingat Tanpa Beban
                     </p>
-                    <p>Streak 5 harimu aktif! Luangkan 3 menit santai sebelum 23.59 untuk menjaga ritme.</p>
+                    <p>
+                      {user.streakDays > 0
+                        ? `Streak ${user.streakDays} harimu aktif! Luangkan 3 menit santai sebelum 23.59 untuk menjaga ritme.`
+                        : 'Mulai ritme belajarmu hari ini: satu materi atau beberapa soal sudah cukup.'}
+                    </p>
                   </div>
                   <div className="p-2.5 rounded-lg bg-primary-fixed/20 text-xs text-on-surface-variant space-y-1">
                     <p className="font-medium text-primary flex items-center gap-1">
@@ -219,10 +285,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             </button>
 
             <button
-              onClick={onOpenAuth}
+              onClick={signedIn ? onSignOut : onOpenAuth}
               className="hidden lg:inline-flex text-xs md:text-sm font-medium text-on-surface-variant hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors"
             >
-              Masuk
+              {signedIn ? 'Keluar' : 'Masuk'}
             </button>
           </div>
         </div>

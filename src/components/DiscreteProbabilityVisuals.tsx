@@ -79,7 +79,7 @@ export const DiscreteDistributionVisual: React.FC = () => {
         <div className="space-y-2">
           <div className="flex justify-between items-center text-xs font-bold text-black">
             <span>Grafik Batang Probabilitas P(X = x)</span>
-            <span className="text-primary font-mono text-[11px]">
+            <span className="text-primary font-mono text-xs">
               Klik batang untuk melihat kalkulasi detail
             </span>
           </div>
@@ -96,7 +96,7 @@ export const DiscreteDistributionVisual: React.FC = () => {
                   className="flex-1 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
                 >
                   <span
-                    className={`text-[11px] font-bold font-mono transition-colors ${
+                    className={`text-xs font-bold font-mono transition-colors ${
                       isSelected ? 'text-primary scale-110' : 'text-black'
                     }`}
                   >
@@ -135,31 +135,31 @@ export const DiscreteDistributionVisual: React.FC = () => {
         {/* Summary Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Nilai Harapan / Mean E(X)
             </span>
             <div className="text-xl font-extrabold text-black font-mono">1.90</div>
-            <p className="text-[11px] text-black font-medium leading-tight">
+            <p className="text-xs text-black font-medium leading-tight">
               Rata-rata jangka panjang frekuensi gangguan per sesi adalah 1.90 kali.
             </p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Varians Populasi σ²
             </span>
             <div className="text-xl font-extrabold text-black font-mono">1.290</div>
-            <p className="text-[11px] text-black font-medium leading-tight">
+            <p className="text-xs text-black font-medium leading-tight">
               Kuadrat rata-rata deviasi jarak tiap outcome dari titik tengah 1.90.
             </p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Standar Deviasi σ
             </span>
             <div className="text-xl font-extrabold text-black font-mono">1.136</div>
-            <p className="text-[11px] text-black font-medium leading-tight">
+            <p className="text-xs text-black font-medium leading-tight">
               Penyimpangan khas sekitar ±1.14 kali gangguan dari rata-rata 1.90.
             </p>
           </div>
@@ -357,7 +357,7 @@ export const BinomialConditionsVisual: React.FC = () => {
             <div
               className={`p-3 rounded-lg border font-bold text-xs flex items-center gap-2 ${currentScen.verdictColor}`}
             >
-              <span className="material-symbols-outlined text-[18px]">
+              <span className="material-symbols-outlined text-[20px]">
                 {currentScen.isBinomial ? 'check_circle' : 'warning'}
               </span>
               <span>
@@ -419,7 +419,7 @@ export const CombinationVisual: React.FC = () => {
           </div>
           {/* Quick Presets from textbook */}
           <div className="flex items-center gap-1.5">
-            <span className="text-[11px] font-bold text-black mr-1">Contoh Kuis:</span>
+            <span className="text-xs font-bold text-black mr-1">Contoh Kuis:</span>
             <button
               type="button"
               onClick={() => {
@@ -472,7 +472,7 @@ export const CombinationVisual: React.FC = () => {
               }}
               className="w-full accent-primary cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-black font-medium">
+            <div className="flex justify-between text-xs text-black font-medium">
               <span>n = 1</span>
               <span>n = 8</span>
             </div>
@@ -491,7 +491,7 @@ export const CombinationVisual: React.FC = () => {
               onChange={(e) => setX(Number(e.target.value))}
               className="w-full accent-primary cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-black font-medium">
+            <div className="flex justify-between text-xs text-black font-medium">
               <span>x = 0</span>
               <span>x = {n}</span>
             </div>
@@ -686,7 +686,7 @@ export const BinomialDistributionVisual: React.FC = () => {
         <div className="space-y-2">
           <div className="flex justify-between items-center text-xs font-bold text-black">
             <span>Probabilitas P(X = x) Sukses Terjadi</span>
-            <span className="text-primary font-mono text-[11px]">
+            <span className="text-primary font-mono text-xs">
               Klik batang untuk menguji target x
             </span>
           </div>
@@ -704,7 +704,7 @@ export const BinomialDistributionVisual: React.FC = () => {
                   className="flex-1 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
                 >
                   <span
-                    className={`text-[10px] sm:text-[11px] font-bold font-mono transition-colors ${
+                    className={`text-xs sm:text-xs font-bold font-mono transition-colors ${
                       isSelected ? 'text-primary scale-110' : 'text-black'
                     }`}
                   >
@@ -757,7 +757,7 @@ export const BinomialDistributionVisual: React.FC = () => {
               <span className="text-xs font-bold text-black uppercase">
                 Peluang Lulus (X ≥ 3 Benar):
               </span>
-              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-600 text-white">
+              <span className="text-xs font-mono font-bold px-2 py-0.5 rounded bg-amber-700 text-white">
                 {pAtLeast3.toFixed(4)}
               </span>
             </div>
@@ -854,7 +854,7 @@ export const BinomialMeanSdVisual: React.FC = () => {
               onChange={(e) => setN(Number(e.target.value))}
               className="w-full accent-primary cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-black font-medium">
+            <div className="flex justify-between text-xs text-black font-medium">
               <span>n = 5</span>
               <span>n = 50</span>
             </div>
@@ -874,7 +874,7 @@ export const BinomialMeanSdVisual: React.FC = () => {
               onChange={(e) => setPi(Number(e.target.value))}
               className="w-full accent-primary cursor-pointer"
             />
-            <div className="flex justify-between text-[10px] text-black font-medium">
+            <div className="flex justify-between text-xs text-black font-medium">
               <span>π = 0.10</span>
               <span>π = 0.90</span>
             </div>
@@ -884,7 +884,7 @@ export const BinomialMeanSdVisual: React.FC = () => {
         {/* 3 Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Rata-rata: μ = nπ
             </span>
             <div className="text-2xl font-extrabold text-black font-mono">
@@ -896,7 +896,7 @@ export const BinomialMeanSdVisual: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Varians: σ² = nπ(1 - π)
             </span>
             <div className="text-2xl font-extrabold text-black font-mono">
@@ -908,7 +908,7 @@ export const BinomialMeanSdVisual: React.FC = () => {
           </div>
 
           <div className="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Standar Deviasi: σ = √σ²
             </span>
             <div className="text-2xl font-extrabold text-primary font-mono">
@@ -937,7 +937,7 @@ export const BinomialMeanSdVisual: React.FC = () => {
                 Aturan Praktis Pendekatan Distribusi Normal (Rule of Thumb):
               </span>
             </div>
-            <p className="font-medium text-[11px] leading-relaxed">
+            <p className="font-medium text-xs leading-relaxed">
               nπ = {rule1.toFixed(1)} {rule1 >= 5 ? '≥ 5 (Memenuhi)' : '< 5 (Belum)'} dan n(1 - π) ={' '}
               {rule2.toFixed(1)} {rule2 >= 5 ? '≥ 5 (Memenuhi)' : '< 5 (Belum)'}.
             </p>
@@ -946,8 +946,8 @@ export const BinomialMeanSdVisual: React.FC = () => {
           <span
             className={`px-3 py-1 rounded-full text-xs font-bold shrink-0 ${
               isNormalApproximationValid
-                ? 'bg-emerald-600 text-white'
-                : 'bg-amber-600 text-white'
+                ? 'bg-emerald-700 text-white'
+                : 'bg-amber-700 text-white'
             }`}
           >
             {isNormalApproximationValid
@@ -1056,7 +1056,7 @@ export const PoissonDistributionVisual: React.FC = () => {
             onChange={(e) => setLambda(Number(e.target.value))}
             className="w-full accent-primary cursor-pointer"
           />
-          <div className="flex justify-between text-[10px] text-black font-medium">
+          <div className="flex justify-between text-xs text-black font-medium">
             <span>λ = 0.5 (Sangat Jarang)</span>
             <span>λ = 3.0 (Standar Soal)</span>
             <span>λ = 7.0 (Padat)</span>
@@ -1067,7 +1067,7 @@ export const PoissonDistributionVisual: React.FC = () => {
         <div className="space-y-2">
           <div className="flex justify-between items-center text-xs font-bold text-black">
             <span>Peluang Tepat x Pengunjung Tiba dalam 1 Menit: P(X = x)</span>
-            <span className="text-primary font-mono text-[11px]">
+            <span className="text-primary font-mono text-xs">
               Klik batang untuk menguji nilai x
             </span>
           </div>
@@ -1085,7 +1085,7 @@ export const PoissonDistributionVisual: React.FC = () => {
                   className="flex-1 flex flex-col items-center gap-2 group cursor-pointer focus:outline-none"
                 >
                   <span
-                    className={`text-[9px] sm:text-[10px] font-bold font-mono transition-colors ${
+                    className={`text-xs sm:text-xs font-bold font-mono transition-colors ${
                       isSelected ? 'text-primary scale-110' : 'text-black'
                     }`}
                   >
@@ -1104,7 +1104,7 @@ export const PoissonDistributionVisual: React.FC = () => {
                     />
                   </div>
                   <span
-                    className={`text-[11px] font-bold px-1 py-0.5 rounded transition-colors ${
+                    className={`text-xs font-bold px-1 py-0.5 rounded transition-colors ${
                       isSelected ? 'bg-primary text-on-primary' : 'text-black bg-surface-container'
                     }`}
                   >
@@ -1119,37 +1119,37 @@ export const PoissonDistributionVisual: React.FC = () => {
         {/* Metric Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               Mean = Varians = λ
             </span>
             <div className="text-xl font-extrabold text-black font-mono">
               μ = σ² = {lambda.toFixed(1)}
             </div>
-            <p className="text-[11px] text-black font-medium leading-tight">
+            <p className="text-xs text-black font-medium leading-tight">
               Ciri khas utama Poisson: rata-rata dan variansnya identik sama dengan λ!
             </p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-primary/40 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               P(X = {selectedX}) Tepat
             </span>
             <div className="text-xl font-extrabold text-primary font-mono">
               {currentP.toFixed(4)}
             </div>
-            <p className="text-[11px] text-black font-medium leading-tight">
+            <p className="text-xs text-black font-medium leading-tight">
               Peluang tepat {selectedX} pengunjung tiba dalam semenit adalah {(currentP * 100).toFixed(2)}%.
             </p>
           </div>
 
           <div className="p-3.5 rounded-xl bg-surface-container-lowest border border-amber-500/40 space-y-1">
-            <span className="text-[11px] font-bold text-black uppercase tracking-wider">
+            <span className="text-xs font-bold text-black uppercase tracking-wider">
               P(X ≥ 5) Pengunjung Padat
             </span>
             <div className="text-xl font-extrabold text-amber-700 font-mono">
               {pAtLeast5.toFixed(4)}
             </div>
-            <p className="text-[11px] text-black font-medium leading-tight">
+            <p className="text-xs text-black font-medium leading-tight">
               Peluang lonjakan ≥ 5 pengunjung per menit sekitar {(pAtLeast5 * 100).toFixed(1)}%.
             </p>
           </div>
@@ -1232,7 +1232,7 @@ export const PoissonAreaVisual: React.FC = () => {
                 <div className="flex justify-between items-center mb-1">
                   <span className="text-xs font-bold text-black">{win.label}</span>
                   <span
-                    className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${
+                    className={`text-xs font-mono font-bold px-2 py-0.5 rounded ${
                       isSelected ? 'bg-primary text-on-primary' : 'bg-surface-container text-black'
                     }`}
                   >
@@ -1242,7 +1242,7 @@ export const PoissonAreaVisual: React.FC = () => {
                 <div className="text-lg font-extrabold text-black font-mono">
                   {(win.pAtLeast2 * 100).toFixed(2)}%
                 </div>
-                <div className="text-[11px] text-black font-medium mt-1">
+                <div className="text-xs text-black font-medium mt-1">
                   Peluang ≥ 2 pengunjung: {win.pAtLeast2.toFixed(4)}
                 </div>
               </button>
@@ -1265,7 +1265,7 @@ export const PoissonAreaVisual: React.FC = () => {
                 width: `${Math.max(6, (activeWindow.seconds / 60) * 100)}%`,
               }}
             >
-              <span className="text-[10px] font-bold text-primary truncate px-1">
+              <span className="text-xs font-bold text-on-primary-fixed truncate px-1">
                 {activeWindow.label}
               </span>
             </div>
@@ -1380,7 +1380,7 @@ export const HypergeometricVisual: React.FC = () => {
         <div className="p-4 rounded-xl bg-surface-container-lowest border border-outline-variant/60 space-y-2">
           <div className="flex justify-between items-center text-xs font-bold text-black">
             <span>Populasi Awal (N = 10):</span>
-            <span className="text-[11px] font-mono">
+            <span className="text-xs font-mono">
               <span className="text-rose-600 font-bold">3 Rusak</span> •{' '}
               <span className="text-emerald-700 font-bold">7 Baik</span>
             </span>
@@ -1421,7 +1421,7 @@ export const HypergeometricVisual: React.FC = () => {
                   onClick={() => setFirstDrawDefective(true)}
                   className={`px-3 py-1 rounded-lg text-xs font-bold transition-all ${
                     firstDrawDefective
-                      ? 'bg-rose-600 text-white'
+                      ? 'bg-rose-700 text-white'
                       : 'bg-surface-container text-black'
                   }`}
                 >
@@ -1443,7 +1443,7 @@ export const HypergeometricVisual: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
               <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/40 space-y-2">
-                <span className="text-[11px] font-bold text-black uppercase">
+                <span className="text-xs font-bold text-black uppercase">
                   Tarikan Pertama (N = 10 tersisa)
                 </span>
                 <div className="text-sm font-bold text-black">
@@ -1455,7 +1455,7 @@ export const HypergeometricVisual: React.FC = () => {
               </div>
 
               <div className="p-4 rounded-xl bg-surface-container-low border border-primary/40 space-y-2">
-                <span className="text-[11px] font-bold text-primary uppercase">
+                <span className="text-xs font-bold text-primary uppercase">
                   Tarikan Kedua (N = 9 tersisa, Tanpa Pengembalian!)
                 </span>
                 <div className="text-sm font-bold text-black">
@@ -1464,7 +1464,7 @@ export const HypergeometricVisual: React.FC = () => {
                 <div className="text-lg font-mono font-extrabold text-primary">
                   {firstDrawDefective ? '2 / 9 ≈ 0.222 (22.2%)' : '3 / 9 ≈ 0.333 (33.3%)'}
                 </div>
-                <p className="text-[11px] text-black font-medium leading-relaxed">
+                <p className="text-xs text-black font-medium leading-relaxed">
                   {firstDrawDefective
                     ? 'Karena 1 lampu rusak sudah terambil, sisa lampu rusak di kotak tinggal 2 dari total 9 lampu.'
                     : 'Karena 1 lampu normal yang terambil, sisa lampu rusak di kotak tetap 3 dari total 9 lampu.'}
@@ -1496,7 +1496,7 @@ export const HypergeometricVisual: React.FC = () => {
                   <div className="text-xl font-extrabold text-black font-mono">
                     {(d.p * 100).toFixed(2)}%
                   </div>
-                  <p className="text-[11px] text-black font-medium leading-tight">{d.label}</p>
+                  <p className="text-xs text-black font-medium leading-tight">{d.label}</p>
                 </div>
               ))}
             </div>
