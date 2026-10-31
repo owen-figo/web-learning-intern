@@ -3,9 +3,10 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Suspense, lazy, useState, useEffect, useRef } from 'react';
+import { Suspense, lazy, useState, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { flushSync } from 'react-dom';
 import { ActivePage, Topic, TopicStatus, UserProfile } from './types';
-import { initialUserProfile, mockTopics, mockLeaderboardEntries } from './data/mockData';
+import { initialUserProfile, mockTopics } from './data/mockData';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
@@ -13,6 +14,19 @@ import { TopicsPage } from './pages/TopicsPage';
 import { AuthModal } from './components/AuthModal';
 import { FormulaModal } from './components/FormulaModal';
 import { InfoModal } from './components/InfoModal';
+import { CalculatorDock } from './components/CalculatorDock';
+import { getSignedInStudent, signOut } from './lib/auth';
+import {
+  completeTopic,
+  initialsOf,
+  levelFor,
+  loadProgress,
+  practiceStats,
+  saveProfile,
+  type AccountProgress,
+  type ProfileChanges,
+  type SavedAnswer,
+} from './lib/account';
 
 // Pages other than the landing and topic list are code-split: they download on first visit.
 const PracticePage = lazy(() => import('./pages/PracticePage').then((m) => ({ default: m.PracticePage })));
@@ -42,10 +56,16 @@ function writeAdminUnlock(on: boolean) {
   }
 }
 
+/** Profile fields the student can change; saved to their account when signed in. */
+const PROFILE_FIELDS: (keyof ProfileChanges)[] = ['name', 'initials', 'avatarColor', 'emailDigest', 'whatsappPing'];
+
 export default function App() {
-  const [activePage, setActivePage] = useState<ActivePage>('landing');
+  const [activePage, setActivePageState] = useState<ActivePage>('landing');
   const [user, setUser] = useState<UserProfile>(initialUserProfile);
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
+  const [signedIn, setSignedIn] = useState<boolean>(false);
+  // Set once the signed-in student's progress has loaded from the database.
+  const [account, setAccount] = useState<{ id: string; answers: Record<string, SavedAnswer> } | null>(null);
   const [isFormulaOpen, setIsFormulaOpen] = useState<boolean>(false);
   const [infoModalType, setInfoModalType] = useState<'privacy' | 'help' | null>(null);
   const [recentXpGained, setRecentXpGained] = useState<number>(0);
@@ -58,6 +78,7 @@ export default function App() {
     'mendefinisikan-mengumpulkan-data'
   );
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [toastIcon, setToastIcon] = useState<string>('lock');
   const [adminUnlockAll, setAdminUnlockAll] = useState<boolean>(readAdminUnlock);
   const [showAdminSwitch] = useState<boolean>(
     () => readAdminUnlock() || new URLSearchParams(window.location.search).has('admin')
@@ -72,6 +93,30 @@ export default function App() {
 
   const sortedTopics = [...mockTopics].sort((a, b) => a.order - b.order);
   const activeTopic = sortedTopics.find((t) => !completedTopicIds.includes(t.id)) || sortedTopics[0];
+
+  // Page changes animate with the View Transitions API: the old page fades up and out while the
+  // new one rises in (styles in index.css). Browsers without it, and visitors who prefer reduced
+  // motion, get the plain switch; the fallback fade-in is applied by the `page-enter` class below.
+  const activePageRef = useRef(activePage);
+  activePageRef.current = activePage;
+  const setActivePage = (page: ActivePage) => {
+    if (page === activePageRef.current) return;
+    const doc = document as Document & { startViewTransition?: (update: () => void) => unknown };
+    const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (doc.startViewTransition && !reduceMotion) {
+      doc.startViewTransition(() => flushSync(() => setActivePageState(page)));
+    } else {
+      setActivePageState(page);
+    }
+  };
+  const supportsViewTransition = typeof document !== 'undefined' && 'startViewTransition' in document;
+
+  // Pages are swapped with state, not a router, so the browser would keep the previous page's
+  // scroll position (e.g. landing at the bottom of Topik Belajar after "Tandai Selesai").
+  // Start every page at the top, before it is painted.
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [activePage]);
 
   useEffect(() => {
     return () => {
@@ -90,8 +135,9 @@ export default function App() {
     }
   }, [toastMessage]);
 
-  const showToast = (message: string) => {
+  const showToast = (message: string, icon = 'lock') => {
     setToastMessage(message);
+    setToastIcon(icon);
   };
 
   const getTopicStatus = (topic: Topic): TopicStatus => {
@@ -146,7 +192,16 @@ export default function App() {
   };
 
   const handleCompleteTheory = (xp: number) => {
-    handleAddXp(xp);
+    if (account && selectedTopicId) {
+      // The server records the topic and decides the XP (only the first time).
+      completeTopic(selectedTopicId)
+        .then((r) => {
+          if (r.xpAwarded > 0) handleAddXp(r.xpAwarded);
+        })
+        .catch(() => showToast('Progres topik belum tersimpan ke akunmu. Coba lagi nanti.', 'cloud_off'));
+    } else {
+      handleAddXp(xp);
+    }
     if (selectedTopicId && !completedTopicIds.includes(selectedTopicId)) {
       const updated = [...completedTopicIds, selectedTopicId];
       setCompletedTopicIds(updated);
@@ -174,21 +229,70 @@ export default function App() {
       ...prev,
       ...updated,
     }));
+    if (!account) return;
+    const changes = Object.fromEntries(
+      Object.entries(updated).filter(([key, value]) => value !== undefined && (PROFILE_FIELDS as string[]).includes(key))
+    ) as ProfileChanges;
+    if (Object.keys(changes).length === 0) return;
+    saveProfile(changes).catch(() => showToast('Perubahan profil belum tersimpan. Coba lagi nanti.', 'cloud_off'));
+  };
+
+  const applyProgress = (p: AccountProgress) => {
+    setAccount({ id: p.id, answers: p.answers });
+    setCompletedTopicIds(p.completedTopicIds);
+    setUser((prev) => ({
+      ...prev,
+      name: p.name,
+      initials: p.initials ?? initialsOf(p.name),
+      avatarColor: p.avatarColor,
+      major: '',
+      xp: p.xp,
+      weeklyXp: undefined,
+      streakDays: p.streakDays,
+      personalRecordStreak: p.bestStreak,
+      masteredTopics: p.completedTopicIds.length,
+      emailDigest: p.emailDigest,
+      whatsappPing: p.whatsappPing,
+    }));
+  };
+
+  // Practice numbers on the profile follow the saved answers.
+  useEffect(() => {
+    if (account) setUser((prev) => ({ ...prev, ...practiceStats(account.answers) }));
+  }, [account?.answers]);
+
+  const handleAnswer = (questionId: string, answer: SavedAnswer) => {
+    setAccount((prev) => (prev ? { ...prev, answers: { ...prev.answers, [questionId]: answer } } : prev));
   };
 
   const handleAuthSuccess = (name?: string) => {
+    setSignedIn(true);
     if (name) {
-      const parts = name.trim().split(' ');
-      const initials = parts.length > 1
-        ? (parts[0][0] + parts[1][0]).toUpperCase()
-        : name.substring(0, 2).toUpperCase();
-      setUser((prev) => ({
-        ...prev,
-        name: name,
-        initials: initials,
-      }));
+      setUser((prev) => ({ ...prev, name, initials: initialsOf(name) }));
     }
+    loadProgress()
+      .then(applyProgress)
+      .catch(() => showToast('Progres akunmu belum bisa dimuat. Muat ulang halaman sebentar lagi.', 'cloud_off'));
   };
+
+  // Keep the student signed in across reloads (Supabase saves the session in this browser).
+  useEffect(() => {
+    getSignedInStudent().then((student) => {
+      if (student) handleAuthSuccess(student.name);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleSignOut = async () => {
+    await signOut().catch(() => undefined);
+    setSignedIn(false);
+    setAccount(null);
+    setCompletedTopicIds([]);
+    setUser(initialUserProfile);
+  };
+
+  // Level and title follow total XP.
+  const shownUser = useMemo(() => ({ ...user, ...levelFor(user.xp) }), [user]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-on-surface antialiased relative">
@@ -201,8 +305,10 @@ export default function App() {
         <Navbar
           activePage={activePage}
           setActivePage={setActivePage}
-          user={user}
+          user={shownUser}
           onOpenAuth={() => setIsAuthOpen(true)}
+          signedIn={signedIn}
+          onSignOut={handleSignOut}
           recentXpGained={recentXpGained}
           recentXpKey={recentXpKey}
           onOpenActiveTopic={handleOpenActiveTopic}
@@ -211,7 +317,10 @@ export default function App() {
       )}
 
       {/* Main Pages */}
-      <main className="flex-1 flex flex-col">
+      <main
+        key={supportsViewTransition ? undefined : activePage}
+        className={`flex-1 flex flex-col ${supportsViewTransition ? '' : 'page-enter'}`}
+      >
         <Suspense
           fallback={
             <div className="flex-1 flex items-center justify-center py-24" role="status" aria-live="polite">
@@ -229,7 +338,7 @@ export default function App() {
 
         {activePage === 'topics' && (
           <TopicsPage
-            user={user}
+            user={shownUser}
             setActivePage={setActivePage}
             onSelectTopic={handleSelectTopic}
             completedTopicIds={completedTopicIds}
@@ -251,7 +360,10 @@ export default function App() {
             onTopicChange={setSelectedTopicId}
             getTopicStatus={getTopicStatus}
             adminUnlockAll={adminUnlockAll}
-            user={user}
+            user={shownUser}
+            key={account?.id ?? 'guest'}
+            accountAnswers={account?.answers}
+            onAnswer={account ? handleAnswer : undefined}
           />
         )}
 
@@ -266,16 +378,13 @@ export default function App() {
 
         {activePage === 'profile' && (
           <ProfilePage
-            user={user}
+            user={shownUser}
             onUpdateUser={handleUpdateUser}
           />
         )}
 
         {activePage === 'leaderboard' && (
-          <LeaderboardPage
-            user={user}
-            mockEntries={mockLeaderboardEntries}
-          />
+          <LeaderboardPage currentUserId={account?.id ?? null} />
         )}
         </Suspense>
       </main>
@@ -299,7 +408,7 @@ export default function App() {
         >
           <div className="bg-surface-container-highest text-on-surface border border-outline-variant/80 px-4 py-3.5 rounded-2xl shadow-xl flex items-center gap-3 backdrop-blur-sm">
             <div className="w-8 h-8 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-[20px]">lock</span>
+              <span className="material-symbols-outlined text-[20px]">{toastIcon}</span>
             </div>
             <p className="text-xs sm:text-sm text-on-surface leading-snug flex-1">
               {toastMessage}
@@ -314,6 +423,9 @@ export default function App() {
           </div>
         </div>
       )}
+
+      {/* Scientific calculator: sticky tab on the right edge, on every page */}
+      <CalculatorDock />
 
       {/* Modals */}
       <AuthModal

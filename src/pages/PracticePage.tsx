@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { ActivePage, DifficultyTier, PracticeQuestion, Topic, TopicStatus, UserProfile } from '../types';
 import { mockTopics } from '../data/mockData';
 import { getConceptById } from '../data/concepts';
-import { loadPracticeSet, TIER_ORDER, TIER_LABEL, TIER_XP, UNLOCK_HARDEST_AT } from '../data/practice';
+import { checkPracticeAnswer, loadPracticeSet, TIER_ORDER, TIER_LABEL, TIER_XP, UNLOCK_HARDEST_AT } from '../data/practice';
 import { ConceptModal } from '../components/ConceptModal';
 import { PomodoroButton } from '../components/PomodoroButton';
 import { RichText } from '../components/RichText';
+import type { SavedAnswer } from '../lib/account';
 
 interface PracticePageProps {
   setActivePage: (page: ActivePage) => void;
@@ -16,16 +17,16 @@ interface PracticePageProps {
   getTopicStatus?: (topic: Topic) => TopicStatus;
   adminUnlockAll?: boolean;
   user?: UserProfile;
+  /** Signed in: the student's answers from the database (then nothing is kept in this browser). */
+  accountAnswers?: Record<string, SavedAnswer>;
+  onAnswer?: (questionId: string, answer: SavedAnswer) => void;
 }
 
 // ---------------------------------------------------------------- saved progress
-// Answers are kept in this browser so a student can leave and continue later.
+// Guests' answers are kept in this browser so they can leave and continue later.
+// Signed-in students' answers are saved by the server (see accountAnswers).
 const STORAGE_KEY = 'ngerti.practice.v1';
 
-interface SavedAnswer {
-  selected: number;
-  correct: boolean;
-}
 interface SavedState {
   answers: Record<string, SavedAnswer>;
   /** Question ids that already gave XP (XP is awarded once per question). */
@@ -77,16 +78,33 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   getTopicStatus,
   adminUnlockAll = false,
   user,
+  accountAnswers,
+  onAnswer,
 }) => {
   const sortedTopics = useMemo(() => [...mockTopics].sort((a, b) => a.order - b.order), []);
   const isTopicOpen = (t: Topic) => !getTopicStatus || getTopicStatus(t) !== 'terkunci';
 
   const [topicId, setTopicId] = useState<string>(initialTopicId);
   const [questions, setQuestions] = useState<PracticeQuestion[] | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState<number>(0);
+  // Answer keys and explanations come from the server after checking (POST /api/practice/check).
+  const [feedback, setFeedback] = useState<Record<string, { answer: number; explanation: string }>>({});
+  const [checking, setChecking] = useState<boolean>(false);
+  const [checkError, setCheckError] = useState<string | null>(null);
+  const [feedbackError, setFeedbackError] = useState<string | null>(null);
+  const [feedbackRetry, setFeedbackRetry] = useState<number>(0);
   const [tier, setTier] = useState<DifficultyTier>('mudah');
   const [index, setIndex] = useState<number>(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const [saved, setSaved] = useState<SavedState>(readSaved);
+  const [saved, setSaved] = useState<SavedState>(() =>
+    accountAnswers
+      ? {
+          answers: accountAnswers,
+          xpAwarded: Object.keys(accountAnswers).filter((id) => accountAnswers[id].correct),
+        }
+      : readSaved()
+  );
   const [hintOpen, setHintOpen] = useState<boolean>(false);
   const [hintReadyAt, setHintReadyAt] = useState<number>(0);
   const [now, setNow] = useState<number>(Date.now());
@@ -121,24 +139,51 @@ export const PracticePage: React.FC<PracticePageProps> = ({
     total: sortedTopics.length * QUESTIONS_PER_TOPIC,
   };
 
-  // Load the question set whenever the topic changes
+  // Load the question set from the backend whenever the topic changes (or on "Coba lagi")
   useEffect(() => {
     let cancelled = false;
     setQuestions(null);
-    loadPracticeSet(topicId).then((qs) => {
-      if (!cancelled) setQuestions(qs);
-    });
+    setLoadError(null);
+    loadPracticeSet(topicId)
+      .then((qs) => {
+        if (!cancelled) setQuestions(qs);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setLoadError(err instanceof Error ? err.message : 'Soal belum bisa dimuat.');
+      });
     return () => {
       cancelled = true;
     };
-  }, [topicId]);
+  }, [topicId, reloadKey]);
 
-  useEffect(() => writeSaved(saved), [saved]);
+  useEffect(() => {
+    if (!accountAnswers) writeSaved(saved);
+  }, [saved, accountAnswers]);
 
   const tierQuestions = useMemo(() => (questions ?? []).filter((q) => q.tier === tier), [questions, tier]);
   const current: PracticeQuestion | undefined = tierQuestions[index];
   const currentSaved = current ? saved.answers[current.id] : undefined;
   const checked = Boolean(currentSaved);
+  const currentFeedback = current ? feedback[current.id] : undefined;
+  // Correct option: from the server once known; before that, a correct saved answer already tells us.
+  const answerIndex = currentFeedback?.answer ?? (currentSaved?.correct ? currentSaved.selected : undefined);
+
+  useEffect(() => {
+    if (!current || !currentSaved || feedback[current.id]) return;
+    let cancelled = false;
+    setFeedbackError(null);
+    checkPracticeAnswer(current.id, currentSaved.selected)
+      .then((r) => {
+        if (!cancelled) setFeedback((f) => ({ ...f, [r.questionId]: { answer: r.answer, explanation: r.explanation } }));
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setFeedbackError(err instanceof Error ? err.message : 'Pembahasan belum bisa dimuat.');
+      });
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current?.id, currentSaved?.selected, feedbackRetry]);
 
   const statsFor = (t: DifficultyTier) => {
     const qs = (questions ?? []).filter((q) => q.tier === t);
@@ -152,6 +197,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   // Reset per-question UI when the question changes
   useEffect(() => {
     setSelected(currentSaved ? currentSaved.selected : null);
+    setCheckError(null);
     setHintOpen(tier === 'mudah');
     setHintReadyAt(Date.now() + HINT_COOLDOWN_SECONDS * 1000);
     setNow(Date.now());
@@ -210,16 +256,32 @@ export const PracticePage: React.FC<PracticePageProps> = ({
     setShowSummary(false);
   };
 
-  const checkAnswer = () => {
-    if (!current || selected === null || checked) return;
-    const correct = selected === current.answer;
-    setHeldCardHeight(null);
-    const awarded = correct && !saved.xpAwarded.includes(current.id);
-    if (awarded) onAddXp?.(TIER_XP[tier]);
-    setSaved((prev) => ({
-      answers: { ...prev.answers, [current.id]: { selected, correct } },
-      xpAwarded: awarded ? [...prev.xpAwarded, current.id] : prev.xpAwarded,
-    }));
+  const checkAnswer = async () => {
+    if (!current || selected === null || checked || checking) return;
+    const question = current;
+    const choice = selected;
+    const xp = TIER_XP[tier];
+    setChecking(true);
+    setCheckError(null);
+    try {
+      const result = await checkPracticeAnswer(question.id, choice);
+      setFeedback((f) => ({ ...f, [question.id]: { answer: result.answer, explanation: result.explanation } }));
+      setHeldCardHeight(null);
+      // Signed in, the server decides the XP (once per question); otherwise this browser does.
+      const gained = result.xpAwarded ?? (result.correct && !saved.xpAwarded.includes(question.id) ? xp : 0);
+      const awarded = gained > 0;
+      if (awarded) onAddXp?.(gained);
+      const answer = { selected: choice, correct: result.correct };
+      onAnswer?.(question.id, answer);
+      setSaved((prev) => ({
+        answers: { ...prev.answers, [question.id]: answer },
+        xpAwarded: awarded && !prev.xpAwarded.includes(question.id) ? [...prev.xpAwarded, question.id] : prev.xpAwarded,
+      }));
+    } catch (err) {
+      setCheckError(err instanceof Error ? err.message : 'Jawaban belum bisa diperiksa. Coba lagi.');
+    } finally {
+      setChecking(false);
+    }
   };
 
   const next = () => {
@@ -559,7 +621,21 @@ export const PracticePage: React.FC<PracticePageProps> = ({
             </div>
           </section>
 
-          {!questions ? (
+          {loadError ? (
+            <div role="alert" className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-8 text-center space-y-3">
+              <span aria-hidden="true" className="material-symbols-outlined text-[32px] text-outline">cloud_off</span>
+              <p className="text-sm font-semibold text-on-surface">Soal belum bisa dimuat</p>
+              <p className="text-sm text-on-surface-variant max-w-md mx-auto">{loadError}</p>
+              <button
+                type="button"
+                onClick={() => setReloadKey((k) => k + 1)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold"
+              >
+                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">refresh</span>
+                <span>Coba lagi</span>
+              </button>
+            </div>
+          ) : !questions ? (
             <div className="flex items-center justify-center py-20" role="status">
               <span className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
               <span className="sr-only">Memuat soal…</span>
@@ -690,7 +766,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                       <div role="radiogroup" aria-labelledby="answer-label" className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
                         {current.options.map((opt, i) => {
                           const isSel = selected === i;
-                          const isAnswer = i === current.answer;
+                          const isAnswer = i === answerIndex;
                           let tone = isSel
                             ? 'border-2 border-primary bg-primary-fixed/20 ring-2 ring-primary/20'
                             : 'border border-outline-variant bg-surface-container-lowest hover:border-primary hover:bg-surface-bright';
@@ -707,7 +783,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                               type="button"
                               role="radio"
                               aria-checked={isSel}
-                              disabled={checked}
+                              disabled={checked || checking}
                               onClick={() => setSelected(i)}
                               className={`flex items-start gap-3 p-4 rounded-xl text-left transition-all w-full disabled:cursor-default ${tone}`}
                             >
@@ -755,14 +831,38 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                           <span>
                             {currentSaved.correct
                               ? `Tepat!${saved.xpAwarded.includes(current.id) ? ` +${TIER_XP[tier]} XP` : ''}`
-                              : `Belum tepat. Jawaban yang benar adalah ${OPTION_LABELS[current.answer]}.`}
+                              : answerIndex !== undefined
+                                ? `Belum tepat. Jawaban yang benar adalah ${OPTION_LABELS[answerIndex]}.`
+                                : 'Belum tepat.'}
                           </span>
                         </p>
-                        <div className="text-sm text-on-surface leading-relaxed whitespace-pre-line">
-                          <span className="font-semibold">Pembahasan: </span>
-                          <RichText text={current.explanation} />
-                        </div>
+                        {currentFeedback ? (
+                          <div className="text-sm text-on-surface leading-relaxed whitespace-pre-line">
+                            <span className="font-semibold">Pembahasan: </span>
+                            <RichText text={currentFeedback.explanation} />
+                          </div>
+                        ) : feedbackError ? (
+                          <p className="text-sm text-on-surface-variant flex flex-wrap items-center gap-2">
+                            <span>Pembahasan belum bisa dimuat.</span>
+                            <button
+                              type="button"
+                              onClick={() => setFeedbackRetry((n) => n + 1)}
+                              className="font-semibold text-primary underline underline-offset-2"
+                            >
+                              Coba lagi
+                            </button>
+                          </p>
+                        ) : (
+                          <p className="text-sm text-on-surface-variant">Memuat pembahasan…</p>
+                        )}
                       </div>
+                    )}
+
+                    {checkError && (
+                      <p role="alert" className="text-sm text-error flex items-start gap-1.5">
+                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">error</span>
+                        <span>{checkError}</span>
+                      </p>
                     )}
 
                     <div className="mt-auto flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-surface-container-high">
@@ -779,11 +879,16 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                         <button
                           type="button"
                           onClick={checkAnswer}
-                          disabled={selected === null}
+                          disabled={selected === null || checking}
+                          aria-busy={checking}
                           className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
                         >
-                          <span className="material-symbols-outlined text-[16px]">fact_check</span>
-                          <span>Cek Jawaban</span>
+                          {checking ? (
+                            <span aria-hidden="true" className="w-4 h-4 rounded-full border-2 border-on-primary/30 border-t-on-primary animate-spin" />
+                          ) : (
+                            <span className="material-symbols-outlined text-[16px]">fact_check</span>
+                          )}
+                          <span>{checking ? 'Memeriksa…' : 'Cek Jawaban'}</span>
                         </button>
                       ) : (
                         <button

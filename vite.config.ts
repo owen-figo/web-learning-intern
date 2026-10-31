@@ -16,7 +16,17 @@ export default defineConfig(() => {
       // Do not modify—file watching is disabled to prevent flickering during agent edits.
       hmr: process.env.DISABLE_HMR !== 'true',
       // Disable file watching when DISABLE_HMR is true to save CPU during agent edits.
-      watch: process.env.DISABLE_HMR === 'true' ? null : {},
+      // backend/ is a separate app (its dev server rewrites backend/.next constantly); the frontend never imports it.
+      watch: process.env.DISABLE_HMR === 'true' ? null : { ignored: ['**/backend/**'] },
+      // Forward API calls to the Next.js backend (backend/, `npm run dev:backend`).
+      proxy: {
+        '/api': { target: process.env.BACKEND_URL ?? 'http://localhost:4000', changeOrigin: true },
+      },
+    },
+    preview: {
+      proxy: {
+        '/api': { target: process.env.BACKEND_URL ?? 'http://localhost:4000', changeOrigin: true },
+      },
     },
   };
 });

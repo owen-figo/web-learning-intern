@@ -7,12 +7,12 @@ import { TheoryContent } from '../types';
 export const theoryContents: TheoryContent[] = [
   {
     topicId: 'mendefinisikan-mengumpulkan-data',
-    topicTitle: 'Mendefinisikan dan Mengumpulkan Data',
+    topicTitle: 'Defining and Collecting Data',
     completionXp: 15,
     sections: [
       {
         id: 'sec-1',
-        heading: 'Mendefinisikan Variabel (Defining Variables)',
+        heading: 'Defining Variables',
         body: 'Variable (variabel) adalah karakteristik atau informasi yang diamati atau diukur dalam suatu penelitian. Variabel inilah yang menjadi objek utama pengumpulan data, baik melalui kuesioner, pengamatan langsung, maupun data arsip sistem. Dalam statistika, variabel secara umum dibagi menjadi dua jenis utama:',
         terms: [
           {
@@ -40,7 +40,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-2',
-        heading: 'Dua Jenis Variabel Numerik',
+        heading: 'Two Types of Numerical Variables',
         body: 'Setelah mengetahui bahwa suatu data berupa angka (numerical), kita membaginya lebih lanjut menjadi dua kategori penting berdasarkan cara perolehannya:',
         terms: [
           {
@@ -69,7 +69,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-3',
-        heading: 'Skala Pengukuran',
+        heading: 'Measurement Scales',
         body: 'Skala pengukuran menentukan tingkat ketepatan informasi yang terkandung dalam data serta menentukan metode dan uji statistik yang sah untuk digunakan. Terdapat empat tingkatan skala pengukuran (dikenal dengan singkatan NOIR):',
         terms: [
           {
@@ -99,7 +99,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-4',
-        heading: 'Populasi dan Sampel (Population & Sample)',
+        heading: 'Populations and Samples',
         body: 'Dalam setiap riset kuantitatif, peneliti harus membedakan dengan tegas antara keseluruhan subjek yang ingin disimpulkan dengan sebagian kelompok yang benar-benar dikumpulkan datanya:',
         terms: [
           {
@@ -129,7 +129,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-5',
-        heading: 'Sumber Data (Collecting Data)',
+        heading: 'Collecting Data',
         body: 'Data mentah tidak muncul dengan sendirinya, melainkan diperoleh melalui berbagai sumber dan metode pengumpulan berikut:',
         terms: [
           {
@@ -161,7 +161,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-6',
-        heading: 'Jenis Metode Sampling (Types of Sampling Method)',
+        heading: 'Types of Sampling Methods',
         body: 'Cara kita memilih anggota sampel dari populasi sangat menentukan apakah kesimpulan penelitian dapat dipercaya atau tidak. Terdapat dua kelompok besar metode sampling:',
         terms: [
           {
@@ -181,7 +181,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-7',
-        heading: 'Jenis Sampling Error (Types of Sampling Error)',
+        heading: 'Types of Sampling Errors',
         body: 'Saat mengumpulkan data, berbagai jenis kesalahan dapat memengaruhi keakuratan hasil penelitian. Mengenali sumber kesalahan ini membantu peneliti meminimalkan bias dalam penelitian:',
         terms: [
           {
@@ -209,7 +209,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-8',
-        heading: 'Contoh Soal dengan Pembahasan',
+        heading: 'Worked Examples',
         body: 'Berikut adalah contoh soal textbook lengkap beserta pembahasan terstruktur. Pelajari cara mengidentifikasi populasi, sampel, parameter, dan statistik dari narasi penelitian:',
         formula: 'Pedoman Menjawab: Populasi = seluruh kelompok yang ingin disimpulkan • Sampel = yang benar-benar disurvei • Parameter = angka tentang populasi (biasanya tidak diketahui) • Statistik = angka yang dihitung dari sampel.',
         formulaNote: 'Gunakan 4 definisi ini untuk membedah studi kasus di bawah secara runtut dan presisi.',
@@ -228,12 +228,12 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'mengorganisasi-memvisualisasikan-variabel',
-    topicTitle: 'Mengorganisasi dan Memvisualisasikan Variabel',
+    topicTitle: 'Organizing and Visualizing Variables',
     completionXp: 15,
     sections: [
       {
         id: 'sec-org-1',
-        heading: 'Tabel Ringkasan & Tabel Kontingensi',
+        heading: 'Summary Tables and Contingency Tables',
         body: 'Untuk data kategorikal, langkah awal pengorganisasian adalah menyusun kategori amatan ke dalam tabel frekuensi dan persentase. Tabel ringkasan merangkum 1 variabel kategorikal, sedangkan tabel kontingensi (tabulasi silang) memetakan hubungan antara 2 variabel kategorikal secara simultan.',
         terms: [
           {
@@ -287,7 +287,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-2',
-        heading: 'Diagram Batang (Bar Chart) & Diagram Lingkaran (Pie Chart)',
+        heading: 'Bar Charts and Pie Charts',
         body: 'Setelah variabel kategorikal diringkas dalam tabel, kita dapat memvisualisasikannya menjadi grafik. Diagram batang menampilkan frekuensi atau persentase tiap kategori dengan batang terpisah berjarak, sedangkan diagram lingkaran membagi luas lingkaran menjadi irisan-irisan yang proporsional dengan persentase tiap kategori.',
         terms: [
           {
@@ -397,7 +397,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-3',
-        heading: 'Diagram Pareto (Pareto Chart)',
+        heading: 'Pareto Charts',
         body: 'Diagram Pareto adalah diagram batang khusus untuk data kategorikal di mana kategori diurutkan dari frekuensi tertinggi ke terendah, dipadukan dengan kurva garis persentase kumulatif. Digunakan untuk menerapkan Prinsip Pareto ("vital few vs. trivial many"), yaitu sekitar 80% masalah bersumber dari 20% penyebab utama.',
         terms: [
           {
@@ -451,7 +451,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-4',
-        heading: 'Diagram Batang Berdampingan (Side-by-Side Bar Chart)',
+        heading: 'Side-by-Side Bar Charts',
         body: 'Ketika kita ingin membandingkan dua variabel kategorikal sekaligus (yang berasal dari tabel kontingensi), diagram batang berdampingan menyajikan kelompok batang bersebelahan dalam tiap kategori utama. Ini memperjelas apakah pola distribusi suatu variabel berbeda antarkelompok variabel lainnya.',
         terms: [
           {
@@ -500,7 +500,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-5',
-        heading: 'Susunan Terurut & Diagram Batang dan Daun (Stem-and-Leaf)',
+        heading: 'Ordered Arrays and Stem-and-Leaf Displays',
         body: 'Untuk variabel numerik mentah, mengurutkan data (Ordered Array) membantu kita melihat rentang (range), nilai minimum, maksimum, serta konsentrasi data. Diagram Batang dan Daun (Stem-and-Leaf Display) melangkah lebih jauh: menyusun data numerik ke dalam kelompok batang (digit depan) dan daun (digit terakhir) tanpa kehilangan nilai data aslinya.',
         terms: [
           {
@@ -559,7 +559,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-6',
-        heading: 'Distribusi Frekuensi & Penentuan Interval Kelas',
+        heading: 'Frequency Distributions and Class Intervals',
         body: 'Jika ukuran data numerik sangat besar, kita mengelompokkan data ke dalam interval kelas yang berurutan. Setiap interval kelas harus saling lepas (mutually exclusive) dan tuntas (collectively exhaustive), sehingga setiap angka amatan hanya masuk ke tepat satu kelas.',
         terms: [
           {
@@ -624,7 +624,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-7',
-        heading: 'Histogram & Poligon Frekuensi',
+        heading: 'Histograms and Frequency Polygons',
         body: 'Histogram adalah grafik batang vertikal untuk variabel numerik kontinu dari tabel distribusi frekuensi. Berbeda dengan diagram batang untuk data kategorikal, batang-batang pada histogram saling menempel rapat tanpa celah karena variabel numerik kontinu tidak memiliki jeda pemisah. Poligon frekuensi menghubungkan titik tengah tiap puncak kelas dengan garis lurus kontinu.',
         terms: [
           {
@@ -678,7 +678,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-8',
-        heading: 'Poligon Kumulatif (Kurva Ogive)',
+        heading: 'Cumulative Percentage Polygons (Ogives)',
         body: 'Kurva Ogive (poligon persentase kumulatif) menyajikan akumulasi persentase data amatan yang bernilai kurang dari batas atas kelas tertentu. Kurva ini selalu mendaki dari 0% hingga mencapai tepat 100%, dan sangat bermanfaat untuk mencari nilai kuartil, desil, median, serta persentase data di bawah ambang batas tertentu.',
         terms: [
           {
@@ -737,7 +737,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-9',
-        heading: 'Diagram Pencar (Scatter Plot) & Grafik Runtun Waktu (Time Series Plot)',
+        heading: 'Scatter Plots and Time-Series Plots',
         body: 'Ketika menganalisis dua variabel numerik secara bersamaan, kita menggunakan Diagram Pencar (Scatter Plot) untuk mengeksplorasi pola hubungan (apakah linear positif, negatif, atau tidak berpola). Sedangkan jika satu variabel numerik diamati secara periodik dari waktu ke waktu, Grafik Runtun Waktu (Time Series Plot) digunakan untuk mengidentifikasi tren jangka panjang dan pola fluktuasi siklus/musiman.',
         terms: [
           {
@@ -791,7 +791,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-org-10',
-        heading: 'Etika Visualisasi & Menghindari Grafik Menyesatkan',
+        heading: 'Visualization Ethics: Avoiding Misleading Charts',
         body: 'Visualisasi data bertujuan menyajikan fakta secara jujur, objektif, dan transparan. Sayangnya, grafik sering kali dibuat secara manipulatif (baik disengaja untuk kepentingan tertentu maupun karena ketidaktahuan pembuatnya), sehingga menimbulkan ilusi visual yang menyesatkan pembaca.',
         terms: [
           {
@@ -847,14 +847,14 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'ukuran-deskriptif-numerik',
-    topicTitle: 'Ukuran Deskriptif Numerik',
+    topicTitle: 'Numerical Descriptive Measures',
     completionXp: 15,
     sections: [
       // GROUP 1: Central Tendency
       {
         id: 'sec-num-1',
-        group: '1. Ukuran Pemusatan Data (Central Tendency)',
-        heading: 'Mean (Rata-rata Hitung)',
+        group: '1. Central Tendency',
+        heading: 'The Mean',
         body: 'Mean adalah nilai rata-rata dari seluruh data numerik, diperoleh dengan menjumlahkan semua nilai kemudian membaginya dengan jumlah keseluruhan amatan. Mean merupakan ukuran pemusatan yang paling umum dipakai dalam inferensi statistik, namun sangat sensitif terhadap nilai ekstrem (outlier).',
         points: [
           'Nilai rata-rata dari seluruh data, diperoleh dengan menjumlahkan semua nilai kemudian membaginya dengan jumlah keseluruhan.',
@@ -877,8 +877,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-2',
-        group: '1. Ukuran Pemusatan Data (Central Tendency)',
-        heading: 'Median (Nilai Tengah)',
+        group: '1. Central Tendency',
+        heading: 'The Median',
         body: 'Median adalah nilai tengah dari sekumpulan data yang telah diurutkan dari terkecil hingga terbesar. Median membagi distribusi data menjadi dua kelompok sama besar (50% di bawah dan 50% di atas).',
         points: [
           'Nilai tengah dari data yang telah diurutkan dari terkecil hingga terbesar.',
@@ -901,8 +901,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-3',
-        group: '1. Ukuran Pemusatan Data (Central Tendency)',
-        heading: 'Modus (Mode)',
+        group: '1. Central Tendency',
+        heading: 'The Mode',
         body: 'Modus adalah nilai yang paling sering muncul dalam suatu kumpulan data amatan. Kumpulan data bisa tidak memiliki modus, memiliki satu modus (unimodal), dua modus (bimodal), atau banyak modus (multimodal).',
         points: [
           'Nilai yang paling sering muncul dalam suatu kumpulan data (frekuensi kemunculan tertinggi).',
@@ -923,8 +923,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-4',
-        group: '1. Ukuran Pemusatan Data (Central Tendency)',
-        heading: 'Rata-rata Geometrik (Geometric Mean)',
+        group: '1. Central Tendency',
+        heading: 'The Geometric Mean',
         body: 'Rata-rata Geometrik (Geometric Mean) digunakan untuk mengukur tingkat perubahan atau pertumbuhan suatu variabel dari waktu ke waktu, seperti imbal hasil portofolio investasi tahunan atau pertumbuhan majemuk.',
         points: [
           'Digunakan untuk mengukur tingkat perubahan atau pertumbuhan suatu variabel dari waktu ke waktu.',
@@ -951,8 +951,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 2: Variation & Shape
       {
         id: 'sec-num-5',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Jangkauan (Range)',
+        group: '2. Variation and Shape',
+        heading: 'The Range',
         body: 'Jangkauan (Range) adalah selisih antara nilai terbesar dan nilai terkecil dalam suatu kumpulan data. Range merupakan ukuran variasi paling sederhana, namun sangat rentan terhadap amatan ekstrem.',
         points: [
           'Selisih antara nilai terbesar dan nilai terkecil.',
@@ -974,8 +974,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-6',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Variansi Sampel (Sample Variance)',
+        group: '2. Variation and Shape',
+        heading: 'The Sample Variance',
         body: 'Variansi (Variance) mengukur variasi data berdasarkan jumlah kuadrat selisih setiap nilai terhadap mean. Karena dikuadratkan, variansi selalu bernilai positif dan memiliki satuan kuadrat dari data aslinya (misal menit²).',
         points: [
           'Variasi data berdasarkan jumlah kuadrat selisih setiap nilai terhadap mean.',
@@ -1002,8 +1002,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-7',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Standar Deviasi Sampel (Standard Deviation)',
+        group: '2. Variation and Shape',
+        heading: 'The Sample Standard Deviation',
         body: 'Standar Deviasi adalah akar kuadrat dari variance dan menunjukkan seberapa jauh data menyebar dari mean. Standar deviasi mengembalikan satuan ukuran ke skala asli data amatan (misal menit).',
         points: [
           'Akar kuadrat dari variance dan menunjukkan seberapa jauh data menyebar dari mean.',
@@ -1025,8 +1025,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-8',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Koefisien Variasi (Coefficient of Variation)',
+        group: '2. Variation and Shape',
+        heading: 'The Coefficient of Variation',
         body: 'Koefisien Variasi (CV) adalah perbandingan antara standard deviation dengan mean yang dinyatakan dalam persentase; digunakan untuk membandingkan variasi relatif dari data yang memiliki satuan berbeda (misal cm vs kg).',
         points: [
           'Perbandingan antara standard deviation dengan mean yang dinyatakan dalam persentase.',
@@ -1050,8 +1050,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-9',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Skor Z (Z-Score)',
+        group: '2. Variation and Shape',
+        heading: 'Z Scores',
         body: 'Skor Z (Z-Score) menunjukkan posisi suatu nilai terhadap mean dalam satuan standard deviation; dapat membantu mengidentifikasi outlier; nilai kurang dari −3 atau lebih dari +3 secara umum menunjukkan kemungkinan outlier.',
         points: [
           'Menunjukkan posisi suatu nilai terhadap mean dalam satuan standard deviation.',
@@ -1076,8 +1076,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-10',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Kemiringan Distribusi (Skewness)',
+        group: '2. Variation and Shape',
+        heading: 'Shape: Skewness',
         body: 'Kemiringan (Skewness) mengukur tingkat ketidaksimetrian distribusi data terhadap mean; mean < median berarti distribusi negative/left-skewed; mean = median berarti distribusi simetris; mean > median berarti distribusi positive/right-skewed.',
         points: [
           'Mengukur tingkat ketidaksimetrian distribusi data terhadap mean.',
@@ -1100,8 +1100,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-11',
-        group: '2. Variasi dan Bentuk Distribusi (Variation and Shape)',
-        heading: 'Keruncingan Distribusi (Kurtosis)',
+        group: '2. Variation and Shape',
+        heading: 'Shape: Kurtosis',
         body: 'Kurtosis mengukur tingkat ketajaman puncak distribusi relatif terhadap kurva distribusi normal standar.',
         points: [
           'Tingkat ketajaman puncak distribusi.',
@@ -1124,8 +1124,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 3: Exploring Numerical Data
       {
         id: 'sec-num-12',
-        group: '3. Menjelajahi Data Numerik (Exploring Numerical Data)',
-        heading: 'Kuartil & Rentang Antarkuartil (Quartiles & IQR)',
+        group: '3. Exploring Numerical Data',
+        heading: 'Quartiles and the Interquartile Range',
         body: 'Kuartil membagi data menjadi empat bagian yang sama; Q1 memisahkan 25% data terbawah; Q2 adalah median; Q3 memisahkan 75% data terbawah dari 25% data tertinggi. Interquartile Range (IQR) adalah selisih antara Q3 dan Q1 yang menggambarkan penyebaran 50% data bagian tengah.',
         points: [
           'Membagi data menjadi empat bagian yang sama.',
@@ -1151,8 +1151,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-13',
-        group: '3. Menjelajahi Data Numerik (Exploring Numerical Data)',
-        heading: 'Five-Number Summary (Lima Angka Ringkasan)',
+        group: '3. Exploring Numerical Data',
+        heading: 'The Five-Number Summary',
         body: 'Five-Number Summary merangkum distribusi data menggunakan lima nilai kunci: nilai minimum, Q1, median, Q3, dan nilai maksimum.',
         points: [
           'Five-Number Summary: nilai minimum, Q1, median, Q3, dan nilai maksimum.',
@@ -1177,8 +1177,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-num-14',
-        group: '3. Menjelajahi Data Numerik (Exploring Numerical Data)',
-        heading: 'Diagram Kotak Garis (Boxplot)',
+        group: '3. Exploring Numerical Data',
+        heading: 'The Boxplot',
         body: 'Boxplot menggunakan five-number summary untuk memvisualisasikan bentuk dan penyebaran distribusi suatu variabel secara grafis.',
         points: [
           'Menggunakan five-number summary untuk memvisualisasikan bentuk dan penyebaran distribusi suatu variabel.',
@@ -1205,8 +1205,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 4: Population Measures
       {
         id: 'sec-num-15',
-        group: '4. Ukuran Deskriptif untuk Populasi',
-        heading: 'Ukuran Deskriptif untuk Populasi (Parameter)',
+        group: '4. Numerical Descriptive Measures for a Population',
+        heading: 'Population Mean, Variance, and Standard Deviation',
         body: 'Ketika data mencakup seluruh anggota populasi (sensus lengkap), nilai pemusatan dan variasi disebut sebagai parameter populasi. Mean populasi adalah jumlah seluruh nilai dalam populasi dibagi dengan ukuran populasi (μ = ΣXᵢ / N). Population variance dan standard deviation mengukur variasi data dalam populasi dengan pembagi N penuh.',
         points: [
           'Population Mean: jumlah seluruh nilai dalam populasi dibagi dengan ukuran populasi (μ = ΣXᵢ / N).',
@@ -1235,8 +1235,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 5: Covariance & Correlation
       {
         id: 'sec-num-16',
-        group: '5. Kovarians dan Koefisien Korelasi (Covariance & Coefficient of Correlation)',
-        heading: 'Kovarians & Koefisien Korelasi Linear',
+        group: '5. Covariance and the Coefficient of Correlation',
+        heading: 'Covariance and the Coefficient of Correlation',
         body: 'Kovarians mengukur kekuatan hubungan linear antara dua variabel numerik, yaitu X dan Y. Koefisien korelasi linear Pearson mengukur kekuatan relatif hubungan linear antara dua variabel numerik secara bebas satuan dengan rentang universal dari −1 sampai +1.',
         points: [
           'Covariance: mengukur kekuatan hubungan linear antara dua variabel numerik, yaitu X dan Y (cov(X, Y) = Σ(Xᵢ − X̄)(Yᵢ − Ȳ) / (n − 1)).',
@@ -1266,8 +1266,8 @@ export const theoryContents: TheoryContent[] = [
       // FINAL SECTION: Ringkasan Rumus (no visual)
       {
         id: 'sec-num-17',
-        group: 'Ringkasan Rumus',
-        heading: 'Ringkasan Rumus Ukuran Deskriptif Numerik',
+        group: 'Formula Summary',
+        heading: 'Summary of Numerical Descriptive Measures Formulas',
         body: 'Berikut adalah komparasi ringkas seluruh formula ukuran deskriptif numerik yang membedakan rumus statistik sampel dan rumus parameter populasi.',
         points: [
           'Ukuran Pemusatan: Mean, Median, Modus, dan Rata-rata Geometrik.',
@@ -1299,14 +1299,14 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'probabilitas-dasar',
-    topicTitle: 'Probabilitas Dasar',
+    topicTitle: 'Basic Probability',
     completionXp: 15,
     sections: [
       // GROUP 1: Fondasi & Konsep Probabilitas
       {
         id: 'sec-prob-1',
-        group: '1. Fondasi & Konsep Probabilitas',
-        heading: 'Konsep & Skala Probabilitas',
+        group: '1. Basic Probability Concepts',
+        heading: 'Probability and Its Scale',
         body: 'Probabilitas (peluang) adalah ukuran numerik tentang kemungkinan terjadinya suatu peristiwa (event) acak. Nilai probabilitas selalu berada pada rentang tertutup antara 0 dan 1 (atau 0% hingga 100%). Nilai 0 menunjukkan peristiwa mustahil terjadi (impossible event), sedangkan nilai 1 menunjukkan peristiwa pasti terjadi (certain event).',
         points: [
           'Probabilitas adalah ukuran numerik seberapa besar kemungkinan suatu kejadian akan terjadi.',
@@ -1347,8 +1347,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-prob-2',
-        group: '1. Fondasi & Konsep Probabilitas',
-        heading: 'Tiga Pendekatan Probabilitas (A Priori, Empiris, Subjektif)',
+        group: '1. Basic Probability Concepts',
+        heading: 'Three Approaches to Probability: A Priori, Empirical, and Subjective',
         body: 'Bagaimana kita menetapkan nilai peluang suatu peristiwa? Dalam statistika terdapat tiga pendekatan utama: Probabilitas Klasik (A Priori), Probabilitas Empiris (Frekuensi Relatif), dan Probabilitas Subjektif. Masing-masing pendekatan diterapkan sesuai dengan konteks dan ketersediaan data.',
         points: [
           'A Priori (Klasik): Ditentukan secara deduktif teoritis sebelum eksperimen dimulai, dengan asumsi setiap outcome memiliki kemungkinan yang sama besar (equally likely).',
@@ -1402,8 +1402,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-prob-3',
-        group: '1. Fondasi & Konsep Probabilitas',
-        heading: 'Ruang Sampel, Simple Event, Joint Event & Komplemen',
+        group: '1. Basic Probability Concepts',
+        heading: 'Sample Spaces, Simple Events, Joint Events, and Complements',
         body: 'Ruang Sampel (Sample Space, dilambangkan S) adalah himpunan seluruh kemungkinan hasil dari suatu percobaan. Setiap hasil tunggal dengan satu karakteristik disebut Simple Event. Jika suatu peristiwa melibatkan gabungan dua atau lebih karakteristik secara serentak, maka disebut Joint Event. Komplemen peristiwa A (dilambangkan A\') adalah seluruh anggota ruang sampel yang bukan merupakan A.',
         points: [
           'Ruang Sampel (S) mencakup seluruh hasil yang mungkin tanpa terkecuali.',
@@ -1446,8 +1446,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 2: Tabel Kontingensi & Peluang Bersama
       {
         id: 'sec-prob-4',
-        group: '2. Tabel Kontingensi & Peluang Bersama',
-        heading: 'Tabel Kontingensi, Joint Probability & Marginal Probability',
+        group: '2. Contingency Tables and Joint Probability',
+        heading: 'Contingency Tables, Joint Probability, and Marginal Probability',
         body: 'Tabel kontingensi mengklasifikasikan data observasi menurut dua variabel kategorikal secara bersamaan. Dari tabel ini, kita dapat menghitung Joint Probability (peluang terjadinya dua peristiwa secara serentak di sel irisan baris dan kolom) serta Marginal Probability (peluang terjadinya satu peristiwa tanpa memandang variabel lainnya, dihitung dari total baris atau total kolom).',
         points: [
           'Tabel Kontingensi memetakan hubungan silang dua variabel kategorikal dalam format baris dan kolom.',
@@ -1488,8 +1488,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-prob-5',
-        group: '2. Tabel Kontingensi & Peluang Bersama',
-        heading: 'Probabilitas Bersyarat (Conditional Probability)',
+        group: '2. Contingency Tables and Joint Probability',
+        heading: 'Conditional Probability',
         body: 'Probabilitas Bersyarat adalah peluang terjadinya peristiwa A dengan syarat bahwa peristiwa B sudah diketahui telah terjadi, dilambangkan P(A | B). Hadirnya informasi bahwa peristiwa B telah terjadi mengecilkan ruang sampel dari keseluruhan populasi menjadi hanya kelompok peristiwa B saja.',
         points: [
           'Mengukur peluang peristiwa A dengan batasan bahwa peristiwa B telah terbukti terjadi lebih dahulu.',
@@ -1531,8 +1531,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 3: Diagram Pohon, Independensi & Aturan Perkalian
       {
         id: 'sec-prob-6',
-        group: '3. Diagram Pohon, Independensi & Aturan Perkalian',
-        heading: 'Diagram Pohon Keputusan (Decision Tree)',
+        group: '3. Decision Trees, Independence, and Multiplication Rules',
+        heading: 'Decision Trees',
         body: 'Diagram Pohon Probabilitas (Decision Tree) adalah alat bantu visual untuk memetakan tahapan peristiwa beruntun. Cabang tingkat pertama merepresentasikan probabilitas marginal, cabang tingkat kedua menggambarkan probabilitas bersyarat, dan ujung daun pohon (terminal leaves) menghasilkan probabilitas bersama (joint probabilities) melalui perkalian di sepanjang jalurnya.',
         points: [
           'Menyajikan rangkaian peristiwa beruntun secara visual dan runtut dari kiri ke kanan.',
@@ -1573,8 +1573,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-prob-7',
-        group: '3. Diagram Pohon, Independensi & Aturan Perkalian',
-        heading: 'Independensi Statistik (Statistical Independence)',
+        group: '3. Decision Trees, Independence, and Multiplication Rules',
+        heading: 'Statistical Independence',
         body: 'Dua peristiwa A dan B dikatakan Independen secara Statistik (saling bebas) jika terjadinya peristiwa B sama sekali tidak memengaruhi kemungkinan terjadinya peristiwa A. Jika peluang A berubah setelah mengetahui bahwa B terjadi, maka kedua peristiwa tersebut bersifat Dependen (saling bergantung).',
         points: [
           'Dua peristiwa saling bebas jika terjadinya peristiwa satu tidak mengubah probabilitas terjadinya peristiwa lainnya.',
@@ -1615,8 +1615,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sec-prob-8',
-        group: '3. Diagram Pohon, Independensi & Aturan Perkalian',
-        heading: 'Aturan Perkalian Probabilitas (Multiplication Rule)',
+        group: '3. Decision Trees, Independence, and Multiplication Rules',
+        heading: 'Multiplication Rules',
         body: 'Aturan Perkalian digunakan untuk menentukan peluang bersama P(A and B). Rumus umum perkalian berlaku untuk segala kondisi (baik peristiwa dependen maupun independen). Apabila kedua peristiwa terbukti saling independen, rumusnya disederhanakan menjadi perkalian langsung kedua peluang marginalnya.',
         points: [
           'Aturan Perkalian Umum: P(A and B) = P(A | B) × P(B), berlaku universal untuk semua peristiwa.',
@@ -1677,8 +1677,8 @@ export const theoryContents: TheoryContent[] = [
       // GROUP 4: Rangkuman Kaidah & Rumus Probabilitas
       {
         id: 'sec-prob-9',
-        group: '4. Rangkuman Kaidah & Rumus Probabilitas',
-        heading: 'Ringkasan Rumus & Kaidah Probabilitas Dasar',
+        group: '4. Summary of Probability Rules',
+        heading: 'Summary of Basic Probability Rules and Formulas',
         body: 'Tabel berikut merangkum seluruh definisi, rumus matematis, dan kaidah utama dalam probabilitas dasar untuk mempermudah pemahaman konseptual dan rujukan belajar.',
         points: [
           'Probabilitas dasar berlandaskan skala [0, 1], aturan komplemen, tabel kontingensi, dan aturan perkalian.',
@@ -1755,13 +1755,13 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'distribusi-probabilitas-diskrit',
-    topicTitle: 'Distribusi Probabilitas Diskrit',
+    topicTitle: 'Discrete Probability Distributions',
     completionXp: 15,
     sections: [
       {
         id: 'dpd-1-variabel-diskrit',
-        heading: 'Variabel Acak Diskrit & Distribusi Probabilitas',
-        group: 'Variabel Diskrit & Nilai Harapan',
+        heading: 'Discrete Random Variables and Probability Distributions',
+        group: 'Discrete Variables and Expected Value',
         body: 'Variabel Acak Diskrit (**Discrete Random Variable**) adalah variabel kuantitatif yang diperoleh dari hasil pencacahan (counting) dengan nilai-nilai berupa bilangan bulat utuh yang terpisah tanpa nilai di antaranya (seperti 0, 1, 2, 3 kali gangguan sinyal).\n\nDistribusi Probabilitas (**Probability Distribution**) untuk variabel diskrit adalah daftar atau fungsi matematis yang memetakan seluruh kemungkinan nilai variabel acak X bersama peluang terjadinya P(X = x). Distribusi ini memberikan gambaran menyeluruh tentang seberapa sering setiap kejadian diperkirakan muncul.',
         points: [
           'Rentang Nilai: Setiap probabilitas individu harus bernilai non-negatif dan tidak melebihi satu: 0 ≤ P(X = x) ≤ 1.',
@@ -1810,8 +1810,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-2-expected-value-variance',
-        heading: 'Nilai Harapan (Expected Value) & Varians / Standar Deviasi',
-        group: 'Variabel Diskrit & Nilai Harapan',
+        heading: 'Expected Value, Variance, and Standard Deviation',
+        group: 'Discrete Variables and Expected Value',
         body: 'Nilai Harapan (**Expected Value**) yang dilambangkan E(X) atau μ adalah rata-rata tertimbang (**weighted average**) jangka panjang dari variabel acak X, di mana bobot penimbangnya adalah probabilitas masing-masing kejadian P(X = x).\n\nSementara itu, **Variance** (σ²) dan **Standard Deviation** (σ) mengukur seberapa jauh nilai-nilai outcome menyebar atau berfluktuasi dari nilai harapan pusatnya. Standar deviasi selalu dinyatakan dalam satuan asli yang sama dengan variabelnya.',
         points: [
           'Makna Jangka Panjang: E(X) bukan jaminan hasil satu kali percobaan, melainkan rata-rata teoritis bila percobaan diulang dalam jumlah yang sangat banyak.',
@@ -1860,8 +1860,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-3-syarat-binomial',
-        heading: 'Syarat & Karakteristik Eksperimen Binomial',
-        group: 'Distribusi Binomial',
+        heading: 'Properties of the Binomial Distribution',
+        group: 'The Binomial Distribution',
         body: 'Distribusi Binomial (**Binomial Distribution**) adalah salah satu model probabilitas diskrit yang paling banyak diterapkan di dunia nyata. Kata binomial merujuk pada struktur dua kemungkinan hasil (**binary outcome**).\n\nUntuk dapat menggunakan model Binomial, eksperimen yang dilakukan wajib memenuhi 4 syarat formal tanpa terkecuali. Jika ada satu syarat saja yang dilanggar, maka kesimpulan perhitungan probabilitas tidak akan valid.',
         points: [
           'Syarat 1 (Fixed Trials n): Eksperimen terdiri dari n pengulangan percobaan yang identik dan jumlahnya sudah ditentukan sejak awal.',
@@ -1906,8 +1906,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-4-kombinasi',
-        heading: 'Kombinasi (Combination) & Kaidah Pencacahan',
-        group: 'Distribusi Binomial',
+        heading: 'Combinations and Counting Rules',
+        group: 'The Binomial Distribution',
         body: 'Dalam eksperimen binomial, kita sering kali hanya peduli pada berapa banyak keberhasilan yang tercapai, bukan urutan bagaimana keberhasilan tersebut terjadi. Misalnya, jika seorang mahasiswa menjawab benar 2 dari 5 soal kuis, keberhasilan tersebut dapat terjadi pada soal (1 dan 2), (1 dan 3), (3 dan 5), dan seterusnya.\n\nRumus **Combination** nCx menghitung berapa banyak cara memilih x objek sukses dari n percobaan tanpa memedulikan urutan kemunculannya.',
         points: [
           'Pengabaian Urutan: Dalam kombinasi, susunan {A, B} dianggap sama dengan {B, A}.',
@@ -1957,8 +1957,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-5-distribusi-binomial',
-        heading: 'Distribusi Probabilitas Binomial',
-        group: 'Distribusi Binomial',
+        heading: 'The Binomial Probability Distribution',
+        group: 'The Binomial Distribution',
         body: 'Rumus **Binomial Distribution** menggabungkan dua pilar utama: banyaknya susunan urutan (dihitung dengan kombinasi nCx) dan peluang terjadinya satu urutan tertentu (dihitung dengan aturan perkalian probabilitas independen π^x · (1 - π)^(n - x)).\n\nRumus ini menghasilkan probabilitas tepat mendapatkan x kali sukses dari total n percobaan bebas dengan peluang sukses per percobaan sebesar π.',
         points: [
           'Dua Komponen Rumus: nCx menentukan banyaknya jalur, sedangkan π^x · (1 - π)^(n - x) menentukan bobot peluang setiap jalur.',
@@ -2009,8 +2009,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-6-mean-sd-binomial',
-        heading: 'Rata-rata dan Standar Deviasi Distribusi Binomial',
-        group: 'Distribusi Binomial',
+        heading: 'Mean and Standard Deviation of the Binomial Distribution',
+        group: 'The Binomial Distribution',
         body: 'Salah satu keistimewaan luar biasa dari distribusi Binomial adalah kita tidak perlu menghitung tabel perkalian panjang Σ [x · P(x)] untuk mencari nilai tengah dan penyebarannya. Parameter rata-rata populasi (μ), varians (σ²), dan standar deviasi (σ) dapat langsung dihitung dari rumus ringkas berbasis n dan π.\n\nSelain itu, ketika ukuran n cukup besar sehingga nπ ≥ 5 dan n(1 - π) ≥ 5 (**Rule of Thumb**), bentuk kurva binomial yang awalnya condong akan berubah menjadi simetris berbentuk lonceng dan dapat didekati menggunakan Distribusi Normal Gauss.',
         points: [
           'Rata-rata Ringkas: μ = nπ. Pada kuis 5 soal dengan π = 0.25, rata-rata mahasiswa yang menebak murni diharapkan benar μ = 5 × 0.25 = 1.25 soal.',
@@ -2056,8 +2056,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-7-distribusi-poisson',
-        heading: 'Distribusi Probabilitas Poisson',
-        group: 'Distribusi Poisson',
+        heading: 'The Poisson Probability Distribution',
+        group: 'The Poisson Distribution',
         body: 'Distribusi Poisson (**Poisson Distribution**) digunakan untuk menghitung probabilitas kemunculan sejumlah kejadian diskrit dalam suatu interval kontinu yang tetap (seperti rentang waktu, jarak, luas wilayah, atau volume).\n\nModel ini sangat populer untuk menganalisis kedatangan pelanggan, panggilan telepon ke call center, cacat pada permukaan kain, atau jumlah pengunjung website per menit. Ciri khas Poisson adalah hanya membutuhkan satu parameter tunggal: laju rata-rata kedatangan λ (lambda).',
         points: [
           'Satu Parameter Tunggal λ: Menggambarkan rata-rata frekuensi kemunculan peristiwa per satuan rentang kontinu.',
@@ -2107,8 +2107,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-8-area-of-opportunity',
-        heading: 'Rentang Kesempatan (Area of Opportunity) Poisson',
-        group: 'Distribusi Poisson',
+        heading: 'The Area of Opportunity',
+        group: 'The Poisson Distribution',
         body: 'Konsep terpenting dalam penerapan praktis Poisson adalah **Area of Opportunity** (bidang atau interval kesempatan di mana suatu kejadian memiliki peluang untuk terjadi).\n\nJika rentang waktu atau luas area yang diamati diperbesar atau diperkecil, maka parameter laju λ wajib disesuaikan secara proporsional. Misalnya, jika rata-rata kedatangan pengunjung adalah 3 orang per menit (60 detik), maka dalam interval 10 detik rata-rata yang diharapkan turun menjadi 0.5 orang.',
         points: [
           'Penyesuaian Skala Proporsional: λ_baru = λ_dasar × (Ukuran Rentang Baru / Ukuran Rentang Dasar).',
@@ -2152,8 +2152,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-9-distribusi-hipergeometrik',
-        heading: 'Distribusi Hipergeometrik: Sampling Tanpa Pengembalian',
-        group: 'Distribusi Hipergeometrik',
+        heading: 'The Hypergeometric Distribution: Sampling Without Replacement',
+        group: 'The Hypergeometric Distribution',
         body: 'Ketika kita mengambil sampel dari populasi berukuran kecil (terbatas) **tanpa pengembalian** (**Without Replacement**), setiap kali satu item ditarik, komposisi populasi yang tersisa berubah. Akibatnya, peluang keberhasilan di tarikan berikutnya tidak lagi konstan dan percobaan menjadi saling dependen.\n\nKondisi ini melanggar asumsi dasar Binomial. Model matematika yang tepat untuk situasi tanpa pengembalian ini adalah **Hypergeometric Distribution**.',
         points: [
           'Populasi Terbatas (N): Ukuran populasi N diketahui secara pasti dan relatif kecil terhadap ukuran sampel (umumnya n/N > 0.05).',
@@ -2200,8 +2200,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'dpd-10-rangkuman-rumus',
-        heading: 'Tabel Komparasi & Rangkuman Rumus Distribusi Diskrit',
-        group: 'Rangkuman Distribusi Probabilitas Diskrit',
+        heading: 'Comparison and Formula Summary: Discrete Distributions',
+        group: 'Summary of Discrete Probability Distributions',
         body: 'Berikut adalah panduan komparasi praktis untuk memilih model distribusi probabilitas diskrit yang tepat berdasarkan karakteristik eksperimen data riset dan tugas perkuliahanmu.',
         points: [
           'Gunakan Diskrit Umum jika peluang tiap nilai x diberikan langsung lewat tabel frekuensi empiris tanpa pola fungsi khusus.',
@@ -2243,13 +2243,13 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'distribusi-normal-kontinu',
-    topicTitle: 'Distribusi Normal dan Distribusi Kontinu Lainnya',
+    topicTitle: 'The Normal Distribution and Other Continuous Distributions',
     completionXp: 15,
     sections: [
       {
         id: 'cd-1-konsep-variabel-kontinu',
-        heading: 'Distribusi Probabilitas Kontinu & Variabel Acak Kontinu',
-        group: 'Distribusi Probabilitas Kontinu',
+        heading: 'Continuous Probability Distributions and Continuous Random Variables',
+        group: 'Continuous Probability Distributions',
         body: 'Dalam kehidupan nyata dan riset akademis, banyak variabel tidak dicacah dalam bentuk bilangan bulat terpisah, melainkan diperoleh melalui **pengukuran** yang menghasilkan nilai pecahan tak hingga di sepanjang suatu garis bilangan kontinu.\n\nSebuah **continuous probability distribution** (distribusi probabilitas kontinu) digunakan untuk menggambarkan perilaku peluang dari variabel acak kontinu. Karena terdapat tak terhingga banyaknya nilai numerik di antara dua angka sembarang, probabilitas pada variabel kontinu tidak pernah dicari untuk satu nilai persis, melainkan dicari untuk suatu **rentang interval** tertentu (misalnya antara 60 dan 80 menit).\n\nContoh variabel acak kontinu yang umum dijumpai antara lain: **waktu tunggu** bus shuttle kampus, **tinggi badan** mahasiswa, **suhu ruangan laboratorium**, dan **nilai ujian** mahasiswa.',
         points: [
           'Sebuah continuous probability distribution digunakan untuk menggambarkan sebaran variabel acak continuous.',
@@ -2261,8 +2261,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-2-probability-density-function',
-        heading: 'Probability Density Function (PDF) & Luas Kurva Peluang',
-        group: 'Distribusi Probabilitas Kontinu',
+        heading: 'Probability Density Functions and Area Under the Curve',
+        group: 'Continuous Probability Distributions',
         body: 'Berbeda dengan variabel diskrit yang memiliki Probability Mass Function (PMF) di mana tinggi batang menyatakan peluang langsung, variabel kontinu dinyatakan melalui **Probability Density Function (PDF)** atau fungsi kepadatan probabilitas yang dinotasikan dengan f(X).\n\nPenting dipahami: **tinggi kurva f(X) BUKANLAH peluang langsung!** Nilai f(X) hanyalah kepadatan matematis kurva pada koordinat X. Peluang sesungguhnya adalah **LUAS AREA di bawah kurva** f(X) di antara dua batas nilai c dan d.\n\nSecara matematis, luas total di bawah seluruh kurva PDF dari ujung kiri ekstrem (−∞) hingga ujung kanan ekstrem (+∞) selalu bernilai tepat **1.0000 (atau 100%)**.',
         points: [
           'Probability Density Function (PDF) merupakan fungsi matematis yang mendefinisikan distribusi kepadatan nilai dari variabel acak kontinu.',
@@ -2312,8 +2312,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-3-distribusi-normal-pdf',
-        heading: 'Distribusi Normal & Normal Probability Density Function',
-        group: 'Distribusi Normal',
+        heading: 'The Normal Distribution and the Normal Probability Density Function',
+        group: 'The Normal Distribution',
         body: 'Distribusi Normal (sering disebut **Gaussian Distribution** atau kurva lonceng Gauss) merupakan distribusi probabilitas kontinu yang paling penting dan paling banyak digunakan dalam statistika dan inferensi data skripsi.\n\nKurva distribusi normal berbentuk simetris menyerupai lonceng (**bell-shaped**), berpusat tepat pada rata-rata populasinya (**μ**), dan sebarannya sepenuhnya ditentukan oleh dua parameter: rata-rata **μ** (mean) dan standar deviasi **σ** (variasi).\n\nPerhatikan baik-baik rumus kepadatan normal di bawah. Di dalam rumus ini terdapat simbol **π** (pi ≈ 3.14159) dan **e** (Euler ≈ 2.71828). Simbol π di sini adalah **konstanta matematis 3.14159**, BUKAN peluang sukses seperti pada distribusi binomial!',
         points: [
           'Distribusi normal merupakan salah satu distribusi probabilitas kontinu terpenting dalam statistik.',
@@ -2368,8 +2368,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-4-transformasi-z-tabel-normal',
-        heading: 'Transformasi Z & Tabel Probabilitas Normal',
-        group: 'Distribusi Normal',
+        heading: 'The Z Transformation and the Normal Probability Table',
+        group: 'The Normal Distribution',
         body: 'Karena setiap fenomena memiliki nilai mean (μ) dan standar deviasi (σ) yang berbeda-beda, para statistikawan tidak perlu membuat tabel peluang untuk setiap nilai μ dan σ. Sebaliknya, seluruh variabel normal X diubah menjadi **variabel normal standar (Z)** dengan **mean = 0** dan **standar deviasi = 1**.\n\nTransformasi ini dilakukan menggunakan rumus **Z-Score**: Z = (X − μ) / σ. Nilai Z menyatakan seberapa banyak satuan standar deviasi suatu nilai amatan berada di atas (+) atau di bawah (−) rata-rata.\n\nSetelah dikonversi menjadi Z, probabilitas kumulatif P(X ≤ a) dicari langsung melalui **Normal Probability Table (Tabel Normal Standar)** dengan membaca pertemuan antara baris (bilangan bulat dan 1 desimal) dan kolom (desimal kedua).',
         points: [
           'Untuk menghitung probabilitas normal, variabel X diubah menjadi variabel normal standar Z (mean 0, standar deviasi 1).',
@@ -2437,8 +2437,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-5-distribusi-uniform-pdf',
-        heading: 'Distribusi Probabilitas Uniform & PDF Uniform',
-        group: 'Distribusi Uniform',
+        heading: 'The Uniform Distribution and Its Probability Density Function',
+        group: 'The Uniform Distribution',
         body: 'Distribusi Uniform Kontinu (sering disebut **Distribusi Persegi Panjang / Rectangular Distribution**) adalah model distribusi probabilitas di mana variabel acak memiliki kerapatan peluang yang sama persis di setiap titik di antara batas minimum **a** dan batas maksimum **b**.\n\nKarena bentuk kurvanya berupa persegi panjang datar, fungsi kepadatan probabilitasnya bersifat konstan: **f(X) = 1 / (b − a)** untuk seluruh nilai a ≤ X ≤ b, dan bernilai 0 di luar rentang tersebut.\n\nMenghitung probabilitas pada distribusi uniform sangat intuitif dan mudah, karena cukup mengalikan **tinggi kurva** f(X) dengan **lebar interval** (d − c), yang merupakan rumus dasar luas persegi panjang: **Luas = Panjang × Lebar**.',
         points: [
           'Distribusi uniform kontinu menggambarkan variabel acak yang peluang kerapatannya tersebar merata di antara nilai minimum a dan maksimum b.',
@@ -2489,8 +2489,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-6-karakteristik-distribusi-uniform',
-        heading: 'Karakteristik Distribusi Uniform: Mean, Varians & Standar Deviasi',
-        group: 'Distribusi Uniform',
+        heading: 'Uniform Distribution: Mean, Variance, and Standard Deviation',
+        group: 'The Uniform Distribution',
         body: 'Selain bentuk kurva perseginya yang sederhana, distribusi uniform kontinu memiliki rumus parameter statistik deskriptif yang sangat rapi dan mudah dihitung.\n\nKarena sebaran nilainya simetris merata, rata-rata atau nilai harapan (**mean / expected value**) terletak tepat di tengah-tengah rentang interval: **μ = (a + b) / 2**.\n\nUkuran variasi atau sebaran data dihitung menggunakan rumus variansi **σ² = (b − a)² / 12**. Angka pembagi 12 merupakan hasil turunan kalkulus integral dari momen kedua distribusi kontinu seragam. Standar deviasi diperoleh dengan menarik akar kuadrat dari variansi tersebut: **σ = (b − a) / √12**.',
         points: [
           'Rata-rata (mean / expected value) distribusi uniform terletak tepat di tengah-tengah rentang interval: μ = (a + b) / 2.',
@@ -2562,8 +2562,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-7-distribusi-eksponensial',
-        heading: 'Distribusi Probabilitas Eksponensial & PDF Eksponensial',
-        group: 'Distribusi Eksponensial',
+        heading: 'The Exponential Distribution and Its Probability Density Function',
+        group: 'The Exponential Distribution',
         body: 'Jika distribusi Poisson mengukur **banyaknya kejadian** dalam satuan waktu tertentu (variabel diskrit), maka **Distribusi Eksponensial** memodelkan **waktu antar kedatangan** atau jarak jeda waktu antar kejadian tersebut (**inter-arrival time**, variabel kontinu).\n\nDistribusi ini memiliki satu parameter utama yaitu **λ (lambda)**, yang menyatakan laju kedatangan rata-rata per satuan waktu. Kurva densitas eksponensial dimulai dari nilai puncak tertinggi di titik X = 0 (f(0) = λ), lalu meluruh turun secara mulus mendekati sumbu nol ke arah kanan (**positively skewed / right-skewed**).\n\nCiri khas unik distribusi eksponensial adalah rata-rata waktu tunggu (**μ**) dan standar deviasinya (**σ**) selalu bernilai sama persis, yaitu merupakan kebalikan dari laju kejadian: **μ = 1 / λ** dan **σ = 1 / λ**.',
         points: [
           'Distribusi eksponensial digunakan untuk memodelkan waktu tunggu atau jarak waktu antar kejadian kontinu (inter-arrival time).',
@@ -2636,8 +2636,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'cd-8-tabel-komparasi-kontinu',
-        heading: 'Tabel Komparasi & Rangkuman Rumus Distribusi Kontinu',
-        group: 'Rangkuman Distribusi Probabilitas Kontinu',
+        heading: 'Comparison and Formula Summary: Continuous Distributions',
+        group: 'Summary of Continuous Probability Distributions',
         body: 'Berikut adalah panduan komparasi lengkap untuk mengenali dan memilih model distribusi probabilitas kontinu yang tepat berdasarkan karakteristik fenomena data pada riset dan perkuliahanmu.',
         points: [
           'Gunakan Distribusi Normal jika fenomena berpusat di rata-rata dan tersebar simetris berbentuk lonceng (nilai ujian, berat badan, galat pengukuran).',
@@ -2673,12 +2673,12 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'distribusi-sampling',
-    topicTitle: 'Distribusi Sampling',
+    topicTitle: 'Sampling Distributions',
     completionXp: 15,
     sections: [
       {
         id: 'sd-1-konsep-sampling-distribution',
-        heading: 'Sampling Distribution & Sifat Unbiased Sample Mean',
+        heading: 'Sampling Distributions and the Unbiased Property of the Sample Mean',
         group: 'Sampling Distribution of the Mean',
         body: 'Dalam riset, kita hampir tidak pernah bisa mengukur seluruh populasi. Kita hanya mengambil **satu sampel**, lalu menghitung statistik seperti sample mean (x̄). Masalahnya, jika sampel diambil ulang, nilai x̄ hampir pasti berubah.\n\n**Sampling distribution** adalah distribusi dari seluruh hasil statistik yang diperoleh jika **semua kemungkinan sampel** dengan ukuran n dipilih dari suatu populasi. Sampling distribution of the mean adalah distribusi dari seluruh kemungkinan sample mean tersebut.\n\nSample mean bersifat **unbiased** (tidak bias) karena **rata-rata dari seluruh kemungkinan sample mean sama persis dengan population mean (μ)**: μ_x̄ = μ. Artinya, walaupun satu sampel bisa meleset, x̄ tidak cenderung selalu terlalu tinggi atau terlalu rendah.',
         points: [
@@ -2798,7 +2798,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sd-3-central-limit-theorem',
-        heading: 'Central Limit Theorem (CLT)',
+        heading: 'The Central Limit Theorem',
         group: 'Sampling Distribution of the Mean',
         body: 'Bagaimana bentuk sampling distribution of the mean jika populasinya tidak normal? Jawabannya ada pada **Central Limit Theorem (CLT)**, salah satu teorema terpenting dalam statistika.\n\nCLT menyatakan bahwa **ketika ukuran sampel cukup besar, sampling distribution of the mean akan mendekati distribusi normal, terlepas dari bentuk distribusi populasinya**. Distribusi tersebut tetap berpusat di μ dengan standard error σ / √n.\n\nSeberapa besar "cukup besar"? Panduan praktisnya bergantung pada bentuk populasi:\n\n- Jika populasi **berdistribusi normal**, sampling distribution of the mean **juga normal untuk ukuran sampel berapa pun**.\n- Jika populasi **cukup simetris** (misalnya uniform), distribusi mean sudah mendekati normal untuk sampel sekecil **n ≥ 5**.\n- Untuk **kebanyakan populasi tidak normal**, distribusi mean umumnya mendekati normal ketika **n ≥ 30**. Populasi yang sangat menceng atau memiliki outlier ekstrem bisa membutuhkan n yang lebih besar lagi.',
         points: [
@@ -2829,7 +2829,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sd-4-z-sample-mean',
-        heading: 'Menghitung Z untuk Sampling Distribution of the Mean',
+        heading: 'Computing Z for the Sampling Distribution of the Mean',
         group: 'Sampling Distribution of the Mean',
         body: 'Karena sampling distribution of the mean berdistribusi normal (atau mendekati normal berkat CLT), kita bisa menghitung **probabilitas terkait sample mean** menggunakan tabel normal standar.\n\nCaranya mirip transformasi Z pada bab distribusi normal, tetapi dengan dua perbedaan penting: yang dibakukan adalah **x̄** (bukan satu nilai X), dan pembaginya adalah **standard error σ / √n** (bukan σ).\n\nKarena standard error lebih kecil dari σ, nilai x̄ yang jauh dari μ jauh lebih jarang terjadi dibanding satu nilai individu yang sama jauhnya. Contoh: peluang **satu** kemasan beras di bawah 365 gram adalah 42.07%, tetapi peluang **rata-rata 25 kemasan** di bawah 365 gram hanya 15.87%.',
         points: [
@@ -2887,7 +2887,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sd-5-finding-xbar',
-        heading: 'Menentukan Nilai x̄ & Interval di Sekitar Population Mean',
+        heading: 'Finding x̄ Values and Intervals Around the Population Mean',
         group: 'Sampling Distribution of the Mean',
         body: 'Sampling distribution juga bisa dipakai ke arah sebaliknya: diberikan suatu peluang, kita mencari **nilai x̄** yang menjadi batasnya. Caranya adalah membalik rumus Z sehingga diperoleh **x̄ = μ + Z · σ / √n**.\n\nPenerapan paling umum adalah **membuat interval tertentu di sekitar population mean** yang memuat persentase sample mean tertentu. Misalnya, interval simetris yang memuat 95% dari seluruh sample mean menggunakan Z = −1.96 untuk batas bawah dan Z = +1.96 untuk batas atas.\n\nIde interval ini adalah fondasi langsung dari **confidence interval estimation** yang akan dipelajari pada bab berikutnya.',
         points: [
@@ -2945,7 +2945,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sd-6-sample-proportion',
-        heading: 'Sample Proportion & Standard Error of the Proportion',
+        heading: 'The Sample Proportion and the Standard Error of the Proportion',
         group: 'Sampling Distribution of the Proportion',
         body: 'Tidak semua variabel riset berupa angka rata-rata. Banyak pertanyaan berbentuk **kategorikal ya/tidak**, misalnya "apakah mahasiswa memilih kuliah hybrid?". Untuk data seperti ini, statistik yang dipakai adalah **sample proportion (p)**.\n\n**Sampling distribution of the proportion** membahas distribusi dari seluruh sample proportion yang diperoleh dari berbagai kemungkinan sampel. Distribusi ini digunakan untuk **memperkirakan atau membuat prediksi mengenai population proportion (π)** berdasarkan hasil sampel.\n\nSama seperti sample mean, sample proportion bersifat unbiased (μ_p = π), dan variasinya diukur oleh **standard error of the proportion σ_p**. Distribusi p dapat didekati distribusi normal selama **nπ ≥ 5 dan n(1 − π) ≥ 5**.\n\nHati-hati: simbol **π di sini adalah population proportion**, BUKAN konstanta 3.14159.',
         points: [
@@ -3006,7 +3006,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sd-7-z-proportion',
-        heading: 'Menghitung Z untuk Sampling Distribution of the Proportion',
+        heading: 'Computing Z for the Sampling Distribution of the Proportion',
         group: 'Sampling Distribution of the Proportion',
         body: 'Setelah standard error of the proportion diketahui, peluang terkait sample proportion dihitung dengan cara yang sama seperti sample mean: bakukan p menjadi skor **Z**, lalu baca tabel normal standar.\n\nNilai Z sama dengan selisih antara sample proportion **p** dan population proportion **π**, dibagi dengan standard error of the proportion **√[π(1 − π) / n]**.\n\nContoh: jika 50% mahasiswa sebenarnya memilih kuliah hybrid, seberapa besar peluang sebuah sampel 100 mahasiswa menunjukkan lebih dari 58% yang memilih hybrid? Jawabannya hanya sekitar **5.48%**.',
         points: [
@@ -3057,8 +3057,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'sd-8-rangkuman',
-        heading: 'Tabel Komparasi & Rangkuman Rumus Distribusi Sampling',
-        group: 'Rangkuman Distribusi Sampling',
+        heading: 'Comparison and Formula Summary: Sampling Distributions',
+        group: 'Summary of Sampling Distributions',
         body: 'Berikut adalah ringkasan perbandingan sampling distribution of the mean dan sampling distribution of the proportion, lengkap dengan rumus standard error, skor Z, dan syarat kenormalannya.',
         points: [
           'Gunakan sampling distribution of the mean jika variabel berupa angka numerik dan statistik yang diamati adalah rata-rata (x̄).',
@@ -3094,13 +3094,13 @@ export const theoryContents: TheoryContent[] = [
   },
   {
     topicId: 'estimasi-interval-kepercayaan',
-    topicTitle: 'Estimasi Confidence Interval',
+    topicTitle: 'Confidence Interval Estimation',
     completionXp: 15,
     sections: [
       {
         id: 'ci-1-konsep-confidence-interval',
-        heading: 'Point Estimate, Interval Estimate & Confidence Level',
-        group: 'Konsep Confidence Interval',
+        heading: 'Point Estimates, Interval Estimates, and the Confidence Level',
+        group: 'Confidence Interval Concepts',
         body: 'Pada bab sebelumnya, kita tahu μ lalu menghitung peluang x̄. Dalam riset nyata, situasinya **terbalik**: μ **tidak diketahui**, dan yang kita punya hanyalah satu sampel. Tugas kita adalah **mengestimasi** μ dari sampel tersebut.\n\nSample mean x̄ adalah **point estimate** (estimasi titik): satu angka tebakan terbaik. Masalahnya, satu angka hampir pasti tidak tepat sama dengan μ. Karena itu kita membuat **confidence interval estimate**: rentang nilai yang diperkirakan mengandung parameter populasi pada **tingkat kepercayaan (confidence level)** tertentu, misalnya 95%.\n\nInterpretasi yang benar dari "95% confidence" adalah tentang **metodenya**: jika sampling diulang berkali-kali dan setiap sampel dibuatkan interval, sekitar **95% dari interval-interval tersebut akan memuat μ**. Untuk satu interval yang sudah jadi, μ hanya bisa berada di dalam atau di luar interval, bukan "berpeluang 95%".',
         points: [
           'Point estimate adalah satu nilai statistik sampel (misalnya x̄ atau p) yang dipakai untuk menebak parameter populasi.',
@@ -3184,7 +3184,7 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'ci-3-distribusi-t',
-        heading: 'Distribusi t Student & Degrees of Freedom',
+        heading: "Student's t Distribution and Degrees of Freedom",
         group: 'Confidence Interval for the Mean',
         body: 'Dalam praktik, σ populasi **hampir tidak pernah diketahui**. Solusinya, σ diganti dengan **standar deviasi sampel S**. Namun S sendiri bervariasi dari sampel ke sampel, sehingga statistik hasil pembakuan tidak lagi berdistribusi Z, melainkan mengikuti **distribusi t Student**.\n\nDistribusi t berbentuk lonceng simetris seperti Z, tetapi **ekornya lebih tebal**. Bentuknya ditentukan oleh **degrees of freedom (df) = n − 1**. Semakin besar df, distribusi t semakin mendekati distribusi normal standar.\n\nNilai kritis **t_α/2** dibaca dari tabel t: baris = df, kolom = luas ekor atas α/2. Contoh: untuk n = 100 (df = 99) dan 95% (ekor atas 0.025, kumulatif 0.975), nilai kritisnya adalah **1.9842**, sedikit lebih besar dari Z = 1.96.',
         points: [
@@ -3444,8 +3444,8 @@ export const theoryContents: TheoryContent[] = [
       },
       {
         id: 'ci-8-rangkuman',
-        heading: 'Tabel Komparasi & Rangkuman Rumus Confidence Interval',
-        group: 'Rangkuman Estimasi Confidence Interval',
+        heading: 'Comparison and Formula Summary: Confidence Intervals',
+        group: 'Summary of Confidence Interval Estimation',
         body: 'Berikut adalah panduan memilih rumus confidence interval dan sample size yang tepat berdasarkan jenis data dan informasi yang tersedia.',
         points: [
           'Data numerik dan σ diketahui → gunakan interval Z untuk mean.',

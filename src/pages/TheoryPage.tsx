@@ -1,5 +1,5 @@
 import React, { Suspense, lazy, useState, useEffect, useRef } from 'react';
-import { ActivePage, TheoryContent, TheorySection } from '../types';
+import { ActivePage, TheoryContent } from '../types';
 import { ConceptExplainer } from '../components/ConceptExplainer';
 import { FormulaStepCard } from '../components/FormulaStepCard';
 import { PomodoroButton } from '../components/PomodoroButton';
@@ -118,22 +118,43 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
     }
   };
 
+  // XP is awarded as the student lands on the topic list, so the navbar can show it arriving.
+  // If they leave before the redirect, it is awarded on unmount instead.
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+  const xpAwardedRef = useRef(false);
+  const redirectTimerRef = useRef<number | null>(null);
+  const awardCompletion = () => {
+    if (xpAwardedRef.current) return;
+    xpAwardedRef.current = true;
+    onCompleteRef.current(theoryContent.completionXp);
+  };
+  useEffect(
+    () => () => {
+      if (redirectTimerRef.current !== null) {
+        window.clearTimeout(redirectTimerRef.current);
+        awardCompletion();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   const handleFinishReading = () => {
     if (!hasReachedBottom || markedDone) return;
 
     setMarkedDone(true);
     setIsSuccess(true);
-    onComplete(theoryContent.completionXp);
 
-    // Auto-navigate back to topics after ~1.5 seconds
-    setTimeout(() => {
+    // Let the check animation play, then go back to the topic list.
+    redirectTimerRef.current = window.setTimeout(() => {
+      redirectTimerRef.current = null;
+      awardCompletion();
       setActivePage('topics');
-    }, 1500);
+    }, 1800);
   };
 
   // Find currently active section object
-  const activeSection: TheorySection =
-    theoryContent.sections.find((s) => s.id === activeSectionId) || theoryContent.sections[0];
 
   return (
     <div className="min-h-screen bg-background text-on-surface flex flex-col">
@@ -385,8 +406,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
             </div>
           </aside>
 
-          {/* CENTER COLUMN (~55% = 6 cols): Main Reading Content */}
-          <main className="lg:col-span-6 space-y-8">
+          {/* RIGHT COLUMN (9 cols): Main Reading Content */}
+          <main className="lg:col-span-9 space-y-8">
             <article className="space-y-8">
               {theoryContent.sections.map((section, idx) => (
                 <section
@@ -416,29 +437,6 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                   <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed whitespace-pre-line">
                     <RichText text={section.body} />
                   </p>
-
-                  {/* POINTS LIST (Poin Penting) */}
-                  {section.points && section.points.length > 0 && (
-                    <div className="space-y-2.5 pt-1">
-                      <div className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[20px]">check_circle</span>
-                        <span>Poin Penting</span>
-                      </div>
-                      <div className="grid grid-cols-1 gap-2">
-                        {section.points.map((pt, pIdx) => (
-                          <div
-                            key={pIdx}
-                            className="p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant/50 text-xs sm:text-sm text-on-surface flex items-start gap-2.5"
-                          >
-                            <span className="w-2 h-2 rounded-full bg-primary shrink-0 mt-1.5" />
-                            <span className="leading-relaxed">
-                              <RichText text={pt} />
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
 
                   {/* TERMS LIST (Structured Definition Cards) */}
                   {section.terms && section.terms.length > 0 && (
@@ -773,200 +771,6 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
             <div ref={sentinelRef} className="h-8 w-full mt-4" aria-hidden="true" />
           </main>
 
-          {/* RIGHT RAIL (~25% = 3 cols): Sticky "Poin Penting & Rumus" Panel for active section */}
-          <aside className="hidden lg:block lg:col-span-3 sticky top-24 space-y-4">
-            <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-4 sm:p-5 shadow-xs space-y-4">
-              {/* Header */}
-              <div className="flex items-center justify-between pb-3 border-b border-surface-container">
-                <div className="flex items-center gap-2">
-                  <div className="w-7 h-7 rounded-lg bg-secondary-fixed text-on-secondary-fixed font-bold flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[16px]">menu_book</span>
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-on-surface uppercase tracking-wider">
-                      {activeSection.formula || (activeSection.formulas && activeSection.formulas.length > 0)
-                        ? 'Rumus & Poin Kunci'
-                        : 'Poin Penting'}
-                    </h3>
-                    <p
-                      className="text-xs text-on-surface-variant truncate max-w-[170px]"
-                      title={stripMarkers(activeSection.heading)}
-                    >
-                      <RichText text={activeSection.heading} />
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* PROMINENT FORMULA CARD IF AVAILABLE */}
-              {(activeSection.formula || (activeSection.formulas && activeSection.formulas.length > 0)) && (
-                <div className="space-y-2 p-3.5 bg-gradient-to-br from-primary/10 via-primary/5 to-surface-container-low rounded-xl border border-primary/30">
-                  <div className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]">functions</span>
-                    <span>Rumus Aktif</span>
-                  </div>
-                  {activeSection.formula && (
-                    <div className="p-2.5 bg-surface-container-lowest rounded-lg border border-outline-variant/60 text-xs font-bold text-black font-mono leading-relaxed text-center overflow-x-auto shadow-2xs">
-                      {activeSection.formula}
-                    </div>
-                  )}
-
-                  {/* Active section multiple formulas */}
-                  {activeSection.formulas && activeSection.formulas.length > 0 && (
-                    <div className="space-y-2">
-                      {activeSection.formulas.map((fItem, fIdx) => (
-                        <div
-                          key={fIdx}
-                          className="p-2 bg-surface-container-lowest rounded-lg border border-outline-variant/50 space-y-1"
-                        >
-                          <div className="text-xs font-bold text-primary">
-                            <RichText text={fItem.label} />
-                          </div>
-                          <div className="font-mono font-bold text-xs text-black text-center">
-                            {fItem.formula}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Symbol Legend in Right Rail */}
-                  {activeSection.formulaSymbols && activeSection.formulaSymbols.length > 0 && (
-                    <div className="pt-2 border-t border-primary/20 space-y-1 text-xs">
-                      <span className="font-bold text-on-surface uppercase tracking-wide">Keterangan:</span>
-                      {activeSection.formulaSymbols.map((sym, idx) => (
-                        <div key={idx} className="flex items-center gap-1.5 text-on-surface-variant">
-                          <span className="font-mono font-bold text-primary">{sym.symbol}</span>
-                          <span>
-                            : <RichText text={sym.meaning} />
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* POINTS (Poin Penting) */}
-              {activeSection.points && activeSection.points.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-surface-container">
-                  <div className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]">check_circle</span>
-                    <span>Intisari Konsep</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    {activeSection.points.map((pt, idx) => (
-                      <div
-                        key={idx}
-                        className="p-2 rounded-lg bg-surface-container-low text-xs text-on-surface-variant flex items-start gap-1.5 leading-snug"
-                      >
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0 mt-1" />
-                        <span>
-                          <RichText text={pt} />
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Dynamic Content: Terms of active section or highlights */}
-              {activeSection.terms && activeSection.terms.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-surface-container">
-                  <div className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]">label_important</span>
-                    <span>Istilah Kunci Bagian Ini</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    {activeSection.terms.map((t, idx) => (
-                      <div
-                        key={idx}
-                        className="p-2.5 rounded-xl bg-surface-container-low border border-outline-variant/40 text-xs space-y-1"
-                      >
-                        <div className="font-bold text-on-surface text-xs">
-                          <RichText text={t.term} />
-                        </div>
-                        <p className="text-xs text-on-surface-variant leading-tight line-clamp-3">
-                          <RichText text={t.definition} />
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Steps summary if activeSection has steps or howToMake */}
-              {((activeSection.steps && activeSection.steps.length > 0) ||
-                (activeSection.howToMake && activeSection.howToMake.steps && activeSection.howToMake.steps.length > 0)) && (
-                <div className="space-y-2 pt-2 border-t border-surface-container">
-                  <div className="text-xs font-bold text-secondary uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]">checklist</span>
-                    <span>Langkah Pengerjaan</span>
-                  </div>
-                  <div className="p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-1.5">
-                    {(activeSection.steps || activeSection.howToMake?.steps || []).map((st) => (
-                      <div key={st.step} className="flex items-start gap-1.5 text-xs">
-                        <span className="w-4 h-4 rounded-full bg-primary/20 text-primary font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                          {st.step}
-                        </span>
-                        <span className="text-on-surface font-medium truncate">
-                          <RichText text={st.title} />
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Grouped steps summary */}
-              {activeSection.howToMakeGroups && activeSection.howToMakeGroups.length > 0 && (
-                <div className="space-y-2 pt-2 border-t border-surface-container">
-                  <div className="text-xs font-bold text-secondary uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]">checklist</span>
-                    <span>Langkah Pengerjaan</span>
-                  </div>
-                  {activeSection.howToMakeGroups.map((group, gIdx) => (
-                    <div key={gIdx} className="p-2.5 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-1.5">
-                      <div className="text-xs font-bold text-on-surface">
-                        <RichText text={group.title} />
-                      </div>
-                      {group.steps.map((st) => (
-                        <div key={st.step} className="flex items-start gap-1.5 text-xs">
-                          <span className="w-4 h-4 rounded-full bg-primary/20 text-primary font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
-                            {st.step}
-                          </span>
-                          <span className="text-on-surface font-medium truncate">
-                            <RichText text={st.title} />
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Examples Summary if present */}
-              {activeSection.examples && activeSection.examples.length > 0 && !activeSection.terms && (
-                <div className="space-y-2 pt-2 border-t border-surface-container">
-                  <div className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]">task_alt</span>
-                    <span>Soal &amp; Solusi</span>
-                  </div>
-                  <div className="p-3 bg-amber-500/5 rounded-xl border border-amber-500/20 text-xs text-on-surface-variant leading-relaxed">
-                    Tersedia {activeSection.examples.length} studi kasus nyata dengan pembahasan lengkap.
-                  </div>
-                </div>
-              )}
-
-              {/* Tip regarding research thesis */}
-              <div className="pt-3 border-t border-surface-container flex items-center gap-2 text-xs text-on-surface-variant">
-                <span className="material-symbols-outlined text-[16px] text-primary shrink-0">
-                  school
-                </span>
-                <span>Materi pondasi metodologi penelitian kuantitatif</span>
-              </div>
-            </div>
-          </aside>
         </div>
       </div>
 
@@ -974,7 +778,12 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
       <footer className="fixed bottom-0 left-0 right-0 bg-surface-container-lowest/95 backdrop-blur-md border-t border-outline-variant/60 py-3.5 px-4 sm:px-6 lg:px-10 z-30 shadow-lg">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-xs text-on-surface-variant text-center sm:text-left flex items-center gap-2">
-            {markedDone ? (
+            {isSuccess ? (
+              <span className="text-primary font-medium flex items-center justify-center sm:justify-start gap-1.5">
+                <span className="material-symbols-outlined text-[16px]">celebration</span>
+                <span>Hebat! Satu topik tuntas. Membuka daftar topik…</span>
+              </span>
+            ) : markedDone ? (
               <span className="text-primary font-medium flex items-center justify-center sm:justify-start gap-1.5">
                 <span className="material-symbols-outlined text-[16px]">check_circle</span>
                 <span>Materi ini telah kamu pelajari di sesi ini. Kamu siap melangkah ke topik berikutnya!</span>
@@ -982,7 +791,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
             ) : hasReachedBottom ? (
               <span className="text-primary font-medium flex items-center justify-center sm:justify-start gap-1.5">
                 <span className="material-symbols-outlined text-[16px]">task_alt</span>
-                <span>Kamu telah membaca seluruh materi sampai akhir. Silakan klaim XP belajarmu.</span>
+                <span>Kamu sudah membaca sampai akhir. Klik Selesai Belajar untuk klaim XP-mu.</span>
               </span>
             ) : (
               <span className="text-outline flex items-center justify-center sm:justify-start gap-1.5">
@@ -997,38 +806,55 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
           </div>
 
           <div className="w-full sm:w-auto">
-            {isSuccess ? (
-              <div className="py-2.5 px-5 rounded-lg bg-primary-fixed text-primary font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-xs">
-                <span
-                  className="material-symbols-outlined text-[16px]"
-                  style={{ fontVariationSettings: "'FILL' 1" }}
-                >
-                  check_circle
+            {markedDone && !isSuccess ? (
+              <div className="w-full sm:w-auto py-2.5 px-4 rounded-xl bg-primary-fixed/50 text-primary text-sm font-semibold flex items-center justify-center gap-2.5">
+                <span className="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center shrink-0">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M5 12.5l4.5 4.5L19 7.5" />
+                  </svg>
                 </span>
-                <span>Materi selesai dipelajari! (+{theoryContent.completionXp} XP)</span>
+                <span>Sudah Selesai Dipelajari</span>
               </div>
-            ) : markedDone ? (
-              <button
-                type="button"
-                disabled
-                className="w-full sm:w-auto py-2.5 px-5 rounded-lg bg-surface-container text-outline text-xs sm:text-sm font-medium cursor-default flex items-center justify-center gap-2"
-              >
-                <span className="material-symbols-outlined text-[16px] text-primary">verified</span>
-                <span>Materi Selesai Dipelajari</span>
-              </button>
             ) : (
               <button
                 type="button"
                 onClick={handleFinishReading}
-                disabled={!hasReachedBottom}
-                className={`w-full sm:w-auto py-2.5 px-6 rounded-lg text-xs sm:text-sm font-semibold transition-all duration-200 flex items-center justify-center gap-2 active:scale-95 shadow-xs ${
-                  hasReachedBottom
-                    ? 'bg-primary hover:bg-primary-container text-on-primary cursor-pointer'
-                    : 'bg-surface-container text-outline cursor-not-allowed opacity-60'
+                disabled={!hasReachedBottom || isSuccess}
+                title={hasReachedBottom ? undefined : 'Baca materi sampai akhir untuk menyelesaikannya'}
+                className={`relative w-full sm:w-auto py-2.5 pl-3 pr-3.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2.5 transition-colors duration-300 ${
+                  isSuccess
+                    ? 'complete-pop bg-primary text-on-primary cursor-default'
+                    : hasReachedBottom
+                      ? 'bg-primary hover:bg-primary-container text-on-primary active:scale-95 shadow-sm'
+                      : 'bg-surface-container text-on-surface-variant cursor-not-allowed'
                 }`}
               >
-                <span>Tandai Selesai &amp; Dapat +{theoryContent.completionXp} XP</span>
-                <span className="material-symbols-outlined text-[16px]">check_circle</span>
+                {isSuccess && (
+                  <span aria-hidden="true" className="complete-ring pointer-events-none absolute inset-0 rounded-xl border-2 border-primary" />
+                )}
+                <span
+                  className={`w-6 h-6 rounded-full flex items-center justify-center shrink-0 transition-colors duration-300 ${
+                    isSuccess
+                      ? 'bg-on-primary text-primary'
+                      : hasReachedBottom
+                        ? 'border-2 border-on-primary/80 animate-gentle-pulse'
+                        : 'border-2 border-outline'
+                  }`}
+                >
+                  {isSuccess && (
+                    <svg viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                      <path className="check-draw" d="M5 12.5l4.5 4.5L19 7.5" />
+                    </svg>
+                  )}
+                </span>
+                <span aria-live="polite">{isSuccess ? 'Materi Tuntas!' : 'Selesai Belajar'}</span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs font-bold ${
+                    isSuccess || hasReachedBottom ? 'bg-on-primary/15' : 'bg-surface-container-high'
+                  }`}
+                >
+                  +{theoryContent.completionXp} XP
+                </span>
               </button>
             )}
           </div>

@@ -1,17 +1,9 @@
-import type { DifficultyTier, PracticeQuestion } from '../../types';
+import type { DifficultyTier, PracticeCheckResult, PracticeQuestion } from '../../types';
+import { api } from '../../lib/api';
+import { authApi } from '../../lib/auth';
 
-// Latihan Mandiri question bank: 8 topics × 4 tiers × 10 questions.
-// Each topic file is loaded only when that topic is opened on the practice page.
-const LOADERS: Record<string, () => Promise<{ questions: PracticeQuestion[] }>> = {
-  'mendefinisikan-mengumpulkan-data': () => import('./topic1Data'),
-  'mengorganisasi-memvisualisasikan-variabel': () => import('./topic2Organizing'),
-  'ukuran-deskriptif-numerik': () => import('./topic3Measures'),
-  'probabilitas-dasar': () => import('./topic4Probability'),
-  'distribusi-probabilitas-diskrit': () => import('./topic5Discrete'),
-  'distribusi-normal-kontinu': () => import('./topic6Continuous'),
-  'distribusi-sampling': () => import('./topic7Sampling'),
-  'estimasi-interval-kepercayaan': () => import('./topic8Confidence'),
-};
+// Latihan Mandiri: the question bank (8 topics × 4 tiers × 10 questions) lives in the backend
+// (backend/data/practice). Questions arrive without answers; answers are checked by the server.
 
 export const TIER_ORDER: DifficultyTier[] = ['mudah', 'sedang', 'sulit', 'sangat_sulit'];
 
@@ -33,13 +25,16 @@ export const TIER_XP: Record<DifficultyTier, number> = {
 /** Correct answers needed in Sulit to unlock Sangat Sulit. */
 export const UNLOCK_HARDEST_AT = 8;
 
-export function hasPracticeSet(topicId: string): boolean {
-  return topicId in LOADERS;
+/** GET /api/practice/[topicId] */
+export async function loadPracticeSet(topicId: string): Promise<PracticeQuestion[]> {
+  const { questions } = await api<{ questions: PracticeQuestion[] }>(`/api/practice/${encodeURIComponent(topicId)}`);
+  return questions;
 }
 
-export async function loadPracticeSet(topicId: string): Promise<PracticeQuestion[]> {
-  const load = LOADERS[topicId];
-  if (!load) return [];
-  const mod = await load();
-  return mod.questions;
+/** POST /api/practice/check (signed in: the server also saves the answer and awards XP) */
+export function checkPracticeAnswer(questionId: string, selected: number): Promise<PracticeCheckResult> {
+  return authApi<PracticeCheckResult>('/api/practice/check', {
+    method: 'POST',
+    body: JSON.stringify({ questionId, selected }),
+  });
 }

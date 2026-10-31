@@ -8,21 +8,27 @@ interface XpSlide {
 }
 
 const SLIDES: XpSlide[] = [
-  { title: 'Mencoba soal', xp: '+10 XP', desc: 'Benar atau salah, tetap dihargai.', icon: 'edit_note' },
-  { title: 'Jawaban benar', xp: '+15 XP', desc: 'Bonus untuk jawaban tepat.', icon: 'check_circle' },
-  { title: 'Cek jawabanmu', xp: '+10 XP', desc: 'Bonus karena kamu memeriksa dulu.', icon: 'fact_check' },
-  { title: 'Bonus kecepatan', xp: 'sampai +10 XP', desc: 'Hanya saat mengerjakan, bukan saat mengecek.', icon: 'bolt' },
-  { title: 'Baca materi sampai selesai', xp: '+15 XP', desc: 'Selesaikan satu materi.', icon: 'menu_book' },
-  { title: 'Daily Quest', xp: '+20 XP', desc: 'Satu set singkat tiap hari.', icon: 'task_alt' },
+  { title: 'Mencoba soal', xp: '+10 XP', desc: 'Benar atau salah, tetap dihargai.', icon: 'draw' },
+  { title: 'Jawaban benar', xp: '+15 XP', desc: 'Bonus untuk jawaban tepat.', icon: 'verified' },
+  { title: 'Cek jawabanmu', xp: '+10 XP', desc: 'Bonus karena kamu memeriksa dulu.', icon: 'manage_search' },
+  { title: 'Bonus kecepatan', xp: 'sampai +10 XP', desc: 'Hanya saat mengerjakan, bukan saat mengecek.', icon: 'speed' },
+  { title: 'Baca materi sampai selesai', xp: '+15 XP', desc: 'Selesaikan satu materi.', icon: 'auto_stories' },
+  { title: 'Daily Quest', xp: '+20 XP', desc: 'Satu set singkat tiap hari.', icon: 'flag' },
 ];
 
 /* Ukuran tumpukan (px). Kartu di atas dan bawah adalah kartu aktif yang diperkecil. */
-const CARD_H = 128;
-const SCALE = 0.7;
-const GAP = 12;
+const CARD_H = 116;
+const SCALE = 0.9;
+const GAP = 10;
 const SIDE_H = CARD_H * SCALE;
 const STEP = CARD_H / 2 + GAP + SIDE_H / 2; // jarak antar pusat kartu aktif dan tetangganya
 const STACK_H = Math.round(2 * (STEP + SIDE_H / 2));
+
+/** Lama tiap kartu tampil sebelum berganti otomatis (ms). */
+const AUTOPLAY_MS = 6000;
+/** Lama animasi perpindahan kartu (ms), dengan kurva ease-in-out. */
+const MOVE_MS = 900;
+const EASE_IN_OUT = 'cubic-bezier(0.65, 0, 0.35, 1)';
 
 /** Selisih posisi kartu terhadap kartu aktif, dengan pembungkusan (kartu terakhir berada tepat di atas kartu pertama). */
 function offsetOf(index: number, current: number, total: number): number {
@@ -35,13 +41,10 @@ function offsetOf(index: number, current: number, total: number): number {
 function transformFor(d: number): React.CSSProperties {
   const abs = Math.abs(d);
   if (abs === 0) return { transform: 'translateY(0) scale(1)', opacity: 1, zIndex: 30 };
-  if (abs === 1) return { transform: `translateY(${d * STEP}px) scale(${SCALE})`, opacity: 1, zIndex: 20 };
+  if (abs === 1) return { transform: `translateY(${d * STEP}px) scale(${SCALE})`, opacity: 0.85, zIndex: 20 };
   // Kartu yang jauh menyingkir keluar tumpukan sambil memudar.
-  return { transform: `translateY(${Math.sign(d) * (STEP + 48)}px) scale(0.5)`, opacity: 0, zIndex: 10, pointerEvents: 'none' };
+  return { transform: `translateY(${Math.sign(d) * (STEP + 56)}px) scale(0.7)`, opacity: 0, zIndex: 10, pointerEvents: 'none' };
 }
-
-/** Lama tiap kartu tampil saat berganti otomatis (ms). */
-const AUTOPLAY_MS = 4500;
 
 function prefersReducedMotion(): boolean {
   return typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)').matches === true;
@@ -50,8 +53,8 @@ function prefersReducedMotion(): boolean {
 export const XpVerticalCarousel: React.FC = () => {
   const total = SLIDES.length;
   const [current, setCurrent] = useState(0);
-  // Berganti otomatis, kecuali pengguna meminta gerakan dikurangi. Tombol jeda/putar mengubahnya.
-  const [playing, setPlaying] = useState(() => !prefersReducedMotion());
+  // Berganti otomatis, kecuali pengguna meminta gerakan dikurangi.
+  const [autoplay] = useState(() => !prefersReducedMotion());
   // Jeda sementara saat kursor di atas karusel atau fokus keyboard ada di dalamnya, agar teks sempat dibaca.
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -63,7 +66,7 @@ export const XpVerticalCarousel: React.FC = () => {
     return () => document.removeEventListener('visibilitychange', onVisibility);
   }, []);
 
-  const running = playing && !hovered && !focused && !tabHidden;
+  const running = autoplay && !hovered && !focused && !tabHidden;
 
   const goPrev = () => setCurrent((c) => (c - 1 + total) % total);
   const goNext = () => setCurrent((c) => (c + 1) % total);
@@ -85,7 +88,8 @@ export const XpVerticalCarousel: React.FC = () => {
   };
 
   const arrowButton =
-    'w-8 h-8 rounded-full bg-white/15 hover:bg-white/25 active:bg-white/30 border border-white/25 text-white flex items-center justify-center transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
+    'w-9 h-9 rounded-xl bg-surface-container-lowest/80 hover:bg-primary-fixed active:bg-primary-fixed border border-outline-variant text-primary flex items-center justify-center transition-colors';
+  const motion: React.CSSProperties = { transitionDuration: `${MOVE_MS}ms`, transitionTimingFunction: EASE_IN_OUT };
 
   return (
     <div
@@ -96,34 +100,21 @@ export const XpVerticalCarousel: React.FC = () => {
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocused(false);
       }}
-      className="relative overflow-hidden rounded-3xl bg-[linear-gradient(135deg,#00614d_0%,#0e7c63_58%,#2f9a82_100%)] p-4 sm:p-5 text-white shadow-lg"
+      className="relative"
     >
+      <div className="relative">
       {/* Kepala: judul, penghitung, dan tombol atas/bawah */}
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <div className="flex items-center gap-1.5 text-primary-fixed text-xs font-semibold uppercase tracking-wider mb-0.5">
-            <span aria-hidden="true" className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-              stars
-            </span>
-            <span>Sistem Apresiasi Usaha</span>
-          </div>
-          <h2 className="text-lg sm:text-xl font-bold">Cara Dapat XP</h2>
-          <p className="text-xs sm:text-sm text-white/80 mt-0.5">Setiap usaha dihitung.</p>
+          <p className="text-primary text-xs font-semibold uppercase tracking-[0.14em] mb-1">Cara dapat XP</p>
+          <h2 className="text-xl sm:text-2xl font-bold leading-tight text-on-surface">Coba Dulu, XP Menyusul.</h2>
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-1">Benar atau salah, setiap usaha tetap dihitung.</p>
         </div>
 
         <div className="flex items-center gap-2 shrink-0">
-          <span className="px-2.5 py-1 rounded-full bg-white/15 border border-white/25 text-xs font-bold tabular-nums">
+          <span className="text-sm font-semibold tabular-nums text-on-surface-variant mr-1" aria-hidden="true">
             {current + 1} / {total}
           </span>
-          <button
-            type="button"
-            onClick={() => setPlaying((p) => !p)}
-            aria-label={playing ? 'Jeda pergantian otomatis' : 'Putar pergantian otomatis'}
-            title={playing ? 'Jeda' : 'Putar otomatis'}
-            className={arrowButton}
-          >
-            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">{playing ? 'pause' : 'play_arrow'}</span>
-          </button>
           <button type="button" onClick={goPrev} aria-label="Hadiah sebelumnya" className={arrowButton}>
             <span aria-hidden="true" className="material-symbols-outlined text-[20px]">keyboard_arrow_up</span>
           </button>
@@ -140,7 +131,8 @@ export const XpVerticalCarousel: React.FC = () => {
         aria-label="Karusel Cara Dapat XP"
         tabIndex={0}
         onKeyDown={onKeyDown}
-        className="relative mt-3 rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-white/70"
+        // overflow-hidden: kartu yang keluar dari tumpukan tidak menutupi judul di atasnya saat berpindah.
+        className="relative mt-4 -mx-1 px-1 overflow-hidden rounded-2xl outline-none focus-visible:ring-2 focus-visible:ring-primary"
         style={{ height: STACK_H }}
       >
         {SLIDES.map((slide, index) => {
@@ -155,68 +147,75 @@ export const XpVerticalCarousel: React.FC = () => {
               // Kartu tetangga hanya kemudahan untuk pengguna mouse/sentuh; pengguna keyboard memakai tombol atas/bawah.
               aria-hidden={!active}
               onClick={active || Math.abs(d) > 1 ? undefined : () => setCurrent(index)}
-              className={`absolute left-10 right-0 top-1/2 rounded-2xl border transition-[transform,opacity,background-color,border-color,box-shadow] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none will-change-transform ${
+              className={`absolute inset-x-1 top-1/2 rounded-2xl border transition-[transform,opacity,background-color,border-color,box-shadow] motion-reduce:transition-none will-change-transform ${
                 active
-                  ? 'bg-surface-container-lowest border-transparent shadow-xl'
-                  : 'bg-white/15 border-white/25 cursor-pointer hover:bg-white/25'
+                  ? 'bg-surface-container-lowest border-primary/20 shadow-[0_12px_32px_-12px_rgba(0,97,77,0.35)]'
+                  : 'bg-surface-container-lowest/60 border-outline-variant/70 backdrop-blur-sm cursor-pointer hover:bg-surface-container-lowest/85'
               }`}
-              style={{ height: CARD_H, marginTop: -CARD_H / 2, ...transformFor(d) }}
+              style={{ height: CARD_H, marginTop: -CARD_H / 2, ...motion, ...transformFor(d) }}
             >
-              {/* Lingkaran ikon yang menonjol keluar dari tepi kiri kartu */}
-              <div
-                className={`absolute -left-9 top-1/2 -translate-y-1/2 w-[72px] h-[72px] rounded-full flex items-center justify-center transition-colors duration-500 motion-reduce:transition-none ${
-                  active ? 'bg-primary-fixed text-primary' : 'bg-white/20 text-white'
-                }`}
-              >
-                <span aria-hidden="true" className="material-symbols-outlined text-[34px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  {slide.icon}
-                </span>
-              </div>
+              <div className="h-full flex items-center gap-4 pl-4 pr-3 sm:pl-5 sm:pr-4">
+                <div className="flex-1 min-w-0 flex flex-col gap-1">
+                  <h3
+                    className={`text-base sm:text-lg font-bold leading-snug line-clamp-1 transition-colors motion-reduce:transition-none ${
+                      active ? 'text-on-surface' : 'text-on-surface-variant'
+                    }`}
+                    style={motion}
+                  >
+                    {slide.title}
+                  </h3>
+                  <p
+                    className={`text-sm leading-snug line-clamp-2 transition-colors motion-reduce:transition-none ${
+                      active ? 'text-on-surface-variant' : 'text-on-surface-variant/80'
+                    }`}
+                    style={motion}
+                  >
+                    {slide.desc}
+                  </p>
+                  <span
+                    className={`inline-flex w-fit mt-0.5 px-2 py-0.5 rounded-lg text-xs font-bold font-code-formula whitespace-nowrap transition-opacity motion-reduce:transition-none ${
+                      active ? 'bg-primary/10 text-primary opacity-100' : 'bg-primary/10 text-primary opacity-0'
+                    }`}
+                    style={motion}
+                  >
+                    {slide.xp}
+                  </span>
+                </div>
 
-              <div className="h-full pl-12 pr-3 py-2.5 sm:pl-14 sm:pr-4 sm:py-3 flex flex-col justify-center gap-1 min-w-0">
-                <h3
-                  className={`text-sm sm:text-lg font-bold leading-snug line-clamp-2 sm:line-clamp-1 transition-colors duration-500 motion-reduce:transition-none ${
-                    active ? 'text-on-surface' : 'text-white'
+                {/* Ikon di sisi kanan kartu */}
+                <div
+                  className={`w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-xl flex items-center justify-center transition-colors motion-reduce:transition-none ${
+                    active ? 'bg-primary text-on-primary' : 'bg-primary-fixed/60 text-primary'
                   }`}
+                  style={motion}
                 >
-                  {slide.title}
-                </h3>
-                <p
-                  className={`text-sm sm:text-sm leading-snug line-clamp-3 sm:line-clamp-2 transition-colors duration-500 motion-reduce:transition-none ${
-                    active ? 'text-on-surface-variant' : 'text-white/75'
-                  }`}
-                >
-                  {slide.desc}
-                </p>
-                <span
-                  className={`inline-flex w-fit px-2.5 py-0.5 rounded-lg border text-xs sm:text-xs font-extrabold font-code-formula whitespace-nowrap transition-opacity duration-500 motion-reduce:transition-none ${
-                    active ? 'bg-primary/10 text-primary border-primary/20 opacity-100' : 'bg-white/10 text-white border-white/20 opacity-0'
-                  }`}
-                >
-                  {slide.xp}
-                </span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-[30px] sm:text-[34px]">
+                    {slide.icon}
+                  </span>
+                </div>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Bilah waktu: penuh berarti kartu berganti. Berhenti saat dijeda. */}
-      <div className="mt-3 h-1 rounded-full bg-white/20 overflow-hidden" aria-hidden="true">
-        {playing && (
+      {/* Bilah waktu: penuh berarti kartu berganti. Berhenti saat kursor atau fokus keyboard ada di karusel. */}
+      {autoplay && (
+        <div className="mt-4 mx-1 h-1 rounded-full bg-outline-variant/50 overflow-hidden" aria-hidden="true">
           <div
             key={current}
-            className="xp-carousel-timer h-full rounded-full bg-white/80"
+            className="xp-carousel-timer h-full rounded-full bg-primary"
             style={{ animationDuration: `${AUTOPLAY_MS}ms`, animationPlayState: running ? 'running' : 'paused' }}
             onAnimationEnd={goNext}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Pembaca layar diberi tahu kartu mana yang aktif, tapi tidak saat berganti otomatis agar tidak mengganggu */}
-      <p className="sr-only" aria-live={playing ? 'off' : 'polite'} aria-atomic="true">
+      <p className="sr-only" aria-live={autoplay ? 'off' : 'polite'} aria-atomic="true">
         Hadiah {current + 1} dari {total}: {SLIDES[current].title}, {SLIDES[current].xp}. {SLIDES[current].desc}
       </p>
+      </div>
     </div>
   );
 };

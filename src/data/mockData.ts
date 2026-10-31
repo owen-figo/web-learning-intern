@@ -29,7 +29,7 @@ export const mockTopics: Topic[] = [
     order: 1,
     category: 'statistika',
     subCategory: 'deskriptif',
-    title: 'Mendefinisikan dan Mengumpulkan Data',
+    title: 'Defining and Collecting Data',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -47,7 +47,7 @@ export const mockTopics: Topic[] = [
     order: 2,
     category: 'statistika',
     subCategory: 'deskriptif',
-    title: 'Mengorganisasi dan Memvisualisasikan Variabel',
+    title: 'Organizing and Visualizing Variables',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -65,7 +65,7 @@ export const mockTopics: Topic[] = [
     order: 3,
     category: 'statistika',
     subCategory: 'deskriptif',
-    title: 'Ukuran Deskriptif Numerik',
+    title: 'Numerical Descriptive Measures',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -83,7 +83,7 @@ export const mockTopics: Topic[] = [
     order: 4,
     category: 'statistika',
     subCategory: 'inferensial',
-    title: 'Probabilitas Dasar',
+    title: 'Basic Probability',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -101,7 +101,7 @@ export const mockTopics: Topic[] = [
     order: 5,
     category: 'statistika',
     subCategory: 'inferensial',
-    title: 'Distribusi Probabilitas Diskrit',
+    title: 'Discrete Probability Distributions',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -119,7 +119,7 @@ export const mockTopics: Topic[] = [
     order: 6,
     category: 'statistika',
     subCategory: 'inferensial',
-    title: 'Distribusi Normal dan Distribusi Kontinu Lainnya',
+    title: 'The Normal Distribution and Other Continuous Distributions',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -137,7 +137,7 @@ export const mockTopics: Topic[] = [
     order: 7,
     category: 'statistika',
     subCategory: 'inferensial',
-    title: 'Distribusi Sampling',
+    title: 'Sampling Distributions',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:
@@ -155,7 +155,7 @@ export const mockTopics: Topic[] = [
     order: 8,
     category: 'statistika',
     subCategory: 'inferensial',
-    title: 'Estimasi Confidence Interval',
+    title: 'Confidence Interval Estimation',
     badge: 'Materi Wajib',
     badgeType: 'fondasi',
     description:

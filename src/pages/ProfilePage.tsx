@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { UserProfile, BadgeItem, LearningSession } from '../types';
 import { mockBadges, mockLearningSessions } from '../data/mockData';
 
@@ -9,12 +9,16 @@ interface ProfilePageProps {
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) => {
   const [showToast, setShowToast] = useState(true);
-  const [emailDigest, setEmailDigest] = useState(true);
-  const [whatsappPing, setWhatsappPing] = useState(true);
+  const [emailDigest, setEmailDigest] = useState(user.emailDigest ?? true);
+  const [whatsappPing, setWhatsappPing] = useState(user.whatsappPing ?? true);
   const [isEditingName, setIsEditingName] = useState(false);
   const [tempName, setTempName] = useState(user.name);
   const [tempInitials, setTempInitials] = useState(user.initials);
   const [savePrefNotice, setSavePrefNotice] = useState(false);
+
+  // The account's saved preferences can arrive after this page opened.
+  useEffect(() => setEmailDigest(user.emailDigest ?? true), [user.emailDigest]);
+  useEffect(() => setWhatsappPing(user.whatsappPing ?? true), [user.whatsappPing]);
 
   const colors = [
     { name: 'Teal', hex: '#0e7c63' },
@@ -24,17 +28,22 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
     { name: 'Terracotta', hex: '#c86452' },
   ];
 
+  const openEditor = () => {
+    setTempName(user.name);
+    setTempInitials(user.initials);
+    setIsEditingName(true);
+  };
+
   const handleSaveName = () => {
-    if (tempName.trim()) {
-      onUpdateUser({ name: tempName.trim() });
-    }
-    if (tempInitials.trim()) {
-      onUpdateUser({ initials: tempInitials.trim().substring(0, 2).toUpperCase() });
-    }
+    const updated: Partial<UserProfile> = {};
+    if (tempName.trim()) updated.name = tempName.trim();
+    if (tempInitials.trim()) updated.initials = tempInitials.trim().substring(0, 2).toUpperCase();
+    if (Object.keys(updated).length) onUpdateUser(updated);
     setIsEditingName(false);
   };
 
   const handleSavePreferences = () => {
+    onUpdateUser({ emailDigest, whatsappPing });
     setSavePrefNotice(true);
     setTimeout(() => setSavePrefNotice(false), 3000);
   };
@@ -59,7 +68,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                 <span className="text-outline">• Tanpa Beban</span>
               </div>
               <p className="text-on-surface-variant leading-relaxed">
-                🌿 Streak 5 harimu aktif! Luangkan 3 menit santai sebelum jam 23.59 untuk menjaga ritme belajar.
+                {user.streakDays > 0
+                  ? `🌿 Streak ${user.streakDays} harimu aktif! Luangkan 3 menit santai sebelum jam 23.59 untuk menjaga ritme belajar.`
+                  : '🌿 Mulai ritme belajarmu hari ini: satu materi atau beberapa soal sudah cukup.'}
               </p>
             </div>
             <button
@@ -89,7 +100,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                 </span>
               </div>
               <button
-                onClick={() => setIsEditingName(true)}
+                onClick={openEditor}
                 title="Ubah Inisial & Nama"
                 className="absolute -bottom-1 -right-1 p-1.5 rounded-full bg-surface-container-lowest border border-outline-variant text-on-surface-variant hover:text-primary hover:border-primary shadow-xs transition-all"
               >
@@ -104,7 +115,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
                   {user.name}
                 </h1>
                 <button
-                  onClick={() => setIsEditingName(true)}
+                  onClick={openEditor}
                   className="p-1 text-outline hover:text-primary rounded transition-colors"
                   title="Ubah Nama"
                 >
@@ -115,7 +126,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               <p className="text-xs sm:text-sm text-on-surface-variant flex items-center gap-1.5">
                 <span className="material-symbols-outlined text-outline text-[20px]">school</span>
                 <span>
-                  {user.major} • {user.university}
+                  {user.major ? `${user.major} • ${user.university}` : user.university}
                 </span>
               </p>
 
@@ -153,7 +164,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             </div>
 
             <button
-              onClick={() => setIsEditingName(true)}
+              onClick={openEditor}
               className="text-xs text-primary hover:underline flex items-center gap-1 font-medium"
             >
               <span className="material-symbols-outlined text-[16px]">edit_note</span>
@@ -280,7 +291,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
             </div>
             <div className="text-2xl font-bold text-on-surface">{user.questionsDone} Soal</div>
             <div className="text-xs text-outline mt-1">
-              {user.selfCheckPercentage}% proses cek mandiri
+              {user.selfCheckPercentage}% dari semua soal latihan
             </div>
           </div>
 
@@ -296,7 +307,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ user, onUpdateUser }) 
               {user.masteredTopics} / {user.totalTopics} Topik
             </div>
             <div className="text-xs text-outline mt-1">
-              Distribusi Normal &amp; Regresi
+              Materi teori yang sudah tuntas
             </div>
           </div>
 

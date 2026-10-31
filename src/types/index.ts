@@ -34,14 +34,23 @@ export interface PracticeQuestion {
   /** Optional data block (table, list of values), shown in monospace. */
   data?: string;
   options: string[];
-  /** Index (0–3) of the correct option. */
-  answer: number;
-  /** Worked solution shown after checking the answer. */
-  explanation: string;
   hint?: string;
   formula?: string;
   /** Optional link to a glossary concept in data/concepts.ts. */
   conceptId?: string;
+  // The answer key and worked solution stay on the server; see PracticeCheckResult.
+}
+
+/** Response of POST /api/practice/check. */
+export interface PracticeCheckResult {
+  questionId: string;
+  correct: boolean;
+  /** Index (0–3) of the correct option. */
+  answer: number;
+  /** Worked solution shown after checking the answer. */
+  explanation: string;
+  /** Only for signed-in students: XP the server awarded for this answer (0 if none). */
+  xpAwarded?: number;
 }
 
 export interface TheoryExample {
@@ -261,4 +270,7 @@ export interface UserProfile {
   masteredTopics: number;
   totalTopics: number;
   understandingScore: number;
+  /** Reminder preferences on the profile page. */
+  emailDigest?: boolean;
+  whatsappPing?: boolean;
 }

@@ -1,4 +1,4 @@
-import type { PracticeQuestion } from '../../types';
+import type { PracticeQuestion } from '../../lib/practice-types';
 
 // Latihan Mandiri: Estimasi Confidence Interval
 // 40 soal = 4 tingkat (mudah, sedang, sulit, sangat_sulit) x 10 soal.

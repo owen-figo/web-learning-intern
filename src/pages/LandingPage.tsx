@@ -1,6 +1,38 @@
 import React from 'react';
 import { ActivePage } from '../types';
 import { XpVerticalCarousel } from '../components/XpVerticalCarousel';
+import { HeroBackgroundLines } from '../components/HeroBackgroundLines';
+
+// Tim pengembang Ngerti. GANTI dengan nama, peran, dan inisial anggota tim yang sebenarnya.
+const DEVELOPERS = [
+  { name: 'Nama Developer 1', role: 'Peran, mis. Frontend Developer', initials: 'D1', color: '#0e7c63' },
+  { name: 'Nama Developer 2', role: 'Peran, mis. UI/UX Designer', initials: 'D2', color: '#0d9488' },
+  { name: 'Nama Developer 3', role: 'Peran, mis. Content & Statistik', initials: 'D3', color: '#00614d' },
+];
+
+const ABOUT_STATS = [
+  { value: '8', label: 'Topik materi' },
+  { value: '320', label: 'Soal latihan' },
+  { value: '4', label: 'Tingkat kesulitan' },
+];
+
+const ABOUT_STEPS = [
+  {
+    icon: 'auto_stories',
+    title: 'Baca materi interaktif',
+    desc: 'Teori dipecah per bagian, lengkap dengan simulasi dan visual untuk setiap langkah.',
+  },
+  {
+    icon: 'stairs',
+    title: 'Latihan bertingkat',
+    desc: 'Dari Mudah sampai Sangat Sulit, dengan petunjuk yang menyesuaikan tingkatnya.',
+  },
+  {
+    icon: 'stars',
+    title: 'Kumpulkan XP',
+    desc: 'Setiap usaha dihitung. Jaga streak dan buka achievement sambil belajar.',
+  },
+];
 
 interface LandingPageProps {
   setActivePage: (page: ActivePage) => void;
@@ -12,11 +44,15 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
     <div className="flex flex-col min-h-screen">
       {/* Main Canvas */}
       <div className="flex-grow">
-        {/* Hero Section */}
-        <section className="py-8 md:py-14 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+        {/* Hero Section, with decorative wave lines behind it */}
+        {/* overflow-x-clip (not hidden): clips the wide lines sideways but lets the corner lines reach below */}
+        <div className="relative overflow-x-clip">
+        <HeroBackgroundLines />
+        <HeroBackgroundLines variant="corner" />
+        <section className="relative py-8 md:py-14 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left Column (7 Columns) */}
-            <div className="lg:col-span-7 flex flex-col justify-between">
+            <div className="lg:col-span-6 flex flex-col justify-between">
               <div className="space-y-6">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-on-surface leading-[1.18]">
                   Statistika sulit? <br className="hidden sm:inline" />
@@ -54,7 +90,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
             </div>
 
             {/* Right Column: Cara Dapat XP (5 Columns), carousel vertikal */}
-            <div className="lg:col-span-5">
+            <div className="lg:col-span-6">
               <XpVerticalCarousel />
             </div>
           </div>
@@ -108,6 +144,56 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+        </div>
+
+        {/* Apa itu Ngerti? */}
+        <section aria-labelledby="about-heading" className="py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+            <div className="space-y-5">
+              <span className="text-primary text-xs font-semibold tracking-wider uppercase">Tentang Ngerti</span>
+              <h2 id="about-heading" className="text-2xl sm:text-3xl font-bold text-on-surface">
+                Apa itu Ngerti?
+              </h2>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+                Ngerti adalah ruang belajar statistika online untuk mahasiswa. Namanya diambil dari kata
+                &ldquo;mengerti&rdquo;, karena tujuannya sederhana: kamu benar-benar paham, bukan sekadar hafal rumus.
+              </p>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+                Materinya mengikuti alur perkuliahan statistika, dari mengumpulkan data sampai confidence interval,
+                dan bisa kamu pelajari sesuai ritmemu sendiri.
+              </p>
+              <dl className="grid grid-cols-3 gap-3 pt-2">
+                {ABOUT_STATS.map((stat) => (
+                  <div key={stat.label} className="rounded-xl bg-surface-container-lowest border border-outline-variant p-3 sm:p-4">
+                    <dt className="sr-only">{stat.label}</dt>
+                    <dd className="text-2xl sm:text-3xl font-bold text-primary tabular-nums">{stat.value}</dd>
+                    <dd className="text-xs sm:text-sm text-on-surface-variant mt-0.5">{stat.label}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+
+            <ol className="space-y-3">
+              {ABOUT_STEPS.map((step, i) => (
+                <li
+                  key={step.title}
+                  className="flex items-start gap-4 rounded-2xl bg-surface-container-lowest border border-outline-variant p-4 sm:p-5 card-gentle"
+                >
+                  <span className="w-12 h-12 rounded-xl bg-primary-fixed text-primary flex items-center justify-center shrink-0">
+                    <span aria-hidden="true" className="material-symbols-outlined text-[24px]">
+                      {step.icon}
+                    </span>
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold text-primary">Langkah {i + 1}</p>
+                    <h3 className="text-base sm:text-lg font-semibold text-on-surface">{step.title}</h3>
+                    <p className="text-sm text-on-surface-variant leading-relaxed mt-0.5">{step.desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </section>
 
@@ -202,6 +288,42 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 </div>
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* Tim pengembang (data di DEVELOPERS, di atas komponen ini) */}
+        <section aria-labelledby="team-heading" className="py-12 md:py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-10">
+            <div className="text-center max-w-2xl mx-auto space-y-2.5">
+              <span className="text-primary text-xs font-semibold tracking-wider uppercase">Tim Pengembang</span>
+              <h2 id="team-heading" className="text-2xl sm:text-3xl font-bold text-on-surface">
+                Orang di Balik Ngerti
+              </h2>
+              <p className="text-sm sm:text-base text-on-surface-variant">
+                Ngerti dibangun oleh tim kecil yang ingin belajar statistika terasa lebih ramah.
+              </p>
+            </div>
+
+            <ul className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              {DEVELOPERS.map((dev) => (
+                <li
+                  key={dev.name}
+                  className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 card-gentle flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition-transform"
+                >
+                  <span
+                    aria-hidden="true"
+                    className="w-20 h-20 rounded-full flex items-center justify-center text-white text-xl font-bold ring-4 ring-primary-fixed/60"
+                    style={{ backgroundColor: dev.color }}
+                  >
+                    {dev.initials}
+                  </span>
+                  <div>
+                    <h3 className="text-base sm:text-lg font-semibold text-on-surface">{dev.name}</h3>
+                    <p className="text-sm text-on-surface-variant">{dev.role}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
       </div>
