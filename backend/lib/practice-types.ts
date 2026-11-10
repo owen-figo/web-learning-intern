@@ -17,7 +17,7 @@ export interface PracticeQuestion {
   explanation: string;
   hint?: string;
   formula?: string;
-  /** Optional link to a glossary concept in the frontend's data/concepts.ts. */
+  /** Optional glossary term id from the frontend's data/glossary.ts. */
   conceptId?: string;
 }
 

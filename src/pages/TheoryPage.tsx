@@ -1,13 +1,20 @@
 import React, { Suspense, lazy, useState, useEffect, useRef } from 'react';
-import { ActivePage, TheoryContent } from '../types';
+import { ActivePage, TheoryContent, TheorySection } from '../types';
 import { ConceptExplainer } from '../components/ConceptExplainer';
 import { FormulaStepCard } from '../components/FormulaStepCard';
+import { MathFormula, MathSymbol } from '../components/MathFormula';
 import { PomodoroButton } from '../components/PomodoroButton';
 import { mockTopics } from '../data/mockData';
 import { RichText, stripMarkers } from '../components/RichText';
+import { GlossaryLinkContext, createGlossaryLinker } from '../components/GlossaryText';
+import { DailyExercise, type DailyCheckResult } from '../components/DailyExercise';
+import type { GlossaryTerm } from '../data/glossary';
 
 // Step pictures are downloaded on demand (they are only needed on the reading page).
 const StepVisual = lazy(() => import('../components/StepVisuals').then((m) => ({ default: m.StepVisual })));
+// The glossary pop-up downloads the first time it is opened.
+const GlossaryModal = lazy(() => import('../components/GlossaryModal').then((m) => ({ default: m.GlossaryModal })));
+
 const LazyStepVisual: React.FC<{ type: string; step: number }> = (props) => (
   <Suspense fallback={<div className="h-24 rounded-xl bg-surface-container-low animate-pulse" />}>
     <StepVisual {...props} />
@@ -19,6 +26,12 @@ interface TheoryPageProps {
   onComplete: (xp: number) => void;
   setActivePage: (page: ActivePage) => void;
   isCompleted?: boolean;
+  /** Open the page scrolled to this section (e.g. from a glossary term). */
+  initialSectionId?: string | null;
+  /** Signed-in student's id (Latihan Harian progress is kept per account). */
+  userId?: string | null;
+  /** Latihan Harian answer checked (XP, streak, saved answer). */
+  onDailyResult?: (result: DailyCheckResult & { selected: number }) => void;
 }
 
 export const TheoryPage: React.FC<TheoryPageProps> = ({
@@ -26,6 +39,9 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
   onComplete,
   setActivePage,
   isCompleted = false,
+  initialSectionId,
+  userId,
+  onDailyResult,
 }) => {
   const [hasReachedBottom, setHasReachedBottom] = useState<boolean>(isCompleted);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
@@ -35,8 +51,14 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
   );
   const [readProgressPercent, setReadProgressPercent] = useState<number>(isCompleted ? 100 : 0);
 
+  const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
+  // Opened from an underlined word: the glossary starts at that term.
+  const [glossaryTerm, setGlossaryTerm] = useState<GlossaryTerm | null>(null);
+
   const sentinelRef = useRef<HTMLDivElement>(null);
   const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
+  const tocScrollRef = useRef<HTMLDivElement>(null);
+  const articleRef = useRef<HTMLElement>(null);
 
   // Track overall scroll progress & active section
   useEffect(() => {
@@ -109,14 +131,57 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
     };
   }, [isCompleted]);
 
-  const scrollToSection = (sectionId: string) => {
+  const scrollToSection = (sectionId: string, behavior: ScrollBehavior = 'smooth') => {
     const targetEl = sectionRefs.current[sectionId];
     if (targetEl) {
       const yOffset = -90; // offset for sticky navbar
       const y = targetEl.getBoundingClientRect().top + window.pageYOffset + yOffset;
-      window.scrollTo({ top: y, behavior: 'smooth' });
+      window.scrollTo({ top: y, behavior });
     }
   };
+
+  // Opened from a glossary term: jump straight to its section (after App's scroll-to-top). Pictures
+  // above it load lazily and push it down, so keep it pinned while the page settles, until the
+  // student scrolls themselves.
+  useEffect(() => {
+    if (!initialSectionId) return;
+    const pin = () => scrollToSection(initialSectionId, 'auto');
+    const raf = requestAnimationFrame(pin);
+    const resize = new ResizeObserver(pin);
+    if (articleRef.current) resize.observe(articleRef.current);
+    const stop = () => {
+      resize.disconnect();
+      window.clearTimeout(timer);
+      ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach((e) => window.removeEventListener(e, stop));
+    };
+    const timer = window.setTimeout(stop, 3000);
+    ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach((e) => window.addEventListener(e, stop, { passive: true }));
+    return () => {
+      cancelAnimationFrame(raf);
+      stop();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialSectionId]);
+
+  // The Daftar Isi scrolls on its own; keep the section being read visible in it.
+  useEffect(() => {
+    const box = tocScrollRef.current;
+    const item = box?.querySelector<HTMLElement>(`[data-section-id="${activeSectionId}"]`);
+    if (!box || !item) return;
+    const margin = 8;
+    // Positions inside the list (items sit in nested, positioned lists, so offsetTop isn't enough).
+    const inBox = (el: Element) => el.getBoundingClientRect().top - box.getBoundingClientRect().top + box.scrollTop;
+    // For a chapter's first section, bring the chapter title into view too.
+    const li = item.closest('li');
+    const anchor = li && li === li.parentElement?.querySelector('li') ? (li.parentElement?.parentElement ?? item) : item;
+    const top = inBox(anchor);
+    const bottom = inBox(item) + item.offsetHeight;
+    if (top < box.scrollTop + margin) {
+      box.scrollTo({ top: top - margin, behavior: 'smooth' });
+    } else if (bottom > box.scrollTop + box.clientHeight - margin) {
+      box.scrollTo({ top: bottom - box.clientHeight + margin, behavior: 'smooth' });
+    }
+  }, [activeSectionId]);
 
   // XP is awarded as the student lands on the topic list, so the navbar can show it arriving.
   // If they leave before the redirect, it is awarded on unmount instead.
@@ -154,7 +219,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
     }, 1800);
   };
 
-  // Find currently active section object
+  // Glossary terms in the text are underlined where they first appear on the page.
+  const linkTerms = createGlossaryLinker(theoryContent.topicId);
 
   return (
     <div className="min-h-screen bg-background text-on-surface flex flex-col">
@@ -191,6 +257,18 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
               </span>
               <span>+{theoryContent.completionXp} XP</span>
             </span>
+            <button
+              type="button"
+              onClick={() => {
+                setGlossaryTerm(null);
+                setGlossaryOpen(true);
+              }}
+              aria-label="Glosarium"
+              className="inline-flex items-center gap-1 whitespace-nowrap px-2.5 py-1 rounded-full text-xs font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+            >
+              <span className="material-symbols-outlined text-[16px]">dictionary</span>
+              <span className="hidden sm:inline">Glosarium</span>
+            </button>
             <PomodoroButton />
           </div>
         </div>
@@ -265,9 +343,11 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
         {/* 3-Column Desktop Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
           {/* LEFT RAIL (~20% = 3 cols): Table of Contents & Reading Progress */}
-          <aside className="hidden lg:block lg:col-span-3 sticky top-24 space-y-4">
-            <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-4 shadow-xs">
-              <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-surface-container">
+          {/* Capped to the space between the sticky header and the completion bar; the section list
+              scrolls inside it, so the wheel over the Daftar Isi scrolls the list, not the material. */}
+          <aside className="hidden lg:flex lg:col-span-3 sticky top-24 flex-col gap-4 max-h-[calc(100vh-11.5rem)]">
+            <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-4 shadow-xs flex flex-col min-h-0">
+              <div className="flex items-center justify-between mb-3 pb-2.5 border-b border-surface-container shrink-0">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-on-surface uppercase tracking-wider">
                   <span className="material-symbols-outlined text-[16px] text-primary">toc</span>
                   <span>Daftar Isi</span>
@@ -277,105 +357,118 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                 </span>
               </div>
 
-              {/* Navigation list: Grouped by group field if present, otherwise flat list */}
+              {/* Navigation list: chapters (the sections' `group`) with a timeline of their sections.
+                  Topics without groups show one plain timeline. Sections before the one being read
+                  count as passed. */}
+              <div ref={tocScrollRef} className="toc-scroll relative min-h-0 overflow-y-auto overscroll-contain -mx-1 px-1">
               {(() => {
-                const hasGroups = theoryContent.sections.some((s) => !!s.group);
+                const activeIdx = Math.max(0, theoryContent.sections.findIndex((s) => s.id === activeSectionId));
+                const groups: { name: string | null; sections: { section: TheorySection; globalIdx: number }[] }[] = [];
+                theoryContent.sections.forEach((section, globalIdx) => {
+                  const name = section.group ?? null;
+                  const last = groups[groups.length - 1];
+                  if (last && last.name === name) last.sections.push({ section, globalIdx });
+                  else groups.push({ name, sections: [{ section, globalIdx }] });
+                });
+                let chapterNo = 0;
 
-                if (hasGroups) {
-                  // Build grouped structure
-                  const groups: { name: string; sections: { section: typeof theoryContent.sections[0]; globalIdx: number }[] }[] = [];
-                  theoryContent.sections.forEach((sec, idx) => {
-                    const gName = sec.group || 'Umum';
-                    let groupObj = groups.find((g) => g.name === gName);
-                    if (!groupObj) {
-                      groupObj = { name: gName, sections: [] };
-                      groups.push(groupObj);
-                    }
-                    groupObj.sections.push({ section: sec, globalIdx: idx });
-                  });
+                return (
+                  <nav aria-label="Daftar isi" className="space-y-1 pb-1">
+                    {groups.map((grp, gIdx) => {
+                      const first = grp.sections[0].globalIdx;
+                      const lastIdx = grp.sections[grp.sections.length - 1].globalIdx;
+                      const state = lastIdx < activeIdx ? 'done' : first <= activeIdx ? 'current' : 'next';
+                      const isSummary = !!grp.name && /summary|rangkuman/i.test(grp.name);
+                      if (grp.name && !isSummary) chapterNo += 1;
 
-                  return (
-                    <nav className="space-y-3">
-                      {groups.map((grp, gIdx) => (
-                        <div key={gIdx} className="space-y-1">
-                          <div className="text-xs font-bold text-primary uppercase tracking-wider px-2 pt-1 border-t first:border-t-0 border-surface-container">
-                            <RichText text={grp.name} />
-                          </div>
-                          {grp.sections.map(({ section, globalIdx }) => {
-                            const isActive = activeSectionId === section.id;
-                            return (
-                              <button
-                                key={section.id}
-                                type="button"
-                                onClick={() => scrollToSection(section.id)}
-                                title={stripMarkers(section.heading)}
-                                aria-label={stripMarkers(section.heading)}
-                                className={`w-full text-left px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all flex items-start gap-2 group ${
-                                  isActive
-                                    ? 'bg-primary/10 text-primary font-semibold border-l-3 border-primary pl-2 shadow-2xs'
-                                    : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                      return (
+                        <div key={gIdx} className={grp.name && gIdx > 0 ? 'pt-2' : ''}>
+                          {grp.name && (
+                            <div className="flex items-center gap-2.5 px-1.5 py-1.5">
+                              <span
+                                className={`w-7 h-7 rounded-lg shrink-0 flex items-center justify-center text-xs font-bold transition-colors ${
+                                  state === 'done'
+                                    ? 'bg-primary text-on-primary'
+                                    : state === 'current'
+                                      ? 'bg-primary-fixed text-on-primary-fixed-variant ring-2 ring-primary/30'
+                                      : 'bg-surface-container text-on-surface-variant'
                                 }`}
+                                aria-hidden="true"
                               >
-                                <span
-                                  className={`w-4 h-4 rounded text-xs font-bold shrink-0 flex items-center justify-center transition-colors mt-0.5 ${
-                                    isActive
-                                      ? 'bg-primary text-on-primary'
-                                      : 'bg-surface-container text-on-surface-variant group-hover:bg-surface-container-high'
+                                {state === 'done' ? (
+                                  <span className="material-symbols-outlined text-[16px]">check</span>
+                                ) : isSummary ? (
+                                  <span className="material-symbols-outlined text-[16px]">summarize</span>
+                                ) : (
+                                  chapterNo
+                                )}
+                              </span>
+                              <div className="min-w-0">
+                                <p
+                                  className={`text-[13px] font-semibold leading-snug ${
+                                    state === 'next' ? 'text-on-surface-variant' : 'text-on-surface'
                                   }`}
                                 >
-                                  {globalIdx + 1}
-                                </span>
-                                <span className="leading-snug line-clamp-1">
-                                  <RichText text={section.heading.replace(/^\d+\.\s*/, '')} />
-                                </span>
-                              </button>
-                            );
-                          })}
-                        </div>
-                      ))}
-                    </nav>
-                  );
-                }
+                                  <RichText text={grp.name.replace(/^\d+\.\s*/, '')} />
+                                </p>
+                                <p className="text-[11px] text-outline">{grp.sections.length} bagian</p>
+                              </div>
+                            </div>
+                          )}
 
-                // Default flat navigation list
-                return (
-                  <nav className="space-y-1">
-                    {theoryContent.sections.map((section, idx) => {
-                      const isActive = activeSectionId === section.id;
-                      return (
-                        <button
-                          key={section.id}
-                          type="button"
-                          onClick={() => scrollToSection(section.id)}
-                          title={stripMarkers(section.heading)}
-                          aria-label={stripMarkers(section.heading)}
-                          className={`w-full text-left px-3 py-2 rounded-xl text-xs font-medium transition-all flex items-start gap-2.5 group ${
-                            isActive
-                              ? 'bg-primary/10 text-primary font-semibold border-l-3 border-primary pl-2.5 shadow-2xs'
-                              : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
-                          }`}
-                        >
-                          <span
-                            className={`w-5 h-5 rounded-md text-xs font-bold shrink-0 flex items-center justify-center transition-colors ${
-                              isActive
-                                ? 'bg-primary text-on-primary'
-                                : 'bg-surface-container text-on-surface-variant group-hover:bg-surface-container-high'
-                            }`}
-                          >
-                            {idx + 1}
-                          </span>
-                          <span className="leading-snug pt-0.5 line-clamp-2">
-                            <RichText text={section.heading} />
-                          </span>
-                        </button>
+                          {/* Timeline: the rail lines up under the chapter badge. */}
+                          <ol className={`relative ${grp.name ? 'ml-[19px] pl-3' : 'ml-[7px] pl-3'}`}>
+                            <span aria-hidden="true" className="absolute left-0 top-2 bottom-2 w-0.5 rounded-full bg-surface-container-high" />
+                            {grp.sections.map(({ section, globalIdx }) => {
+                              const isActive = globalIdx === activeIdx;
+                              const isPassed = globalIdx < activeIdx;
+                              return (
+                                <li key={section.id} className="relative">
+                                  <span
+                                    aria-hidden="true"
+                                    className={`absolute rounded-full transition-all ${
+                                      isActive
+                                        ? 'top-[10px] -left-[17px] w-2.5 h-2.5 bg-primary ring-4 ring-primary/15'
+                                        : isPassed
+                                          ? 'top-[12px] -left-[15px] w-1.5 h-1.5 bg-primary/70'
+                                          : 'top-[12px] -left-[15px] w-1.5 h-1.5 bg-outline-variant'
+                                    }`}
+                                  />
+                                  <button
+                                    type="button"
+                                    data-section-id={section.id}
+                                    onClick={() => scrollToSection(section.id)}
+                                    title={stripMarkers(section.heading)}
+                                    aria-current={isActive ? 'location' : undefined}
+                                    className={`w-full text-left px-2.5 py-1.5 rounded-lg text-[13px] leading-snug transition-colors flex items-baseline gap-2 ${
+                                      isActive
+                                        ? 'bg-primary/10 text-primary font-semibold'
+                                        : isPassed
+                                          ? 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container-low'
+                                          : 'text-on-surface-variant/90 hover:text-on-surface hover:bg-surface-container-low'
+                                    }`}
+                                  >
+                                    <span className={`text-[11px] tabular-nums shrink-0 w-4 ${isActive ? 'text-primary' : 'text-outline'}`}>
+                                      {globalIdx + 1}
+                                    </span>
+                                    <span className="line-clamp-2">
+                                      <RichText text={grp.name ? section.heading.replace(/^\d+\.\s*/, '') : section.heading} />
+                                    </span>
+                                  </button>
+                                </li>
+                              );
+                            })}
+                          </ol>
+                        </div>
                       );
                     })}
                   </nav>
                 );
               })()}
+              </div>
 
               {/* Reading Progress indicator */}
-              <div className="mt-4 pt-3 border-t border-surface-container">
+              <div className="mt-4 pt-3 border-t border-surface-container shrink-0">
                 <div className="flex items-center justify-between text-xs mb-1.5">
                   <span className="text-xs font-medium text-on-surface-variant flex items-center gap-1">
                     <span className="material-symbols-outlined text-[16px] text-primary">
@@ -394,8 +487,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
               </div>
             </div>
 
-            {/* Quick reading reassurance tip */}
-            <div className="bg-primary/5 border border-primary/20 rounded-2xl p-3.5 text-xs text-on-surface-variant space-y-1.5">
+            {/* Quick reading reassurance tip (only on tall screens, so the Daftar Isi keeps its room) */}
+            <div className="hidden [@media(min-height:900px)]:block bg-primary/5 border border-primary/20 rounded-2xl p-3.5 text-xs text-on-surface-variant space-y-1.5 shrink-0">
               <div className="flex items-center gap-1.5 font-semibold text-primary text-xs">
                 <span className="material-symbols-outlined text-[16px]">verified</span>
                 <span>Belajar Santai &amp; Terarah</span>
@@ -408,7 +501,17 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
 
           {/* RIGHT COLUMN (9 cols): Main Reading Content */}
           <main className="lg:col-span-9 space-y-8">
-            <article className="space-y-8">
+            <GlossaryLinkContext.Provider
+              value={{
+                topicId: theoryContent.topicId,
+                onOpenSection: (term) => term.sectionId && scrollToSection(term.sectionId),
+                onOpenGlossary: (term) => {
+                  setGlossaryTerm(term);
+                  setGlossaryOpen(true);
+                },
+              }}
+            >
+            <article ref={articleRef} className="space-y-8">
               {theoryContent.sections.map((section, idx) => (
                 <section
                   key={section.id}
@@ -435,52 +538,66 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
 
                   {/* Body Paragraph */}
                   <p className="text-base sm:text-lg text-on-surface-variant leading-relaxed whitespace-pre-line">
-                    <RichText text={section.body} />
+                    <RichText text={section.body} linkText={(t) => linkTerms(t, section.id)} />
                   </p>
 
-                  {/* TERMS LIST (Structured Definition Cards) */}
+                  {/* TERMS: one card listing the section's key terms. Each row: the term (with the name in
+                      brackets shown as a subtitle) on the left, its meaning and an example on the right. */}
                   {section.terms && section.terms.length > 0 && (
-                    <div className="space-y-3 pt-1">
-                      <div className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
-                        <span className="material-symbols-outlined text-[16px]">dictionary</span>
-                        <span>Definisi &amp; Konsep Kunci</span>
+                    <div className="@container rounded-2xl border border-outline-variant/60 bg-surface-container-lowest overflow-hidden">
+                      <div className="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 bg-primary-fixed/25 border-b border-outline-variant/40">
+                        <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-wider">
+                          <span className="material-symbols-outlined text-[18px]">dictionary</span>
+                          <span>Definisi &amp; Konsep Kunci</span>
+                        </div>
+                        <span className="text-xs text-on-surface-variant">{section.terms.length} istilah</span>
                       </div>
-                      <div className="grid grid-cols-1 gap-3">
-                        {section.terms.map((t, tIdx) => (
-                          <div
-                            key={tIdx}
-                            className="p-4 rounded-xl bg-surface-container-low/80 border border-outline-variant/60 space-y-2 hover:border-primary/40 transition-colors"
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="w-2 h-2 rounded-full bg-primary"></span>
-                              <strong className="text-xs sm:text-sm font-bold text-on-surface">
-                                <RichText text={t.term} />
-                              </strong>
+                      <dl className="divide-y divide-outline-variant/40">
+                        {section.terms.map((t, tIdx) => {
+                          const named = t.term.match(/^(.*?)\s*\(([^()]*)\)\s*$/);
+                          return (
+                            <div
+                              key={tIdx}
+                              className="grid grid-cols-1 @xl:grid-cols-[minmax(0,12rem)_minmax(0,1fr)] @3xl:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] gap-x-6 gap-y-2 px-4 sm:px-5 py-4"
+                            >
+                              <dt className="flex items-start gap-2.5">
+                                <span aria-hidden="true" className="mt-[7px] w-1.5 h-4 rounded-full bg-primary shrink-0" />
+                                <span className="min-w-0">
+                                  <span className="block text-sm sm:text-base font-bold text-on-surface leading-snug">
+                                    <RichText text={named ? named[1] : t.term} />
+                                  </span>
+                                  {named && (
+                                    <span className="block mt-0.5 text-xs font-medium text-on-surface-variant">{named[2]}</span>
+                                  )}
+                                </span>
+                              </dt>
+                              <dd className="space-y-2 pl-4 @xl:pl-0">
+                                <p className="text-sm sm:text-[15px] text-on-surface leading-relaxed">
+                                  <RichText text={t.definition} />
+                                </p>
+                                {t.example && (
+                                  <p className="flex items-start gap-2 text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                                    <span className="shrink-0 inline-flex items-center gap-1 mt-px px-1.5 py-0.5 rounded-md bg-secondary-fixed/60 text-on-secondary-fixed-variant text-[11px] font-semibold">
+                                      <span className="material-symbols-outlined text-[14px]">lightbulb</span>
+                                      Contoh
+                                    </span>
+                                    <span className="min-w-0">
+                                      <RichText text={t.example} />
+                                    </span>
+                                  </p>
+                                )}
+                              </dd>
                             </div>
-                            <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed pl-4 border-l-2 border-primary/20">
-                              <RichText text={t.definition} />
-                            </p>
-                            {t.example && (
-                              <div className="text-xs text-on-surface/90 bg-surface-container-lowest p-2.5 rounded-lg border border-outline-variant/40 flex items-start gap-1.5">
-                                <span className="material-symbols-outlined text-[16px] text-amber-700 shrink-0 mt-0.5">
-                                  lightbulb
-                                </span>
-                                <span>
-                                  <strong className="text-on-surface">Contoh:</strong>{' '}
-                                  <RichText text={t.example} />
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
+                          );
+                        })}
+                      </dl>
                     </div>
                   )}
 
                   {/* SCENARIO IF PRESENT */}
                   {section.scenario && (
                     <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/60 text-xs sm:text-sm text-on-surface leading-relaxed whitespace-pre-line">
-                      <RichText text={section.scenario} />
+                      <RichText text={section.scenario} linkText={(t) => linkTerms(t, section.id)} />
                     </div>
                   )}
 
@@ -493,8 +610,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                       </div>
 
                       {section.formula && (
-                        <div className="bg-surface-container-lowest px-4 py-3.5 rounded-xl border border-outline-variant/60 text-sm sm:text-base font-bold text-black text-center sm:text-left overflow-x-auto font-mono leading-relaxed shadow-2xs">
-                          {section.formula}
+                        <div className="bg-surface-container-lowest px-4 py-3.5 rounded-xl border border-outline-variant/60 text-sm sm:text-base text-black leading-relaxed shadow-2xs">
+                          <MathFormula text={section.formula} display textClassName="font-semibold" />
                         </div>
                       )}
 
@@ -509,8 +626,8 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                               <div className="font-bold text-xs text-primary">
                                 <RichText text={fItem.label} />
                               </div>
-                              <div className="font-mono font-bold text-sm sm:text-base text-black">
-                                {fItem.formula}
+                              <div className="text-sm sm:text-base text-black">
+                                <MathFormula text={fItem.formula} display textClassName="font-semibold" />
                               </div>
                               {fItem.note && (
                                 <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -524,9 +641,10 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                                       key={sIdx}
                                       className="flex items-center gap-1.5 text-xs text-on-surface-variant"
                                     >
-                                      <span className="font-mono font-bold text-black bg-surface-container-high/60 px-1 py-0.5 rounded text-xs">
-                                        {sym.symbol}
-                                      </span>
+                                      <MathSymbol
+                                        symbol={sym.symbol}
+                                        className="math-inline font-semibold text-black bg-surface-container-high/60 px-1 py-0.5 rounded text-xs shrink-0"
+                                      />
                                       <span>
                                         ={' '}
                                         <RichText text={sym.meaning} />
@@ -553,9 +671,10 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                                 key={sIdx}
                                 className="flex items-center gap-2 text-xs text-black bg-surface-container-lowest px-2.5 py-1 rounded-lg border border-outline-variant/30"
                               >
-                                <span className="font-mono font-bold text-black bg-surface-container-high/60 px-1.5 py-0.5 rounded">
-                                  {sym.symbol}
-                                </span>
+                                <MathSymbol
+                                  symbol={sym.symbol}
+                                  className="math-inline font-semibold text-black bg-surface-container-high/60 px-1.5 py-0.5 rounded shrink-0"
+                                />
                                 <span className="font-medium">
                                   ={' '}
                                   <RichText text={sym.meaning} />
@@ -607,7 +726,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                                 <RichText text={st.title} />
                               </h4>
                               <p className="text-xs sm:text-sm text-black font-medium leading-relaxed">
-                                <RichText text={st.instruction} />
+                                <RichText text={st.instruction} linkText={(t) => linkTerms(t, section.id)} />
                               </p>
                               {(st as { substituted?: string }).substituted && (
                                 <p className="text-xs sm:text-sm font-mono text-black bg-surface-container-lowest px-2.5 py-1.5 rounded-lg border border-outline-variant/40 leading-relaxed">
@@ -666,7 +785,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                                     <RichText text={st.title} />
                                   </h4>
                                   <p className="text-xs sm:text-sm text-black font-medium leading-relaxed">
-                                    <RichText text={st.instruction} />
+                                    <RichText text={st.instruction} linkText={(t) => linkTerms(t, section.id)} />
                                   </p>
                                   {st.substituted && (
                                     <p className="text-xs sm:text-sm font-mono text-black bg-surface-container-lowest px-2.5 py-1.5 rounded-lg border border-outline-variant/40 leading-relaxed whitespace-pre-line">
@@ -708,11 +827,11 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                                 <td className="py-2.5 px-3 font-bold text-black">
                                   <RichText text={row.ukuran} />
                                 </td>
-                                <td className="py-2.5 px-3 font-mono font-bold text-black text-xs sm:text-sm">
-                                  {row.sampel}
+                                <td className="py-2.5 px-3 text-black text-xs sm:text-sm">
+                                  <MathFormula text={row.sampel} display className="math-cell" textClassName="font-medium" />
                                 </td>
-                                <td className="py-2.5 px-3 font-mono font-bold text-black text-xs sm:text-sm bg-surface-container-low/40">
-                                  {row.populasi || '—'}
+                                <td className="py-2.5 px-3 text-black text-xs sm:text-sm bg-surface-container-low/40">
+                                  {row.populasi ? <MathFormula text={row.populasi} display className="math-cell" textClassName="font-medium" /> : '—'}
                                 </td>
                                 {row.catatan && (
                                   <td className="py-2.5 px-3 text-xs text-black font-medium leading-relaxed">
@@ -756,7 +875,7 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                               </span>
                             </div>
                             <div className="text-xs sm:text-sm text-on-surface leading-relaxed whitespace-pre-line bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/40 space-y-1">
-                              <RichText text={example.text} />
+                              <RichText text={example.text} linkText={(t) => linkTerms(t, section.id)} />
                             </div>
                           </div>
                         ))}
@@ -766,6 +885,10 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
                 </section>
               ))}
             </article>
+            </GlossaryLinkContext.Provider>
+
+            {/* Latihan Harian (only topics whose chapter has Latihan Soal) */}
+            <DailyExercise topicId={theoryContent.topicId} userId={userId} onResult={onDailyResult} />
 
             {/* Bottom Sentinel to detect completion of reading */}
             <div ref={sentinelRef} className="h-8 w-full mt-4" aria-hidden="true" />
@@ -860,6 +983,22 @@ export const TheoryPage: React.FC<TheoryPageProps> = ({
           </div>
         </div>
       </footer>
+
+      {glossaryOpen && (
+        <Suspense fallback={null}>
+          <GlossaryModal
+            isOpen
+            onClose={() => setGlossaryOpen(false)}
+            topicId={glossaryTerm?.topicId ?? theoryContent.topicId}
+            initialQuery={glossaryTerm?.term}
+            canOpen={(term) => term.topicId === theoryContent.topicId}
+            onOpenSection={(term) => {
+              setGlossaryOpen(false);
+              if (term.sectionId) scrollToSection(term.sectionId);
+            }}
+          />
+        </Suspense>
+      )}
     </div>
   );
 };

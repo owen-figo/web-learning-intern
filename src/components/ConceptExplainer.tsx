@@ -34,6 +34,7 @@ const DiscreteProbabilityVisuals = lazy(() => import('./DiscreteProbabilityVisua
 const ContinuousProbabilityVisuals = lazy(() => import('./ContinuousProbabilityVisuals').then((m) => ({ default: m.ContinuousProbabilityVisuals })));
 const SamplingDistributionVisuals = lazy(() => import('./SamplingDistributionVisuals').then((m) => ({ default: m.SamplingDistributionVisuals })));
 const ConfidenceIntervalVisuals = lazy(() => import('./ConfidenceIntervalVisuals').then((m) => ({ default: m.ConfidenceIntervalVisuals })));
+const HypothesisVisuals = lazy(() => import('./HypothesisVisuals').then((m) => ({ default: m.HypothesisVisuals })));
 
 // visualType → module that renders it. Add new types here when adding visuals.
 const MODULE_TYPES: [TypedVisual, string[]][] = [
@@ -50,6 +51,25 @@ const MODULE_TYPES: [TypedVisual, string[]][] = [
   [ContinuousProbabilityVisuals, ['continuous-vs-discrete', 'pdf-area', 'normal-pdf', 'z-transformation', 'uniform-pdf', 'uniform-stats', 'exponential-pdf']],
   [SamplingDistributionVisuals, ['sampling-distribution-concept', 'standard-error-mean', 'central-limit-theorem', 'sample-mean-z', 'sample-mean-interval', 'sample-proportion', 'proportion-z']],
   [ConfidenceIntervalVisuals, ['ci-coverage', 'ci-sigma-known', 't-distribution', 'ci-sigma-unknown', 'ci-proportion', 'sample-size-mean', 'sample-size-proportion']],
+  [
+    HypothesisVisuals,
+    [
+      'hypothesis-setup',
+      'type-errors',
+      'critical-region',
+      'z-test-mean',
+      'p-value',
+      't-test-mean',
+      'one-tail-test',
+      'z-test-proportion',
+      'test-chooser',
+      'test-chooser-two',
+      'independent-vs-related',
+      'pooled-t-test',
+      'ci-difference',
+      'paired-t-test',
+    ],
+  ],
 ];
 const MODULE_OF: Record<string, TypedVisual> = Object.fromEntries(MODULE_TYPES.flatMap(([mod, types]) => types.map((t) => [t, mod])));
 

@@ -690,7 +690,7 @@ const TwoBars: React.FC<{ min: number; max: number; ticks: number[]; color: stri
 const MisleadingStep: React.FC<{ step: number }> = ({ step }) => {
   if (step === 1) {
     return (
-      <Frame note="Produk B hanya 5% lebih tinggi (105 vs 100), tetapi sumbu yang dipotong di 98 membuatnya tampak 3,5× lebih tinggi.">
+      <Frame note="Produk B hanya 5% lebih tinggi (105 vs 100), tetapi sumbu yang dipotong di 98 membuatnya tampak 3.5× lebih tinggi.">
         <Compare badLabel="Sumbu mulai 98" goodLabel="Sumbu mulai 0" bad={<TwoBars min={98} max={106} ticks={[98, 102, 106]} color="#e11d48" />} good={<TwoBars min={0} max={120} ticks={[0, 60, 120]} color={FILL} />} />
       </Frame>
     );

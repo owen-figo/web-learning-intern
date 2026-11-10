@@ -1,13 +1,9 @@
 import { getUser } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { errorResponse, handle } from '@/lib/http';
+import { jakartaDate } from '@/lib/streak';
 
 export const dynamic = 'force-dynamic';
-
-/** 'YYYY-MM-DD' in Jakarta time (UTC+7), `daysAgo` days back. */
-function jakartaDate(daysAgo = 0): string {
-  return new Date(Date.now() + 7 * 3600_000 - daysAgo * 86400_000).toISOString().slice(0, 10);
-}
 
 // GET /api/progress  (needs Authorization: Bearer <token>)
 // → the signed-in student's profile, finished topics, and Latihan Mandiri answers.

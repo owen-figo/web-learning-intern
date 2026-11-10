@@ -1,13 +1,14 @@
 import { getUser } from '@/lib/auth';
 import { supabaseAdmin } from '@/lib/supabase';
 import { errorResponse, handle } from '@/lib/http';
+import { recordActivity } from '@/lib/streak';
 import { isTopicId, TOPIC_COMPLETION_XP } from '@/lib/topics';
 
 export const dynamic = 'force-dynamic';
 
 // POST /api/progress/topics  { "topicId": "..." }  (needs Authorization: Bearer <token>)
-// Marks a topic's theory as finished ("Selesai Belajar"). XP is decided here, not by the browser,
-// and only awarded the first time.
+// Marks a topic's theory as finished ("Selesai Belajar") → { topicId, xpAwarded, streakDays }.
+// XP is decided here, not by the browser, and only awarded the first time.
 export const POST = handle(async (req: Request) => {
   const user = await getUser(req);
   if (!user) return errorResponse(401, 'Silakan masuk terlebih dahulu');
@@ -23,11 +24,14 @@ export const POST = handle(async (req: Request) => {
     .select('topic_id');
   if (error) throw error;
 
+  // Finishing a topic always counts for the streak, even when it was finished before.
+  const { streakDays } = await recordActivity(db, user.id);
+
   const firstTime = data.length > 0;
   if (firstTime) {
     const { error: xpError } = await db.rpc('add_xp', { p_user: user.id, p_amount: TOPIC_COMPLETION_XP });
     if (xpError) throw xpError;
   }
 
-  return Response.json({ topicId: body.topicId, xpAwarded: firstTime ? TOPIC_COMPLETION_XP : 0 });
+  return Response.json({ topicId: body.topicId, xpAwarded: firstTime ? TOPIC_COMPLETION_XP : 0, streakDays });
 });

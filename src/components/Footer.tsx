@@ -3,14 +3,12 @@ import { ActivePage } from '../types';
 
 interface FooterProps {
   setActivePage: (page: ActivePage) => void;
-  onOpenFormula: () => void;
   onOpenHelp: () => void;
   onOpenPrivacy: () => void;
 }
 
 export const Footer: React.FC<FooterProps> = ({
   setActivePage,
-  onOpenFormula,
   onOpenHelp,
   onOpenPrivacy,
 }) => {
@@ -35,11 +33,11 @@ export const Footer: React.FC<FooterProps> = ({
 
         <nav aria-label="Navigasi Footer" className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs sm:text-sm">
           <button
-            onClick={onOpenFormula}
+            onClick={() => setActivePage('glosarium')}
             className="text-primary font-medium hover:underline transition-colors duration-200 flex items-center gap-1"
           >
-            <span className="material-symbols-outlined text-[16px]">menu_book</span>
-            <span>Panduan Formula</span>
+            <span className="material-symbols-outlined text-[16px]">dictionary</span>
+            <span>Glosarium</span>
           </button>
           <button
             onClick={onOpenPrivacy}

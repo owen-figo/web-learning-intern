@@ -38,6 +38,18 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [unreadNotifications, setUnreadNotifications] = useState(true);
   const notificationsRef = useRef<HTMLDivElement>(null);
 
+  // Little bump on the flame when today's activity grows the streak.
+  const [streakBump, setStreakBump] = useState(false);
+  const prevStreakRef = useRef(user.streakDays);
+  useEffect(() => {
+    const grew = user.streakDays > prevStreakRef.current;
+    prevStreakRef.current = user.streakDays;
+    if (!grew) return;
+    setStreakBump(true);
+    const t = window.setTimeout(() => setStreakBump(false), 600);
+    return () => window.clearTimeout(t);
+  }, [user.streakDays]);
+
   // Close the notification box on a click/tap outside it (bell included in the wrapper) or Escape.
   useEffect(() => {
     if (!showNotifications) return;
@@ -164,6 +176,23 @@ export const Navbar: React.FC<NavbarProps> = ({
             >
               Latihan Mandiri
             </button>
+            {/* The full menu doesn't fit next to the right-hand pills on tablets: hidden below lg (the
+                footer links to it), icon only below xl. */}
+            <button
+              onClick={() => setActivePage('glosarium')}
+              aria-label="Glosarium"
+              title="Glosarium"
+              className={`hidden lg:block pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
+                activePage === 'glosarium'
+                  ? 'text-primary border-primary font-semibold'
+                  : 'border-transparent hover:text-primary'
+              }`}
+            >
+              <span className="xl:hidden flex" aria-hidden="true">
+                <span className="material-symbols-outlined text-[20px] leading-none">dictionary</span>
+              </span>
+              <span className="hidden xl:inline">Glosarium</span>
+            </button>
             <button
               onClick={() => setActivePage('leaderboard')}
               className={`pb-1 whitespace-nowrap transition-colors duration-200 border-b-2 ${
@@ -179,45 +208,51 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Right Section: Streak, XP, Notifications, User */}
         <div className="flex items-center gap-1 sm:gap-1.5 lg:gap-3.5">
-          {/* Streak Indicator Pill: Only flame and number */}
-          <div
-            aria-label={`Streak ${user.streakDays} hari`}
-            className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base lg:text-lg font-bold select-none shrink-0"
-          >
-            <span className="text-lg lg:text-xl leading-none">🔥</span>
-            <span className="leading-none">{user.streakDays}</span>
-          </div>
-
-          {/* XP Indicator Pill & Popup */}
-          <div className="relative shrink-0">
+          {/* Streak Indicator Pill: Only flame and number (signed-in students only) */}
+          {signedIn && (
             <div
-              aria-label={`Total ${user.xp} XP`}
-              className={`flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full text-primary text-base lg:text-lg font-bold transition-colors duration-500 ${
-                xpBump ? 'xp-bump bg-primary-fixed' : 'bg-primary-fixed/40'
+              aria-label={`Streak ${user.streakDays} hari`}
+              className={`flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base lg:text-lg font-bold select-none shrink-0 ${
+                streakBump ? 'xp-bump' : ''
               }`}
             >
-              <span
-                className="material-symbols-outlined text-primary text-[20px] lg:text-[24px]"
-                style={{ fontVariationSettings: "'FILL' 1" }}
-              >
-                stars
-              </span>
-              <span className="leading-none tabular-nums">{shownXp} XP</span>
+              <span className="text-lg lg:text-xl leading-none">🔥</span>
+              <span className="leading-none">{user.streakDays}</span>
             </div>
+          )}
 
-            {/* XP-Gain Popup */}
-            {visibleXp !== null && (
+          {/* XP Indicator Pill & Popup (signed-in students only) */}
+          {signedIn && (
+            <div className="relative shrink-0">
               <div
-                role="status"
-                aria-live="polite"
-                className={`xp-float-in pointer-events-none absolute left-1/2 top-full mt-2 z-50 px-3 py-1 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow-md shadow-primary/25 whitespace-nowrap transition-opacity duration-400 ${
-                  isFadingOut ? 'opacity-0' : 'opacity-100'
+                aria-label={`Total ${user.xp} XP`}
+                className={`flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full text-primary text-base lg:text-lg font-bold transition-colors duration-500 ${
+                  xpBump ? 'xp-bump bg-primary-fixed' : 'bg-primary-fixed/40'
                 }`}
               >
-                +{visibleXp} XP
+                <span
+                  className="material-symbols-outlined text-primary text-[20px] lg:text-[24px]"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  stars
+                </span>
+                <span className="leading-none tabular-nums">{shownXp} XP</span>
               </div>
-            )}
-          </div>
+
+              {/* XP-Gain Popup */}
+              {visibleXp !== null && (
+                <div
+                  role="status"
+                  aria-live="polite"
+                  className={`xp-float-in pointer-events-none absolute left-1/2 top-full mt-2 z-50 px-3 py-1 rounded-xl bg-primary text-on-primary font-bold text-xs sm:text-sm shadow-md shadow-primary/25 whitespace-nowrap transition-opacity duration-400 ${
+                    isFadingOut ? 'opacity-0' : 'opacity-100'
+                  }`}
+                >
+                  +{visibleXp} XP
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Pomodoro Timer */}
           <PomodoroButton />
@@ -252,45 +287,49 @@ export const Navbar: React.FC<NavbarProps> = ({
                       <span>🌿</span> Pengingat Tanpa Beban
                     </p>
                     <p>
-                      {user.streakDays > 0
+                      {signedIn && user.streakDays > 0
                         ? `Streak ${user.streakDays} harimu aktif! Luangkan 3 menit santai sebelum 23.59 untuk menjaga ritme.`
                         : 'Mulai ritme belajarmu hari ini: satu materi atau beberapa soal sudah cukup.'}
                     </p>
-                  </div>
-                  <div className="p-2.5 rounded-lg bg-primary-fixed/20 text-xs text-on-surface-variant space-y-1">
-                    <p className="font-medium text-primary flex items-center gap-1">
-                      <span>⭐</span> Pencapaian Baru Terbuka
-                    </p>
-                    <p>Lencana &apos;Konsisten 5 Hari&apos; berhasil kamu raih!</p>
                   </div>
                 </div>
               </div>
             )}
           </div>
 
-          {/* User Profile Mini Avatar & Login Button */}
-          <div className="flex items-center gap-2 shrink-0">
+          {/* Signed in: avatar (opens the profile) + Keluar on wide screens (phones: Keluar on the profile
+              page). Guests: a Masuk button at every size. */}
+          {signedIn ? (
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => setActivePage('profile')}
+                title={`Profil: ${user.name}`}
+                aria-label="Buka profil"
+                className={`w-9 h-9 rounded-full text-on-primary flex items-center justify-center font-semibold text-xs tracking-wider transition-all shadow-xs ${
+                  activePage === 'profile'
+                    ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest'
+                    : 'ring-2 ring-primary-fixed-dim/40 hover:ring-primary'
+                }`}
+                style={{ backgroundColor: user.avatarColor }}
+              >
+                <span>{user.initials}</span>
+              </button>
+              <button
+                onClick={onSignOut}
+                className="hidden lg:inline-flex text-xs md:text-sm font-medium text-on-surface-variant hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors"
+              >
+                Keluar
+              </button>
+            </div>
+          ) : (
             <button
-              onClick={() => setActivePage('profile')}
-              title={`Profil: ${user.name}`}
-              aria-label="Buka profil"
-              className={`w-9 h-9 rounded-full text-on-primary flex items-center justify-center font-semibold text-xs tracking-wider transition-all shadow-xs ${
-                activePage === 'profile'
-                  ? 'ring-2 ring-primary ring-offset-2 ring-offset-surface-container-lowest'
-                  : 'ring-2 ring-primary-fixed-dim/40 hover:ring-primary'
-              }`}
-              style={{ backgroundColor: user.avatarColor }}
+              onClick={onOpenAuth}
+              className="shrink-0 inline-flex items-center gap-1.5 px-3 sm:px-4 py-2 rounded-lg bg-primary text-on-primary text-sm font-semibold hover:bg-primary-container transition-colors shadow-xs"
             >
-              <span>{user.initials}</span>
+              <span className="material-symbols-outlined" style={{ fontSize: 18 }}>login</span>
+              Masuk
             </button>
-
-            <button
-              onClick={signedIn ? onSignOut : onOpenAuth}
-              className="hidden lg:inline-flex text-xs md:text-sm font-medium text-on-surface-variant hover:text-primary px-2.5 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors"
-            >
-              {signedIn ? 'Keluar' : 'Masuk'}
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </header>

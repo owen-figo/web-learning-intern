@@ -1,6 +1,7 @@
 import type { UserProfile } from '../types';
 import { api } from './api';
 import { authApi } from './auth';
+import { TOTAL_PRACTICE_QUESTIONS, practiceTopicOf } from './practiceBank';
 
 // The signed-in student's data in the database (backend routes under /api/progress and /api/profile).
 
@@ -41,7 +42,7 @@ export const saveProfile = (changes: ProfileChanges) =>
   authApi<{ ok: true }>('/api/profile', { method: 'PATCH', body: JSON.stringify(changes) });
 
 export const completeTopic = (topicId: string) =>
-  authApi<{ topicId: string; xpAwarded: number }>('/api/progress/topics', { method: 'POST', body: JSON.stringify({ topicId }) });
+  authApi<{ topicId: string; xpAwarded: number; streakDays: number }>('/api/progress/topics', { method: 'POST', body: JSON.stringify({ topicId }) });
 
 export const loadLeaderboard = () => api<{ entries: LeaderboardRow[] }>('/api/leaderboard');
 
@@ -50,11 +51,11 @@ export function initialsOf(name: string): string {
   return (parts.length > 1 ? parts[0][0] + parts[1][0] : name.trim().slice(0, 2)).toUpperCase();
 }
 
-const TOTAL_PRACTICE_QUESTIONS = 320;
-
-/** Profile numbers that come from the practice answers. */
+/** Profile numbers that come from the Latihan Mandiri answers (see lib/practiceBank.ts). */
 export function practiceStats(answers: Record<string, SavedAnswer>): Pick<UserProfile, 'questionsDone' | 'selfCheckPercentage' | 'understandingScore'> {
-  const all = Object.values(answers);
+  const all = Object.entries(answers)
+    .filter(([id]) => practiceTopicOf(id) !== null)
+    .map(([, a]) => a);
   const correct = all.filter((a) => a.correct).length;
   return {
     questionsDone: all.length,

@@ -1,4 +1,4 @@
-export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth' | 'teori' | 'leaderboard';
+export type ActivePage = 'landing' | 'topics' | 'practice' | 'profile' | 'auth' | 'teori' | 'leaderboard' | 'glosarium';
 
 export interface LeaderboardEntry {
   id: string;
@@ -14,15 +14,6 @@ export type DifficultyTier = 'mudah' | 'sedang' | 'sulit' | 'sangat_sulit';
 /** 'terbuka' = would be locked, but opened by the admin unlock-all switch. */
 export type TopicStatus = 'selesai' | 'aktif' | 'terbuka' | 'terkunci';
 
-export interface Concept {
-  id: string;
-  title: string;
-  summary: string;
-  formula?: string;
-  example?: string;
-  binusContext?: string;
-}
-
 /** One Latihan Mandiri question (multiple choice, 4 options shown as A–D). */
 export interface PracticeQuestion {
   /** e.g. 'T3-L04' = topic 3, tier Sulit (L), question 4 */
@@ -36,7 +27,7 @@ export interface PracticeQuestion {
   options: string[];
   hint?: string;
   formula?: string;
-  /** Optional link to a glossary concept in data/concepts.ts. */
+  /** Optional glossary term id (data/glossary.ts), shown as "Konsep yang Diuji". */
   conceptId?: string;
   // The answer key and worked solution stay on the server; see PracticeCheckResult.
 }
@@ -51,6 +42,8 @@ export interface PracticeCheckResult {
   explanation: string;
   /** Only for signed-in students: XP the server awarded for this answer (0 if none). */
   xpAwarded?: number;
+  /** Only for signed-in students: their streak after this answer. */
+  streakDays?: number;
 }
 
 export interface TheoryExample {
@@ -227,26 +220,6 @@ export interface Topic {
   excelSpssAvailable?: boolean;
   thesisTag?: string;
   contentType?: 'practice' | 'teori';
-}
-
-export interface BadgeItem {
-  id: string;
-  title: string;
-  description: string;
-  reward: string;
-  icon: string;
-  unlocked: boolean;
-  bgClass?: string;
-}
-
-export interface LearningSession {
-  id: string;
-  title: string;
-  timeAgo: string;
-  questionsCompleted: number;
-  tag: string;
-  tagType: 'rileks' | 'baik' | 'diulang';
-  icon: string;
 }
 
 export interface UserProfile {

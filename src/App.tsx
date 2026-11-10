@@ -12,10 +12,9 @@ import { Footer } from './components/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { TopicsPage } from './pages/TopicsPage';
 import { AuthModal } from './components/AuthModal';
-import { FormulaModal } from './components/FormulaModal';
 import { InfoModal } from './components/InfoModal';
 import { CalculatorDock } from './components/CalculatorDock';
-import { getSignedInStudent, signOut } from './lib/auth';
+import { getSignedInStudent, hasSavedSession, signOut } from './lib/auth';
 import {
   completeTopic,
   initialsOf,
@@ -33,6 +32,7 @@ const PracticePage = lazy(() => import('./pages/PracticePage').then((m) => ({ de
 const ProfilePage = lazy(() => import('./pages/ProfilePage').then((m) => ({ default: m.ProfilePage })));
 const TheoryRoute = lazy(() => import('./pages/TheoryRoute').then((m) => ({ default: m.TheoryRoute })));
 const LeaderboardPage = lazy(() => import('./pages/LeaderboardPage').then((m) => ({ default: m.LeaderboardPage })));
+const GlossaryPage = lazy(() => import('./pages/GlossaryPage').then((m) => ({ default: m.GlossaryPage })));
 
 // Admin "buka semua topik" switch. Front-end only: it changes what this browser
 // shows, it is not access control. The switch is shown when the page is opened
@@ -56,6 +56,18 @@ function writeAdminUnlock(on: boolean) {
   }
 }
 
+/** Pages guests can open; every other page asks the visitor to sign in first. */
+const PUBLIC_PAGES: ActivePage[] = ['landing'];
+
+const PAGE_NAMES: Partial<Record<ActivePage, string>> = {
+  topics: 'Topik Belajar',
+  teori: 'materi',
+  practice: 'Latihan Mandiri',
+  glosarium: 'Glosarium',
+  leaderboard: 'Leaderboard',
+  profile: 'Profil',
+};
+
 /** Profile fields the student can change; saved to their account when signed in. */
 const PROFILE_FIELDS: (keyof ProfileChanges)[] = ['name', 'initials', 'avatarColor', 'emailDigest', 'whatsappPing'];
 
@@ -64,9 +76,16 @@ export default function App() {
   const [user, setUser] = useState<UserProfile>(initialUserProfile);
   const [isAuthOpen, setIsAuthOpen] = useState<boolean>(false);
   const [signedIn, setSignedIn] = useState<boolean>(false);
+  // Read synchronously by the page gate (state updates land a render later).
+  const signedInRef = useRef(false);
+  // Until the saved session has been checked, a saved one counts as signed in (no flash of the
+  // sign-in window for returning students).
+  const sessionCheckedRef = useRef(false);
+  // Page a guest tried to open; opened right after they sign in.
+  const pendingPageRef = useRef<ActivePage | null>(null);
+  const [authReason, setAuthReason] = useState<string | null>(null);
   // Set once the signed-in student's progress has loaded from the database.
   const [account, setAccount] = useState<{ id: string; answers: Record<string, SavedAnswer> } | null>(null);
-  const [isFormulaOpen, setIsFormulaOpen] = useState<boolean>(false);
   const [infoModalType, setInfoModalType] = useState<'privacy' | 'help' | null>(null);
   const [recentXpGained, setRecentXpGained] = useState<number>(0);
   const [recentXpKey, setRecentXpKey] = useState<number>(0);
@@ -77,6 +96,8 @@ export default function App() {
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(
     'mendefinisikan-mengumpulkan-data'
   );
+  // Section to open the reading page at (from a glossary term's "Baca di materi").
+  const [theorySectionId, setTheorySectionId] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [toastIcon, setToastIcon] = useState<string>('lock');
   const [adminUnlockAll, setAdminUnlockAll] = useState<boolean>(readAdminUnlock);
@@ -101,6 +122,14 @@ export default function App() {
   activePageRef.current = activePage;
   const setActivePage = (page: ActivePage) => {
     if (page === activePageRef.current) return;
+    const mayOpen =
+      PUBLIC_PAGES.includes(page) || signedInRef.current || (!sessionCheckedRef.current && hasSavedSession());
+    if (!mayOpen) {
+      pendingPageRef.current = page;
+      setAuthReason(`Masuk dulu untuk membuka ${PAGE_NAMES[page] ?? 'fitur ini'}.`);
+      setIsAuthOpen(true);
+      return;
+    }
     const doc = document as Document & { startViewTransition?: (update: () => void) => unknown };
     const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     if (doc.startViewTransition && !reduceMotion) {
@@ -152,7 +181,7 @@ export default function App() {
     return adminUnlockAll ? 'terbuka' : 'terkunci';
   };
 
-  const handleSelectTopic = (topicId: string) => {
+  const handleSelectTopic = (topicId: string, sectionId: string | null = null) => {
     const targetTopic = mockTopics.find((t) => t.id === topicId);
     if (!targetTopic) return;
     const status = getTopicStatus(targetTopic);
@@ -163,6 +192,7 @@ export default function App() {
       return;
     }
     setSelectedTopicId(topicId);
+    setTheorySectionId(sectionId);
     if (targetTopic.contentType === 'teori') {
       setActivePage('teori');
     } else {
@@ -178,7 +208,7 @@ export default function App() {
     setUser((prev) => ({
       ...prev,
       xp: prev.xp + amount,
-      weeklyXp: (prev.weeklyXp ?? 50) + amount,
+      weeklyXp: (prev.weeklyXp ?? 0) + amount,
     }));
 
     if (recentXpTimerRef.current) {
@@ -197,6 +227,7 @@ export default function App() {
       completeTopic(selectedTopicId)
         .then((r) => {
           if (r.xpAwarded > 0) handleAddXp(r.xpAwarded);
+          handleStreak(r.streakDays);
         })
         .catch(() => showToast('Progres topik belum tersimpan ke akunmu. Coba lagi nanti.', 'cloud_off'));
     } else {
@@ -265,8 +296,17 @@ export default function App() {
     setAccount((prev) => (prev ? { ...prev, answers: { ...prev.answers, [questionId]: answer } } : prev));
   };
 
+  // The server counts every answer / finished topic as today's activity and returns the streak.
+  const handleStreak = (streakDays: number) => {
+    setUser((prev) => ({ ...prev, streakDays, personalRecordStreak: Math.max(prev.personalRecordStreak, streakDays) }));
+  };
+
   const handleAuthSuccess = (name?: string) => {
+    signedInRef.current = true;
     setSignedIn(true);
+    const pending = pendingPageRef.current;
+    pendingPageRef.current = null;
+    if (pending) setActivePage(pending);
     if (name) {
       setUser((prev) => ({ ...prev, name, initials: initialsOf(name) }));
     }
@@ -278,14 +318,18 @@ export default function App() {
   // Keep the student signed in across reloads (Supabase saves the session in this browser).
   useEffect(() => {
     getSignedInStudent().then((student) => {
+      sessionCheckedRef.current = true;
       if (student) handleAuthSuccess(student.name);
+      else if (!PUBLIC_PAGES.includes(activePageRef.current)) setActivePage('landing');
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSignOut = async () => {
     await signOut().catch(() => undefined);
+    signedInRef.current = false;
     setSignedIn(false);
+    if (!PUBLIC_PAGES.includes(activePageRef.current)) setActivePage('landing');
     setAccount(null);
     setCompletedTopicIds([]);
     setUser(initialUserProfile);
@@ -306,7 +350,10 @@ export default function App() {
           activePage={activePage}
           setActivePage={setActivePage}
           user={shownUser}
-          onOpenAuth={() => setIsAuthOpen(true)}
+          onOpenAuth={() => {
+            setAuthReason(null);
+            setIsAuthOpen(true);
+          }}
           signedIn={signedIn}
           onSignOut={handleSignOut}
           recentXpGained={recentXpGained}
@@ -362,8 +409,11 @@ export default function App() {
             adminUnlockAll={adminUnlockAll}
             user={shownUser}
             key={account?.id ?? 'guest'}
+            userId={account?.id ?? null}
             accountAnswers={account?.answers}
             onAnswer={account ? handleAnswer : undefined}
+            onStreak={account ? handleStreak : undefined}
+            signedIn={signedIn}
           />
         )}
 
@@ -373,13 +423,28 @@ export default function App() {
             onComplete={handleCompleteTheory}
             setActivePage={setActivePage}
             isCompleted={Boolean(selectedTopicId && completedTopicIds.includes(selectedTopicId))}
+            initialSectionId={theorySectionId}
+            userId={account?.id ?? null}
+            onDailyResult={(r) => {
+              if (r.xpAwarded) handleAddXp(r.xpAwarded);
+              if (r.streakDays !== undefined) handleStreak(r.streakDays);
+              handleAnswer(r.questionId, { selected: r.selected, correct: r.correct });
+            }}
           />
+        )}
+
+        {activePage === 'glosarium' && (
+          <GlossaryPage onOpenTerm={(term) => handleSelectTopic(term.topicId, term.sectionId ?? null)} />
         )}
 
         {activePage === 'profile' && (
           <ProfilePage
             user={shownUser}
             onUpdateUser={handleUpdateUser}
+            signedIn={signedIn}
+            answers={account?.answers}
+            completedTopicIds={completedTopicIds}
+            onSignOut={handleSignOut}
           />
         )}
 
@@ -393,7 +458,6 @@ export default function App() {
       {activePage !== 'teori' && (
         <Footer
           setActivePage={setActivePage}
-          onOpenFormula={() => setIsFormulaOpen(true)}
           onOpenPrivacy={() => setInfoModalType('privacy')}
           onOpenHelp={() => setInfoModalType('help')}
         />
@@ -430,13 +494,12 @@ export default function App() {
       {/* Modals */}
       <AuthModal
         isOpen={isAuthOpen}
-        onClose={() => setIsAuthOpen(false)}
+        onClose={() => {
+          setIsAuthOpen(false);
+          pendingPageRef.current = null;
+        }}
         onSuccess={handleAuthSuccess}
-      />
-
-      <FormulaModal
-        isOpen={isFormulaOpen}
-        onClose={() => setIsFormulaOpen(false)}
+        reason={authReason}
       />
 
       <InfoModal

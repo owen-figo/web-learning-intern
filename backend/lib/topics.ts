@@ -10,6 +10,8 @@ export const TOPIC_IDS = [
   'distribusi-normal-kontinu',
   'distribusi-sampling',
   'estimasi-interval-kepercayaan',
+  'uji-hipotesis-satu-sampel',
+  'uji-dua-sampel',
 ] as const;
 
 /** XP for finishing a topic's theory, awarded once per topic (same as completionXp in the frontend). */

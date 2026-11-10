@@ -1,6 +1,6 @@
 -- Ngerti database schema for Supabase.
 -- Run once in the Supabase dashboard → SQL Editor → New query → paste → Run.
--- Then run, in order: students.sql, profile-sync.sql.
+-- Then run, in order: students.sql, profile-sync.sql, leaderboard-ties.sql.
 
 -- One row per student, created automatically when they sign up (trigger below).
 create table if not exists public.profiles (

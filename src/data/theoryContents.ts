@@ -1,4 +1,5 @@
 import { TheoryContent } from '../types';
+import { hypothesisTestingContent, twoSampleContent } from './theoryHypothesis';
 
 // Full reading content for every topic. Kept out of mockData.ts so it is only
 // downloaded together with the reading page (see pages/TheoryRoute.tsx).
@@ -3479,4 +3480,6 @@ export const theoryContents: TheoryContent[] = [
       },
     ],
   },
+  hypothesisTestingContent,
+  twoSampleContent,
 ];

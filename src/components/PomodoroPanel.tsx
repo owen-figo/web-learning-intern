@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { usePomodoro } from '../context/PomodoroContext';
 import { LIMITS, MODE_LABEL, clamp, durationMs, type PomodoroMode } from '../lib/pomodoro';
+import { PomodoroArt } from './PomodoroArt';
 
 /** Kelas Tailwind harus tertulis utuh agar ikut terbuat, jadi dipetakan di sini. */
 export const MODE_STYLE: Record<PomodoroMode, { ring: string; text: string; dot: string; chip: string }> = {
@@ -202,7 +203,7 @@ export const PomodoroPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
           </div>
 
           {/* Cincin waktu */}
-          <div className="relative mx-auto mt-5 w-48 h-48">
+          <div className="relative mx-auto mt-5 w-52 h-52">
             <svg viewBox="0 0 200 200" className="w-full h-full -rotate-90" aria-hidden="true">
               <circle cx="100" cy="100" r={RADIUS} fill="none" strokeWidth="10" className="stroke-outline-variant/50" />
               <circle
@@ -218,13 +219,14 @@ export const PomodoroPanel: React.FC<{ onClose: () => void }> = ({ onClose }) =>
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <PomodoroArt mode={p.mode} running={p.status === 'running'} />
               <span
-                className="font-code-formula text-[2.75rem] leading-none font-semibold tabular-nums text-on-surface"
+                className="mt-1.5 font-code-formula text-[2.5rem] leading-none font-semibold tabular-nums text-on-surface"
                 aria-label={`Sisa waktu ${p.clock}`}
               >
                 {p.clock}
               </span>
-              <span className={`mt-2 text-sm font-medium ${style.text}`}>{caption}</span>
+              <span className={`mt-1.5 text-sm font-medium ${style.text}`}>{caption}</span>
             </div>
           </div>
 

@@ -76,7 +76,7 @@ const IntervalLine: React.FC<{
   const toPx = (x: number) => 30 + ((Math.min(maxX, Math.max(minX, x)) - minX) / (maxX - minX)) * 400;
   const inside = reference ? reference.x >= lower && reference.x <= upper : true;
   return (
-    <div className="w-full h-32 sm:h-36 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+    <div className="w-full h-28 sm:h-32 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
       <svg viewBox="0 0 460 110" className="w-full h-full select-none overflow-visible">
         <line x1="20" y1="70" x2="440" y2="70" stroke="#191c1c" strokeWidth="1.5" />
         <rect x={toPx(lower)} y="58" width={Math.max(2, toPx(upper) - toPx(lower))} height="24" rx="4" fill="#97f4d5" opacity="0.85" stroke="#00614d" strokeWidth="2" />
@@ -307,7 +307,7 @@ export const TDistributionVisual: React.FC = () => {
           Distribusi t (df = {df}) vs Normal Standar Z
         </div>
 
-        <div className="w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+        <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
           <svg viewBox="0 0 460 160" className="w-full h-full select-none overflow-visible">
             <path d={tailPath(minX, -tCrit)} fill="#ffdad6" opacity="0.9" />
             <path d={tailPath(tCrit, maxX)} fill="#ffdad6" opacity="0.9" />

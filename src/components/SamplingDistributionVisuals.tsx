@@ -73,7 +73,7 @@ export const BellCurve: React.FC<BellCurveProps> = ({
   }
 
   return (
-    <div className="w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+    <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
       <svg viewBox="0 0 460 160" className="w-full h-full select-none overflow-visible">
         {ghost && (
           <path d={`M ${ghost.join(' L ')}`} fill="none" stroke="#6e7a74" strokeWidth="1.5" strokeDasharray="4 4" />
@@ -416,7 +416,7 @@ export const CentralLimitVisual: React.FC = () => {
           </span>
         </div>
 
-        <div className="w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+        <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
           <svg viewBox="0 0 460 160" className="w-full h-full select-none overflow-visible">
             {counts.map((c, i) => {
               const x1 = toPx(pop.min + i * binW);

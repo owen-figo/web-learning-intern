@@ -1019,7 +1019,7 @@ export const ZScoreVisual: React.FC = () => {
         </div>
 
         {/* Bell Curve Canvas SVG */}
-        <div className="relative w-full h-44 sm:h-52">
+        <div className="relative w-full h-40 sm:h-44">
           <svg viewBox="0 0 500 180" className="w-full h-full overflow-visible select-none">
             {/* Outlier Hatched Regions (Z < -3 and Z > +3) */}
             {/* Left Outlier (X < 40) */}
@@ -1295,7 +1295,7 @@ export const KurtosisVisual: React.FC = () => {
         </div>
 
         {/* Big Morphing SVG Curve */}
-        <div className="h-44 w-full">
+        <div className="h-40 w-full">
           <svg viewBox="0 0 400 160" className="w-full h-full select-none">
             <line x1="20" y1="140" x2="380" y2="140" stroke="#64748b" strokeWidth="1.5" />
             {/* Center Mean */}
@@ -1638,7 +1638,7 @@ export const BoxplotVisual: React.FC = () => {
         </div>
 
         {/* Boxplot SVG */}
-        <div className="relative w-full h-44 sm:h-48">
+        <div className="relative w-full h-40 sm:h-44">
           <svg viewBox="0 0 500 160" className="w-full h-full overflow-visible select-none">
             {/* Horizontal Axis */}
             <line x1="30" y1="130" x2="470" y2="130" stroke="#64748b" strokeWidth="1.5" />
@@ -1991,7 +1991,7 @@ export const CovarianceVisual: React.FC = () => {
         </div>
 
         {/* 4-Quadrant Scatter Plot SVG */}
-        <div className="relative w-full h-56 sm:h-64">
+        <div className="relative w-full h-48 sm:h-56">
           <svg viewBox="0 0 500 240" className="w-full h-full overflow-visible select-none">
             {/* Quadrant Crosshair lines */}
             {(() => {

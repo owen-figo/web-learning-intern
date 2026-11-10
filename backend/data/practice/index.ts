@@ -7,9 +7,11 @@ import { questions as topic5 } from './topic5Discrete';
 import { questions as topic6 } from './topic6Continuous';
 import { questions as topic7 } from './topic7Sampling';
 import { questions as topic8 } from './topic8Confidence';
+import { questions as topic9 } from './topic9Hypothesis';
+import { questions as topic10 } from './topic10TwoSample';
 
-// Latihan Mandiri question bank: 8 topics × 4 tiers × 10 questions.
-const ALL: PracticeQuestion[] = [...topic1, ...topic2, ...topic3, ...topic4, ...topic5, ...topic6, ...topic7, ...topic8];
+// Latihan Mandiri question bank: 10 topics × 4 tiers × 10 questions.
+const ALL: PracticeQuestion[] = [...topic1, ...topic2, ...topic3, ...topic4, ...topic5, ...topic6, ...topic7, ...topic8, ...topic9, ...topic10];
 
 export const QUESTIONS_BY_TOPIC: ReadonlyMap<string, PracticeQuestion[]> = ALL.reduce((map, q) => {
   map.set(q.topicId, [...(map.get(q.topicId) ?? []), q]);

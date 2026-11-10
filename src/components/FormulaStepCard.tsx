@@ -1,13 +1,14 @@
 import React from 'react';
 import { TheorySection, FormulaSymbol } from '../types';
+import { MathFormula, MathSymbol } from './MathFormula';
 
 // =========================================================================
 // FORMULA STEP CARD
 // Fallback visual for calculation steps without a dedicated picture.
-// Shows the section's formula with the symbols this step works on
-// highlighted, plus a progress strip of the steps.
-// Highlighting is automatic: a symbol is highlighted when it appears
-// (as a standalone token) in the step's title, instruction or example.
+// Shows the section's formula (drawn by KaTeX) with chips for the symbols
+// this step works on, plus a progress strip of the steps.
+// A symbol counts as used when it appears (as a standalone token) in the
+// step's title, instruction or example.
 // =========================================================================
 
 interface Candidate {
@@ -60,22 +61,6 @@ function highlightRanges(formula: string, symbols: FormulaSymbol[], stepText: st
   return ranges.sort((a, b) => a[0] - b[0]);
 }
 
-const Highlighted: React.FC<{ text: string; ranges: [number, number][] }> = ({ text, ranges }) => {
-  const parts: React.ReactNode[] = [];
-  let pos = 0;
-  ranges.forEach(([s, e], i) => {
-    if (s > pos) parts.push(text.slice(pos, s));
-    parts.push(
-      <mark key={i} className="bg-[#ffdad6] text-[#ba1a1a] font-extrabold rounded px-0.5">
-        {text.slice(s, e)}
-      </mark>,
-    );
-    pos = e;
-  });
-  if (pos < text.length) parts.push(text.slice(pos));
-  return <>{parts}</>;
-};
-
 export const FormulaStepCard: React.FC<{ section: TheorySection; stepNumber: number; total: number; stepText: string }> = ({ section, stepNumber, total, stepText }) => {
   const cands = candidatesOf(section);
   if (cands.length === 0) return null;
@@ -108,15 +93,28 @@ export const FormulaStepCard: React.FC<{ section: TheorySection; stepNumber: num
       {scored.map((s, i) => {
         const isBest = i === best;
         if (!isBest && scored.length > 3) return null;
+        if (!isBest) {
+          return (
+            <div key={i} className="px-3 text-xs text-on-surface-variant opacity-80">
+              <MathFormula text={s.cand.formula} />
+            </div>
+          );
+        }
+        // The symbols this step works on, as chips under the formula.
+        // Only symbols as chips: plain words from the formula ("tolak", "value", "Rentang") are left out.
+        const used = Array.from(new Set(s.ranges.map(([a, b]) => s.cand.formula.slice(a, b)))).filter((tok) => !/^[A-Za-z]{3,}$/.test(tok));
         return (
-          <div
-            key={i}
-            className={`rounded-lg px-3 py-2 font-mono overflow-x-auto ${
-              isBest ? 'bg-surface-container-lowest border border-outline-variant/60 text-sm sm:text-base font-bold text-black' : 'text-xs text-on-surface-variant'
-            }`}
-          >
-            {s.cand.label && isBest && <div className="font-sans text-xs font-bold text-primary mb-0.5">{s.cand.label}</div>}
-            <Highlighted text={s.cand.formula} ranges={isBest ? s.ranges : []} />
+          <div key={i} className="rounded-lg px-3 py-2 bg-surface-container-lowest border border-outline-variant/60 text-sm text-black space-y-1.5">
+            {s.cand.label && <div className="text-xs font-bold text-primary">{s.cand.label}</div>}
+            <MathFormula text={s.cand.formula} display textClassName="font-semibold" />
+            {used.length > 0 && (
+              <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-outline-variant/30">
+                <span className="text-xs text-on-surface-variant">Dipakai di langkah ini:</span>
+                {used.map((tok) => (
+                  <MathSymbol key={tok} symbol={tok} className="math-inline text-xs font-bold bg-[#ffdad6] text-[#ba1a1a] rounded px-1.5 py-0.5" />
+                ))}
+              </div>
+            )}
           </div>
         );
       })}

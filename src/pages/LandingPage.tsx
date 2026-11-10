@@ -1,20 +1,121 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ActivePage } from '../types';
 import { XpVerticalCarousel } from '../components/XpVerticalCarousel';
 import { HeroBackgroundLines } from '../components/HeroBackgroundLines';
+import { HomeQuickQuestion } from '../components/HomeQuickQuestion';
+import { TOTAL_PRACTICE_QUESTIONS } from '../lib/practiceBank';
 
-// Tim pengembang Ngerti. GANTI dengan nama, peran, dan inisial anggota tim yang sebenarnya.
+// Tim pengembang Ngerti. Foto sengaja anonim (ikon orang), bukan foto asli.
 const DEVELOPERS = [
-  { name: 'Nama Developer 1', role: 'Peran, mis. Frontend Developer', initials: 'D1', color: '#0e7c63' },
-  { name: 'Nama Developer 2', role: 'Peran, mis. UI/UX Designer', initials: 'D2', color: '#0d9488' },
-  { name: 'Nama Developer 3', role: 'Peran, mis. Content & Statistik', initials: 'D3', color: '#00614d' },
+  { name: 'Kurnia Yoga Pratama', role: 'Backend Developer', color: '#0e7c63' },
+  { name: 'Owen Figo', role: 'Frontend Developer', color: '#0d9488' },
+  { name: 'Danendra Rafi Firjatullah', role: 'Business Analyst / Content', color: '#00614d' },
 ];
 
 const ABOUT_STATS = [
-  { value: '8', label: 'Topik materi' },
-  { value: '320', label: 'Soal latihan' },
-  { value: '4', label: 'Tingkat kesulitan' },
+  { value: 8, label: 'Topik materi' },
+  { value: TOTAL_PRACTICE_QUESTIONS, label: 'Soal latihan' },
+  { value: 4, label: 'Tingkat kesulitan' },
 ];
+
+const prefersReducedMotion = () =>
+  typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/** Counts from 0 up to `value` (ease-out) the first time the number scrolls into view. */
+const CountUp: React.FC<{ value: number; duration?: number }> = ({ value, duration = 1400 }) => {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [shown, setShown] = useState(() => (prefersReducedMotion() ? value : 0));
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || prefersReducedMotion()) return;
+    let frame = 0;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        observer.disconnect();
+        const start = performance.now();
+        const tick = (now: number) => {
+          const t = Math.min(1, (now - start) / duration);
+          setShown(Math.round(value * (1 - Math.pow(1 - t, 3))));
+          if (t < 1) frame = requestAnimationFrame(tick);
+        };
+        frame = requestAnimationFrame(tick);
+      },
+      { threshold: 0.6 }
+    );
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, [value, duration]);
+
+  return (
+    <>
+      <span ref={ref} aria-hidden="true">
+        {shown}
+      </span>
+      <span className="sr-only">{value}</span>
+    </>
+  );
+};
+
+/**
+ * Bouncing arrow at the bottom of the screen that invites scrolling down. It shows while the hero is
+ * being looked at (the next section at most peeks in), hides once that section is well into view or
+ * the arrow is clicked, and comes back when the student scrolls up to the hero again.
+ */
+const ScrollHint: React.FC<{ targetId: string }> = ({ targetId }) => {
+  const [inHero, setInHero] = useState(true);
+  // Clicked: stay hidden while the page scrolls away, until the student is back in the hero.
+  const [clicked, setClicked] = useState(false);
+
+  useEffect(() => {
+    const update = () => {
+      const target = document.getElementById(targetId);
+      const hero = !target || target.getBoundingClientRect().top > window.innerHeight * 0.6;
+      setInHero(hero);
+      if (!hero) setClicked(false);
+    };
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update);
+      window.removeEventListener('resize', update);
+    };
+  }, [targetId]);
+
+  const visible = inHero && !clicked;
+
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        setClicked(true);
+        document.getElementById(targetId)?.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+      }}
+      aria-label="Gulir ke bawah: Apa itu Ngerti?"
+      aria-hidden={!visible}
+      tabIndex={visible ? 0 : -1}
+      title="Kenali Ngerti"
+      className={`group fixed bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 p-1 rounded-full transition-[opacity,translate] duration-300 ${
+        visible ? 'opacity-100' : 'opacity-0 translate-y-3 pointer-events-none'
+      }`}
+    >
+      {/* Amber (the site's accent) so it stands out from the green page, with a pulsing halo. */}
+      <span className="scroll-hint-bounce relative block">
+        <span aria-hidden="true" className="scroll-hint-halo absolute inset-0 rounded-full bg-secondary-container" />
+        <span className="relative w-14 h-14 rounded-full bg-secondary-container text-on-secondary-container shadow-lg shadow-secondary/40 ring-4 ring-surface-container-lowest flex items-center justify-center transition-[background-color,scale] duration-200 group-hover:bg-secondary-fixed-dim group-hover:scale-110 group-active:scale-95">
+          <span className="material-symbols-outlined" style={{ fontSize: 34 }}>
+            keyboard_double_arrow_down
+          </span>
+        </span>
+      </span>
+    </button>
+  );
+};
 
 const ABOUT_STEPS = [
   {
@@ -40,8 +141,28 @@ interface LandingPageProps {
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStartActiveTopic }) => {
+  // Below the hero, blocks marked data-reveal fade up as they scroll into view (once).
+  // `--reveal-delay` on a block staggers cards in the same row.
+  const rootRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const blocks = rootRef.current?.querySelectorAll<HTMLElement>('[data-reveal]');
+    if (!blocks?.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-revealed');
+          observer.unobserve(entry.target);
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -40px 0px' }
+    );
+    blocks.forEach((b) => observer.observe(b));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="flex flex-col min-h-screen">
+    <div ref={rootRef} className="flex flex-col min-h-screen">
       {/* Main Canvas */}
       <div className="flex-grow">
         {/* Hero Section, with decorative wave lines behind it */}
@@ -49,7 +170,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
         <div className="relative overflow-x-clip">
         <HeroBackgroundLines />
         <HeroBackgroundLines variant="corner" />
-        <section className="relative py-8 md:py-14 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
+        <section className="relative pt-6 pb-6 md:pt-8 px-4 sm:px-6 md:px-8 max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
             {/* Left Column (7 Columns) */}
             <div className="lg:col-span-6 flex flex-col justify-between">
@@ -96,7 +217,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
           </div>
 
           {/* Full-width "Apa gunanya XP?" Bar */}
-          <div className="mt-8 lg:mt-10 bg-surface-container-lowest rounded-2xl border border-outline-variant p-4 sm:p-5 card-gentle">
+          <div className="mt-6 bg-surface-container-lowest rounded-2xl border border-outline-variant p-4 card-gentle">
             <div className="flex flex-col lg:flex-row lg:items-center gap-4 lg:gap-6">
               {/* Title / Badge */}
               <div className="flex items-center gap-2.5 shrink-0 lg:pr-6 lg:border-r lg:border-outline-variant">
@@ -112,8 +233,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               </div>
 
               {/* 3 items in grid / flex */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1">
-                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-xs space-y-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 lg:gap-6 flex-1">
+                <div className="p-2.5 sm:p-3 lg:p-0 rounded-xl lg:rounded-none bg-surface-container-low/70 lg:bg-transparent border border-outline-variant lg:border-0 text-xs space-y-1">
                   <p className="font-semibold text-primary flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px]">trending_up</span>
                     <span>Naik Rank</span>
@@ -123,7 +244,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-xs space-y-1">
+                <div className="p-2.5 sm:p-3 lg:p-0 rounded-xl lg:rounded-none bg-surface-container-low/70 lg:bg-transparent border border-outline-variant lg:border-0 text-xs space-y-1">
                   <p className="font-semibold text-primary flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px]">military_tech</span>
                     <span>Buka Achievement</span>
@@ -133,7 +254,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                   </p>
                 </div>
 
-                <div className="p-2.5 sm:p-3 rounded-xl bg-surface-container-low/70 border border-outline-variant text-xs space-y-1">
+                <div className="p-2.5 sm:p-3 lg:p-0 rounded-xl lg:rounded-none bg-surface-container-low/70 lg:bg-transparent border border-outline-variant lg:border-0 text-xs space-y-1">
                   <p className="font-semibold text-primary flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[16px]">local_fire_department</span>
                     <span>Jaga Streak</span>
@@ -146,11 +267,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
             </div>
           </div>
         </section>
+        <ScrollHint targetId="tentang-ngerti" />
         </div>
 
         {/* Apa itu Ngerti? */}
-        <section aria-labelledby="about-heading" className="py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-center">
+        <section id="tentang-ngerti" aria-labelledby="about-heading" className="relative overflow-x-clip pt-6 pb-12 md:pt-8 md:pb-16 scroll-mt-20">
+          <HeroBackgroundLines variant="about" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-14 items-start">
             <div className="space-y-5">
               <span className="text-primary text-xs font-semibold tracking-wider uppercase">Tentang Ngerti</span>
               <h2 id="about-heading" className="text-2xl sm:text-3xl font-bold text-on-surface">
@@ -168,7 +291,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
                 {ABOUT_STATS.map((stat) => (
                   <div key={stat.label} className="rounded-xl bg-surface-container-lowest border border-outline-variant p-3 sm:p-4">
                     <dt className="sr-only">{stat.label}</dt>
-                    <dd className="text-2xl sm:text-3xl font-bold text-primary tabular-nums">{stat.value}</dd>
+                    <dd className="text-2xl sm:text-3xl font-bold text-primary tabular-nums">
+                      <CountUp value={stat.value} />
+                    </dd>
                     <dd className="text-xs sm:text-sm text-on-surface-variant mt-0.5">{stat.label}</dd>
                   </div>
                 ))}
@@ -197,10 +322,39 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
           </div>
         </section>
 
+        {/* Coba satu soal: rasakan cara belajar di Ngerti */}
+        <section aria-labelledby="quick-heading" className="relative overflow-hidden pb-12 md:pb-16">
+          <HeroBackgroundLines variant="quick" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+            <div className="lg:col-span-5 space-y-4">
+              <span className="text-primary text-xs font-semibold tracking-wider uppercase">Coba 10 Detik</span>
+              <h2 id="quick-heading" className="text-2xl sm:text-3xl font-bold text-on-surface">
+                Satu soal, langsung paham alasannya
+              </h2>
+              <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed">
+                Begini rasanya belajar di Ngerti: pilih jawaban, lalu lihat penjelasannya lengkap dengan gambar. Tidak ada
+                nilai, tidak ada yang menghakimi. Salah pun tetap belajar.
+              </p>
+              <ul className="space-y-2 text-sm text-on-surface-variant">
+                {['Penjelasan langkah demi langkah', 'Visual yang menunjukkan kenapa', 'XP untuk setiap usaha (setelah masuk)'].map((t) => (
+                  <li key={t} className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-primary" style={{ fontSize: 18 }}>check_circle</span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="lg:col-span-7">
+              <HomeQuickQuestion onExplore={() => setActivePage('topics')} />
+            </div>
+          </div>
+        </section>
+
         {/* Student Reassurance Bento Section */}
-        <section className="py-12 md:py-16 bg-surface-container-lowest border-y border-outline-variant">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-10">
-            <div className="text-center max-w-2xl mx-auto space-y-2.5">
+        <section className="relative overflow-hidden py-12 md:py-16 bg-surface-container-lowest border-y border-outline-variant">
+          <HeroBackgroundLines variant="reasons" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-10">
+            <div data-reveal className="text-center max-w-2xl mx-auto space-y-2.5">
               <span className="text-primary text-xs font-semibold tracking-wider uppercase">Pendekatan Ramah Mental</span>
               <h2 className="text-2xl sm:text-3xl font-bold text-on-surface">
                 Kenapa Belajar di Ngerti Terasa Beda?
@@ -213,7 +367,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
             {/* 4 Calm Reassurance Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {/* Card 1 */}
-              <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
+              <div data-reveal style={{ '--reveal-delay': '0ms' } as React.CSSProperties} className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-primary flex items-center justify-center">
                     <span className="material-symbols-outlined text-[24px]">functions</span>
@@ -232,7 +386,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               </div>
 
               {/* Card 2 */}
-              <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
+              <div data-reveal style={{ '--reveal-delay': '90ms' } as React.CSSProperties} className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-primary flex items-center justify-center">
                     <span className="material-symbols-outlined text-[24px]">mood</span>
@@ -251,7 +405,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               </div>
 
               {/* Card 3 */}
-              <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
+              <div data-reveal style={{ '--reveal-delay': '180ms' } as React.CSSProperties} className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-primary flex items-center justify-center">
                     <span className="material-symbols-outlined text-[24px]">self_improvement</span>
@@ -270,7 +424,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
               </div>
 
               {/* Card 4 */}
-              <div className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
+              <div data-reveal style={{ '--reveal-delay': '270ms' } as React.CSSProperties} className="bg-surface rounded-xl p-6 border border-outline-variant card-gentle hover:-translate-y-1 transition-transform flex flex-col justify-between">
                 <div className="space-y-3">
                   <div className="w-12 h-12 rounded-lg bg-surface-container-low border border-outline-variant text-secondary flex items-center justify-center">
                     <span className="material-symbols-outlined text-[24px]">tips_and_updates</span>
@@ -292,9 +446,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
         </section>
 
         {/* Tim pengembang (data di DEVELOPERS, di atas komponen ini) */}
-        <section aria-labelledby="team-heading" className="py-12 md:py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-10">
-            <div className="text-center max-w-2xl mx-auto space-y-2.5">
+        <section aria-labelledby="team-heading" className="relative overflow-hidden py-12 md:py-16">
+          <HeroBackgroundLines variant="team" />
+          <div className="relative max-w-7xl mx-auto px-4 sm:px-6 md:px-8 space-y-10">
+            <div data-reveal className="text-center max-w-2xl mx-auto space-y-2.5">
               <span className="text-primary text-xs font-semibold tracking-wider uppercase">Tim Pengembang</span>
               <h2 id="team-heading" className="text-2xl sm:text-3xl font-bold text-on-surface">
                 Orang di Balik Ngerti
@@ -305,17 +460,21 @@ export const LandingPage: React.FC<LandingPageProps> = ({ setActivePage, onStart
             </div>
 
             <ul className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl mx-auto">
-              {DEVELOPERS.map((dev) => (
+              {DEVELOPERS.map((dev, i) => (
                 <li
                   key={dev.name}
+                  data-reveal
+                  style={{ '--reveal-delay': `${i * 90}ms` } as React.CSSProperties}
                   className="bg-surface-container-lowest rounded-2xl border border-outline-variant p-6 card-gentle flex flex-col items-center text-center gap-3 hover:-translate-y-1 transition-transform"
                 >
                   <span
                     aria-hidden="true"
-                    className="w-20 h-20 rounded-full flex items-center justify-center text-white text-xl font-bold ring-4 ring-primary-fixed/60"
+                    className="w-20 h-20 rounded-full flex items-end justify-center overflow-hidden text-white/90 ring-4 ring-primary-fixed/60"
                     style={{ backgroundColor: dev.color }}
                   >
-                    {dev.initials}
+                    <span className="material-symbols-outlined -mb-2" style={{ fontSize: 68, fontVariationSettings: "'FILL' 1" }}>
+                      person
+                    </span>
                   </span>
                   <div>
                     <h3 className="text-base sm:text-lg font-semibold text-on-surface">{dev.name}</h3>

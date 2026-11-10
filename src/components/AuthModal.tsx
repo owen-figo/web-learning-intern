@@ -5,12 +5,14 @@ interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: (name?: string) => void;
+  /** Why the window opened, e.g. "Masuk dulu untuk membuka Glosarium." (a guest tried a locked page). */
+  reason?: string | null;
 }
 
 const inputClass =
   'w-full px-3.5 py-2.5 rounded-lg text-xs sm:text-sm text-on-surface placeholder:text-outline/70 border border-outline-variant focus:outline-none focus:ring-2 focus:ring-primary bg-surface-container-lowest transition-colors';
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess, reason }) => {
   const [showNim, setShowNim] = useState(false);
   const [email, setEmail] = useState('');
   const [nim, setNim] = useState('');
@@ -86,6 +88,12 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose, onSuccess
           <p className="text-xs sm:text-sm text-on-surface-variant">
             Masuk dengan email dan NIM yang terdaftar di kampus.
           </p>
+          {reason && (
+            <p className="mt-3 flex items-start gap-2 rounded-xl bg-secondary-fixed/50 border border-secondary/20 px-3 py-2.5 text-xs sm:text-sm text-on-secondary-fixed-variant">
+              <span className="material-symbols-outlined shrink-0" style={{ fontSize: 18 }}>lock</span>
+              <span>{reason}</span>
+            </p>
+          )}
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3.5">

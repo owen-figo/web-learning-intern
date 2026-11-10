@@ -75,7 +75,7 @@ export const ContinuousVsDiscreteVisual: React.FC = () => {
             </p>
 
             {/* Visual SVG showing single point line vs interval area */}
-            <div className="relative w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+            <div className="relative w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
               <svg viewBox="0 0 500 180" className="w-full h-full select-none overflow-visible">
                 {/* Background Box for Uniform [5, 15] */}
                 {/* x: 5 -> svgX: 80, x: 15 -> svgX: 440 (scale: 360 px / 10 = 36 px/unit) */}
@@ -337,7 +337,7 @@ export const PdfAreaVisual: React.FC = () => {
         </div>
 
         {/* Responsive Curve SVG */}
-        <div className="w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+        <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
           <svg viewBox="0 0 460 160" className="w-full h-full select-none overflow-visible">
             {/* Shaded Area between c and d */}
             {shadedPath && <path d={shadedPath} fill="#97f4d5" opacity="0.85" />}
@@ -490,7 +490,7 @@ export const NormalPdfVisual: React.FC = () => {
         </div>
 
         {/* SVG Bell Curve */}
-        <div className="w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+        <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
           <svg viewBox="0 0 460 160" className="w-full h-full select-none overflow-visible">
             {/* Bell Curve Line */}
             <path d={curveD} fill="none" stroke="#00614d" strokeWidth="2.5" />
@@ -673,7 +673,7 @@ export const ZTransformationVisual: React.FC = () => {
             Transformasi Sumbu Asli (X) ke Sumbu Normal Standar (Z):
           </div>
 
-          <div className="w-full h-40 sm:h-44">
+          <div className="w-full h-36 sm:h-40">
             <svg viewBox="0 0 460 140" className="w-full h-full select-none overflow-visible">
               {/* Curve fill */}
               {(() => {
@@ -872,7 +872,7 @@ export const UniformPdfVisual: React.FC = () => {
         </div>
 
         {/* SVG Diagram of Uniform Distribution */}
-        <div className="w-full h-44 sm:h-48 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+        <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
           <svg viewBox="0 0 460 150" className="w-full h-full select-none overflow-visible">
             {/* Total Box a to b */}
             {/* a=5 -> 70px, b=15 -> 390px (320px / 10 = 32px per unit) */}
@@ -1164,7 +1164,7 @@ export const ExponentialPdfVisual: React.FC = () => {
         </div>
 
         {/* SVG Curve */}
-        <div className="w-full h-44 sm:h-52 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
+        <div className="w-full h-40 sm:h-44 bg-surface-container-lowest rounded-xl border border-outline-variant/40 p-2">
           <svg viewBox="0 0 460 150" className="w-full h-full select-none overflow-visible">
             {/* Shaded Area */}
             {shadedPath && <path d={shadedPath} fill="#97f4d5" opacity="0.85" />}

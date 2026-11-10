@@ -242,7 +242,7 @@ export const JenisProbabilitasVisual: React.FC = () => {
       title: 'Pahami Tiga Pendekatan Probabilitas',
       description: 'Probabilitas dapat ditentukan secara deduktif teoritis (A Priori), induktif observasional (Empiris), atau persepsi subjektif.',
       formula: 'A Priori (X/T teoritis) | Empiris (Frekuensi Relatif) | Subjektif (Keyakinan)',
-      substitution: `Dadu: 1/6 (A Priori) | Koin: ${headsCount}/${totalFlips} = ${empiricalProb.toFixed(4).replace('.', ',')} (Empiris) | Subjektif: ${subjectiveProb}%`,
+      substitution: `Dadu: 1/6 (A Priori) | Koin: ${headsCount}/${totalFlips} = ${empiricalProb.toFixed(4)} (Empiris) | Subjektif: ${subjectiveProb}%`,
       result: `Tiga metode menentukan peluang sesuai ketersediaan informasi`,
     },
   ];
@@ -303,7 +303,7 @@ export const JenisProbabilitasVisual: React.FC = () => {
                 Hasil Peluang A Priori:
               </span>
               <div className="text-2xl font-bold font-mono text-[#1B2430]">
-                P(Angka {selectedDieFace}) = 1 / 6 ≈ 0,1667 (16,7%)
+                P(Angka {selectedDieFace}) = 1 / 6 ≈ 0.1667 (16.7%)
               </div>
               <p className="text-base text-[#1B2430] leading-relaxed">
                 Dihitung langsung dari struktur dadu adil tanpa perlu melempar satu kali pun.
@@ -383,7 +383,7 @@ export const JenisProbabilitasVisual: React.FC = () => {
                 Hasil Peluang Empiris:
               </span>
               <div className="text-2xl font-bold font-mono text-[#1B2430]">
-                P(Kepala) = {headsCount} / {totalFlips} ≈ {totalFlips > 0 ? empiricalProb.toFixed(4).replace('.', ',') : '0,0000'}
+                P(Kepala) = {headsCount} / {totalFlips} ≈ {totalFlips > 0 ? empiricalProb.toFixed(4) : '0.0000'}
               </div>
               <p className="text-base text-[#1B2430] leading-relaxed">
                 Semakin banyak lemparan, proporsi empiris akan semakin mendekati nilai teoritis 0.50 (Law of Large Numbers).

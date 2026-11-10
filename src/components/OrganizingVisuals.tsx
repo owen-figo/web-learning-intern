@@ -462,75 +462,77 @@ const BarPieCanvas: React.FC<{ chartType: ChartKind; step: number; categories: B
   const slices = withRanges(categories);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-      <div className={step >= 6 ? 'md:col-span-7' : 'md:col-span-12'}>
-        <svg viewBox="0 0 240 240" className="w-full max-w-[260px] mx-auto h-auto overflow-visible select-none">
-          {step >= 6 && (
-            <text x="120" y="12" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#0f172a">
-              Merek Laptop 150 Mahasiswa
-            </text>
-          )}
-          {step < 4 && (
-            <text x="120" y="120" textAnchor="middle" fontSize="11" fill="#475569">
-              {step === 1 ? 'Siapkan tabel dulu' : step === 2 ? 'Hitung sudut tiap merek' : 'Total sudut sudah 360°'}
-            </text>
-          )}
-          {step >= 4 && (
-            <g>
-              {step >= 5 &&
-                slices.map((s) => {
-                  const a = polar(s.start);
-                  const b = polar(s.end);
-                  const large = s.degrees > 180 ? 1 : 0;
-                  return (
-                    <path
-                      key={s.label}
-                      d={`M ${cx} ${cy} L ${a.x} ${a.y} A ${r} ${r} 0 ${large} 1 ${b.x} ${b.y} Z`}
-                      fill={step >= 6 ? s.color : '#ffffff'}
-                      stroke="#0f172a"
-                      strokeWidth="1.5"
-                    />
-                  );
-                })}
-              <circle cx={cx} cy={cy} r={r} fill="none" stroke="#0f172a" strokeWidth="1.5" />
-              <circle cx={cx} cy={cy} r="2.5" fill="#0f172a" />
-              <line x1={cx} y1={cy} x2={cx} y2={cy - r} stroke="#ba1a1a" strokeWidth="2.5" />
-              <text x={cx + 6} y={cy - r - 4} fontSize="10" fontWeight="bold" fill="#ba1a1a">
-                0°
+    <div className="@container">
+      <div className="grid grid-cols-1 @md:grid-cols-12 gap-4 items-center">
+        <div className={step >= 6 ? '@md:col-span-7' : '@md:col-span-12'}>
+          <svg viewBox="0 0 240 240" className="w-full max-w-[260px] mx-auto h-auto overflow-visible select-none">
+            {step >= 6 && (
+              <text x="120" y="12" textAnchor="middle" fontSize="11" fontWeight="bold" fill="#0f172a">
+                Merek Laptop 150 Mahasiswa
               </text>
-              {step === 5 &&
-                slices.map((s) => {
-                  const p = polar(s.end, r + 12);
-                  return (
-                    <text key={s.label} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a" fontFamily="monospace">
-                      {s.end}°
-                    </text>
-                  );
-                })}
-              {step >= 6 &&
-                slices.map((s) => {
-                  const p = polar((s.start + s.end) / 2, r * 0.62);
-                  return (
-                    <text key={s.label} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" paintOrder="stroke" fontFamily="monospace">
-                      {s.pct.toFixed(1)}%
-                    </text>
-                  );
-                })}
-            </g>
-          )}
-        </svg>
-      </div>
-      {step >= 6 && (
-        <div className="md:col-span-5 space-y-1.5">
-          {slices.map((s) => (
-            <div key={s.label} className="flex items-center gap-2 text-xs text-black">
-              <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: s.color }} />
-              <span className="font-semibold">{s.label}</span>
-              <span className="font-mono ml-auto">{s.pct.toFixed(1)}%</span>
-            </div>
-          ))}
+            )}
+            {step < 4 && (
+              <text x="120" y="120" textAnchor="middle" fontSize="11" fill="#475569">
+                {step === 1 ? 'Siapkan tabel dulu' : step === 2 ? 'Hitung sudut tiap merek' : 'Total sudut sudah 360°'}
+              </text>
+            )}
+            {step >= 4 && (
+              <g>
+                {step >= 5 &&
+                  slices.map((s) => {
+                    const a = polar(s.start);
+                    const b = polar(s.end);
+                    const large = s.degrees > 180 ? 1 : 0;
+                    return (
+                      <path
+                        key={s.label}
+                        d={`M ${cx} ${cy} L ${a.x} ${a.y} A ${r} ${r} 0 ${large} 1 ${b.x} ${b.y} Z`}
+                        fill={step >= 6 ? s.color : '#ffffff'}
+                        stroke="#0f172a"
+                        strokeWidth="1.5"
+                      />
+                    );
+                  })}
+                <circle cx={cx} cy={cy} r={r} fill="none" stroke="#0f172a" strokeWidth="1.5" />
+                <circle cx={cx} cy={cy} r="2.5" fill="#0f172a" />
+                <line x1={cx} y1={cy} x2={cx} y2={cy - r} stroke="#ba1a1a" strokeWidth="2.5" />
+                <text x={cx + 6} y={cy - r - 4} fontSize="10" fontWeight="bold" fill="#ba1a1a">
+                  0°
+                </text>
+                {step === 5 &&
+                  slices.map((s) => {
+                    const p = polar(s.end, r + 12);
+                    return (
+                      <text key={s.label} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="9" fontWeight="bold" fill="#0f172a" fontFamily="monospace">
+                        {s.end}°
+                      </text>
+                    );
+                  })}
+                {step >= 6 &&
+                  slices.map((s) => {
+                    const p = polar((s.start + s.end) / 2, r * 0.62);
+                    return (
+                      <text key={s.label} x={p.x} y={p.y + 3} textAnchor="middle" fontSize="10" fontWeight="bold" fill="#ffffff" stroke="#0f172a" strokeWidth="2.5" paintOrder="stroke" fontFamily="monospace">
+                        {s.pct.toFixed(1)}%
+                      </text>
+                    );
+                  })}
+              </g>
+            )}
+          </svg>
         </div>
-      )}
+        {step >= 6 && (
+          <div className="@md:col-span-5 space-y-1.5">
+            {slices.map((s) => (
+              <div key={s.label} className="flex items-center gap-2 text-xs text-black">
+                <span className="w-3 h-3 rounded-sm" style={{ backgroundColor: s.color }} />
+                <span className="font-semibold">{s.label}</span>
+                <span className="font-mono ml-auto">{s.pct.toFixed(1)}%</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -587,10 +589,25 @@ const BarPieStepBuilder: React.FC<{ chartType: ChartKind; categories: BuilderCat
         <p className="text-sm text-black leading-relaxed">{current.desc}</p>
       </div>
 
-      <BarPieTable chartType={chartType} step={step} categories={categories} />
-
-      <div className="p-3 sm:p-4 rounded-2xl bg-surface-container-low/60 border border-outline-variant/40">
-        <BarPieCanvas chartType={chartType} step={step} categories={categories} />
+      {/* Table and drawing side by side when the panel is wide enough (the pie's table grows to six
+          columns, so it gets the wider side; the bar chart gets more room for the drawing). */}
+      <div className="@container">
+        <div
+          className={`grid grid-cols-1 gap-4 items-stretch ${
+            chartType === 'pie'
+              ? '@2xl:grid-cols-[minmax(0,7fr)_minmax(0,5fr)]'
+              : '@2xl:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]'
+          }`}
+        >
+          <div className="min-w-0">
+            <BarPieTable chartType={chartType} step={step} categories={categories} />
+          </div>
+          <div className="min-w-0 p-3 sm:p-4 rounded-2xl bg-surface-container-low/60 border border-outline-variant/40 flex items-center">
+            <div className="w-full">
+              <BarPieCanvas chartType={chartType} step={step} categories={categories} />
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Prev / Next */}
@@ -963,7 +980,7 @@ export const ParetoChartVisual: React.FC = () => {
 
       {/* SVG Pareto Chart with dual axes */}
       <div className="p-4 sm:p-6 rounded-2xl bg-surface-container-low/70 border border-outline-variant/60">
-        <div className="relative h-64 sm:h-72 w-full">
+        <div className="relative h-52 sm:h-60 w-full">
           {/* SVG Canvas */}
           <svg viewBox="0 0 500 240" className="w-full h-full overflow-visible">
             {/* Grid Lines */}
@@ -1726,7 +1743,7 @@ export const HistogramPolygonVisual: React.FC = () => {
 
       {/* SVG Canvas for Histogram & Polygon */}
       <div className="p-4 sm:p-6 rounded-2xl bg-surface-container-low/70 border border-outline-variant/60">
-        <div className="relative h-64 sm:h-72 w-full">
+        <div className="relative h-52 sm:h-60 w-full">
           <svg viewBox="0 0 500 240" className="w-full h-full overflow-visible">
             {/* Grid Lines */}
             {[0, 5, 10, 15, 20].map((val) => {
@@ -1881,7 +1898,7 @@ export const OgiveCurveVisual: React.FC = () => {
 
       {/* SVG Canvas for Ogive */}
       <div className="p-4 sm:p-6 rounded-2xl bg-surface-container-low/70 border border-outline-variant/60">
-        <div className="relative h-64 sm:h-72 w-full">
+        <div className="relative h-52 sm:h-60 w-full">
           <svg viewBox="0 0 500 240" className="w-full h-full overflow-visible">
             {/* Grid lines (0% to 100%) */}
             {[0, 25, 50, 75, 100].map((pct) => {
@@ -2081,7 +2098,7 @@ export const ScatterTimeSeriesVisual: React.FC = () => {
       {activeTab === 'scatter' && (
         <div className="space-y-4">
           <div className="p-4 sm:p-6 rounded-2xl bg-surface-container-low/70 border border-outline-variant/60">
-            <div className="relative h-60 w-full">
+            <div className="relative h-52 w-full">
               <svg viewBox="0 0 500 220" className="w-full h-full overflow-visible">
                 {/* Axes */}
                 <line x1="40" y1="180" x2="480" y2="180" stroke="#64748b" strokeWidth="2" />
@@ -2137,7 +2154,7 @@ export const ScatterTimeSeriesVisual: React.FC = () => {
       {activeTab === 'timeseries' && (
         <div className="space-y-4">
           <div className="p-4 sm:p-6 rounded-2xl bg-surface-container-low/70 border border-outline-variant/60">
-            <div className="relative h-60 w-full">
+            <div className="relative h-52 w-full">
               <svg viewBox="0 0 500 220" className="w-full h-full overflow-visible">
                 {/* Horizontal grid lines */}
                 {[400, 600, 800].map((val) => {

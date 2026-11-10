@@ -1,12 +1,28 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivePage, DifficultyTier, PracticeQuestion, Topic, TopicStatus, UserProfile } from '../types';
 import { mockTopics } from '../data/mockData';
-import { getConceptById } from '../data/concepts';
-import { checkPracticeAnswer, loadPracticeSet, TIER_ORDER, TIER_LABEL, TIER_XP, UNLOCK_HARDEST_AT } from '../data/practice';
-import { ConceptModal } from '../components/ConceptModal';
+import { getGlossaryTerm } from '../data/glossary';
+import { DailyExercise, type DailyCheckResult } from '../components/DailyExercise';
+import { DAILY_BANK_SIZE, PRACTICE_DAILY_COUNT, TOTAL_PRACTICE_QUESTIONS, hasDailyPractice, practiceQuestionsFor, practiceTopicOf } from '../lib/practiceBank';
+import {
+  checkPracticeAnswer,
+  loadPracticeSet,
+  SPEED_XP_RANGE,
+  speedXp,
+  stampTime,
+  startPracticeQuestion,
+  TIER_ORDER,
+  TIER_LABEL,
+  TIER_XP,
+  UNLOCK_HARDEST_AT,
+} from '../data/practice';
 import { PomodoroButton } from '../components/PomodoroButton';
 import { RichText } from '../components/RichText';
+import { MathFormula } from '../components/MathFormula';
 import type { SavedAnswer } from '../lib/account';
+
+// The glossary pop-up downloads the first time it is opened.
+const GlossaryModal = lazy(() => import('../components/GlossaryModal').then((m) => ({ default: m.GlossaryModal })));
 
 interface PracticePageProps {
   setActivePage: (page: ActivePage) => void;
@@ -20,6 +36,12 @@ interface PracticePageProps {
   /** Signed in: the student's answers from the database (then nothing is kept in this browser). */
   accountAnswers?: Record<string, SavedAnswer>;
   onAnswer?: (questionId: string, answer: SavedAnswer) => void;
+  /** Signed in: the streak after an answer (every answer counts as today's activity). */
+  onStreak?: (streakDays: number) => void;
+  /** The streak is only shown to signed-in students. */
+  signedIn?: boolean;
+  /** Signed-in student's id (Latihan Harian progress is kept per account). */
+  userId?: string | null;
 }
 
 // ---------------------------------------------------------------- saved progress
@@ -52,22 +74,62 @@ function writeSaved(state: SavedState) {
   }
 }
 
+// Sangat Sulit timer stamps from the server, kept for this browser session so a reload doesn't restart the clock.
+const STAMPS_KEY = 'ngerti.practiceStamps';
+
+function readStamps(): Record<string, string> {
+  try {
+    return JSON.parse(window.sessionStorage.getItem(STAMPS_KEY) ?? '{}') as Record<string, string>;
+  } catch {
+    return {};
+  }
+}
+
+const formatClock = (seconds: number) => `${Math.floor(seconds / 60)}:${String(Math.floor(seconds % 60)).padStart(2, '0')}`;
+
 const OPTION_LABELS = ['A', 'B', 'C', 'D'];
 const HINT_COOLDOWN_SECONDS = 20;
-const QUESTIONS_PER_TOPIC = 40;
 
 const TIER_RULE: Record<DifficultyTier, string> = {
   mudah: 'Rumus & petunjuk langsung terlihat.',
   sedang: 'Petunjuk bisa dibuka, rumus diingat mandiri.',
   sulit: `Petunjuk terbuka setelah ${HINT_COOLDOWN_SECONDS} detik (Clue Cooldown).`,
-  sangat_sulit: 'Tanpa rumus dan petunjuk.',
+  sangat_sulit: 'Tanpa rumus dan petunjuk. Makin cepat benar, makin banyak XP.',
 };
 
-const TIER_DOT: Record<DifficultyTier, string> = {
-  mudah: 'bg-primary-container',
-  sedang: 'bg-secondary-container',
-  sulit: 'bg-secondary',
-  sangat_sulit: 'bg-error',
+// Tier cards: each level has its own colour (readable as text on light backgrounds), icon and a
+// 1–4 difficulty meter.
+const TIER_LOOK: Record<DifficultyTier, { color: string; icon: string; level: number }> = {
+  mudah: { color: '#0e7c63', icon: 'eco', level: 1 },
+  sedang: { color: '#9a6400', icon: 'trending_up', level: 2 },
+  sulit: { color: '#c2410c', icon: 'local_fire_department', level: 3 },
+  sangat_sulit: { color: '#ba1a1a', icon: 'bolt', level: 4 },
+};
+
+/** Ring around the tier icon that fills with the share of questions answered correctly. */
+const ProgressRing: React.FC<{ value: number; color: string; children: React.ReactNode }> = ({ value, color, children }) => {
+  const r = 19;
+  const c = 2 * Math.PI * r;
+  return (
+    <span className="relative w-10 h-10 shrink-0 flex items-center justify-center">
+      <svg viewBox="0 0 48 48" className="absolute inset-0 -rotate-90" aria-hidden="true">
+        <circle cx="24" cy="24" r={r} fill="none" stroke="currentColor" strokeWidth="4" className="text-outline-variant/40" />
+        <circle
+          cx="24"
+          cy="24"
+          r={r}
+          fill="none"
+          stroke={color}
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray={c}
+          strokeDashoffset={c * (1 - Math.min(1, Math.max(0, value)))}
+          className="transition-[stroke-dashoffset] duration-500"
+        />
+      </svg>
+      {children}
+    </span>
+  );
 };
 
 export const PracticePage: React.FC<PracticePageProps> = ({
@@ -80,6 +142,9 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   user,
   accountAnswers,
   onAnswer,
+  onStreak,
+  signedIn = false,
+  userId = null,
 }) => {
   const sortedTopics = useMemo(() => [...mockTopics].sort((a, b) => a.order - b.order), []);
   const isTopicOpen = (t: Topic) => !getTopicStatus || getTopicStatus(t) !== 'terkunci';
@@ -95,6 +160,11 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   const [feedbackError, setFeedbackError] = useState<string | null>(null);
   const [feedbackRetry, setFeedbackRetry] = useState<number>(0);
   const [tier, setTier] = useState<DifficultyTier>('mudah');
+  // Latihan Harian (chapter's Latihan Soal) instead of a difficulty tier.
+  const [dailyMode, setDailyMode] = useState<boolean>(false);
+  // Sangat Sulit speed bonus: server stamps per question, and the XP each answer earned this session.
+  const [stamps, setStamps] = useState<Record<string, string>>(readStamps);
+  const [xpGained, setXpGained] = useState<Record<string, number>>({});
   const [index, setIndex] = useState<number>(0);
   const [selected, setSelected] = useState<number | null>(null);
   const [saved, setSaved] = useState<SavedState>(() =>
@@ -110,8 +180,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   const [now, setNow] = useState<number>(Date.now());
   const [showSummary, setShowSummary] = useState<boolean>(false);
 
-  const [conceptModalId, setConceptModalId] = useState<string | null>(null);
-  const [conceptModalOpen, setConceptModalOpen] = useState<boolean>(false);
+  const [glossaryOpen, setGlossaryOpen] = useState<boolean>(false);
   const [mobileHelpOpen, setMobileHelpOpen] = useState<boolean>(false);
   const [toast, setToast] = useState<string | null>(null);
   const [topicPickerOpen, setTopicPickerOpen] = useState<boolean>(false);
@@ -122,11 +191,12 @@ export const PracticePage: React.FC<PracticePageProps> = ({
 
   const topic = sortedTopics.find((t) => t.id === topicId) ?? sortedTopics[0];
 
-  // Per-topic progress from saved answers. Question ids start with "T<topic order>-", so no topic file has to load.
+  // Per-topic progress from saved answers. Question ids carry the topic order ("T3-L04", "H1-07"), so no
+  // topic file has to load; topics 1–2 count their Latihan Harian answers (see lib/practiceBank.ts).
   const topicProgress = useMemo(() => {
     const byOrder: Record<number, { answered: number; correct: number }> = {};
     for (const [id, a] of Object.entries(saved.answers)) {
-      const order = Number(/^T(\d+)-/.exec(id)?.[1]);
+      const order = practiceTopicOf(id);
       if (!order) continue;
       const p = (byOrder[order] ??= { answered: 0, correct: 0 });
       p.answered++;
@@ -136,8 +206,12 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   }, [saved.answers]);
   const overall = {
     answered: Object.values(topicProgress).reduce((s, p) => s + p.answered, 0),
-    total: sortedTopics.length * QUESTIONS_PER_TOPIC,
+    total: TOTAL_PRACTICE_QUESTIONS,
   };
+
+  const dailyAvailable = hasDailyPractice(topic.order);
+  const isDaily = dailyMode && dailyAvailable;
+  const dailyAnswered = Object.keys(saved.answers).filter((id) => id.startsWith(`H${topic.order}-`)).length;
 
   // Load the question set from the backend whenever the topic changes (or on "Coba lagi")
   useEffect(() => {
@@ -172,7 +246,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
     if (!current || !currentSaved || feedback[current.id]) return;
     let cancelled = false;
     setFeedbackError(null);
-    checkPracticeAnswer(current.id, currentSaved.selected)
+    checkPracticeAnswer(current.id, currentSaved.selected, true)
       .then((r) => {
         if (!cancelled) setFeedback((f) => ({ ...f, [r.questionId]: { answer: r.answer, explanation: r.explanation } }));
       })
@@ -212,14 +286,53 @@ export const PracticePage: React.FC<PracticePageProps> = ({
     return () => window.clearInterval(timer);
   }, [tier, cooldownLeft]);
 
+  // Sangat Sulit: ask the server for a timer stamp when a question opens, and tick the clock while it is open.
+  const speedTimed = tier === 'sangat_sulit' && !isDaily && Boolean(current) && !checked;
+  const stamp = current ? stamps[current.id] : undefined;
+  useEffect(() => {
+    if (!speedTimed || !current || stamp || !userId) return;
+    let cancelled = false;
+    startPracticeQuestion(current.id)
+      .then((s) => {
+        if (cancelled) return;
+        setStamps((prev) => {
+          const next = { ...prev, [current.id]: s };
+          try {
+            window.sessionStorage.setItem(STAMPS_KEY, JSON.stringify(next));
+          } catch {
+            /* penyimpanan sesi diblokir: timer tetap berjalan selama halaman terbuka */
+          }
+          return next;
+        });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [speedTimed, current, stamp, userId]);
+  useEffect(() => {
+    if (!speedTimed || !stamp) return;
+    setNow(Date.now());
+    const timer = window.setInterval(() => setNow(Date.now()), 1000);
+    return () => window.clearInterval(timer);
+  }, [speedTimed, stamp]);
+  const elapsedSeconds = stamp ? Math.max(0, (now - stampTime(stamp)) / 1000) : null;
+
+  const handleDailyResult = (r: DailyCheckResult & { selected: number }) => {
+    const answer = { selected: r.selected, correct: r.correct };
+    setSaved((prev) => ({ ...prev, answers: { ...prev.answers, [r.questionId]: answer } }));
+    if (r.xpAwarded) onAddXp?.(r.xpAwarded);
+    if (r.streakDays !== undefined) onStreak?.(r.streakDays);
+    onAnswer?.(r.questionId, answer);
+  };
+
   const showToast = (msg: string) => {
     setToast(msg);
     window.setTimeout(() => setToast(null), 4000);
   };
 
-  const openConcept = (id?: string) => {
-    setConceptModalId(id ?? null);
-    setConceptModalOpen(true);
+  const openGlossary = () => {
+    setGlossaryOpen(true);
   };
 
   const chooseTopic = (t: Topic) => {
@@ -232,7 +345,17 @@ export const PracticePage: React.FC<PracticePageProps> = ({
     setTopicPickerOpen(false);
     setHeldCardHeight(null);
     setTier('mudah');
+    setDailyMode((d) => d && hasDailyPractice(t.order));
     setIndex(0);
+    setShowSummary(false);
+  };
+
+  const chooseDaily = () => {
+    if (!dailyAvailable) {
+      showToast('Latihan Harian untuk topik ini belum tersedia. Soal dari materinya sedang disiapkan.');
+      return;
+    }
+    setDailyMode(true);
     setShowSummary(false);
   };
 
@@ -244,6 +367,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
       return;
     }
     setTier(t);
+    setDailyMode(false);
     setIndex(0);
     setHeldCardHeight(null);
     setShowSummary(false);
@@ -260,17 +384,21 @@ export const PracticePage: React.FC<PracticePageProps> = ({
     if (!current || selected === null || checked || checking) return;
     const question = current;
     const choice = selected;
-    const xp = TIER_XP[tier];
+    const xp = tier === 'sangat_sulit' ? speedXp(elapsedSeconds) : TIER_XP[tier];
     setChecking(true);
     setCheckError(null);
     try {
-      const result = await checkPracticeAnswer(question.id, choice);
+      const result = await checkPracticeAnswer(question.id, choice, false, stamps[question.id]);
       setFeedback((f) => ({ ...f, [question.id]: { answer: result.answer, explanation: result.explanation } }));
       setHeldCardHeight(null);
       // Signed in, the server decides the XP (once per question); otherwise this browser does.
       const gained = result.xpAwarded ?? (result.correct && !saved.xpAwarded.includes(question.id) ? xp : 0);
       const awarded = gained > 0;
-      if (awarded) onAddXp?.(gained);
+      if (awarded) {
+        onAddXp?.(gained);
+        setXpGained((prev) => ({ ...prev, [question.id]: gained }));
+      }
+      if (result.streakDays !== undefined) onStreak?.(result.streakDays);
       const answer = { selected: choice, correct: result.correct };
       onAnswer?.(question.id, answer);
       setSaved((prev) => ({
@@ -302,7 +430,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
   };
 
   const nextTier = TIER_ORDER[TIER_ORDER.indexOf(tier) + 1] as DifficultyTier | undefined;
-  const concept = current?.conceptId ? getConceptById(current.conceptId) : undefined;
+  const concept = current?.conceptId ? getGlossaryTerm(current.conceptId) : undefined;
   const showFormula = tier === 'mudah' && Boolean(current?.formula);
   const hintAvailable = Boolean(current?.hint) && tier !== 'sangat_sulit' && (tier !== 'sulit' || cooldownLeft === 0);
 
@@ -312,11 +440,11 @@ export const PracticePage: React.FC<PracticePageProps> = ({
       {concept && (
         <div className="bg-surface-container-low/70 border border-outline-variant/60 rounded-xl p-4 space-y-2">
           <span className="text-xs font-bold text-primary uppercase tracking-wide">Konsep yang Diuji</span>
-          <h3 className="text-sm font-bold text-on-surface">{concept.title}</h3>
-          <p className="text-xs text-on-surface-variant leading-relaxed line-clamp-3">{concept.summary}</p>
+          <h3 className="text-sm font-bold text-on-surface">{concept.term}</h3>
+          <p className="text-xs text-on-surface-variant leading-relaxed line-clamp-3">{concept.definition}</p>
           <button
             type="button"
-            onClick={() => openConcept(concept.id)}
+            onClick={openGlossary}
             className="w-full py-2 px-3 rounded-lg bg-surface-container-lowest border border-primary/30 text-primary hover:bg-primary hover:text-on-primary text-xs font-semibold transition-colors flex items-center justify-center gap-1.5"
           >
             <span className="material-symbols-outlined text-[16px]">school</span>
@@ -334,8 +462,8 @@ export const PracticePage: React.FC<PracticePageProps> = ({
           <span className="text-xs text-on-surface-variant bg-surface-container-low px-1.5 py-0.5 rounded">{TIER_LABEL[tier]}</span>
         </div>
         {showFormula ? (
-          <div className="font-code-formula text-sm text-primary bg-surface-container-low/80 p-3 rounded-lg border border-outline-variant/50 overflow-x-auto">
-            {current?.formula}
+          <div className="text-sm text-black bg-surface-container-low/80 p-3 rounded-lg border border-outline-variant/50">
+            <MathFormula text={current?.formula ?? ''} display textClassName="font-medium" />
           </div>
         ) : (
           <p className="text-xs text-on-surface-variant leading-relaxed">
@@ -354,7 +482,10 @@ export const PracticePage: React.FC<PracticePageProps> = ({
           <span>Petunjuk</span>
         </span>
         {tier === 'sangat_sulit' ? (
-          <p className="text-xs text-on-surface-variant">Tingkat Sangat Sulit tidak menyediakan petunjuk. Kamu pasti bisa!</p>
+          <p className="text-xs text-on-surface-variant">
+            Tingkat Sangat Sulit tidak menyediakan petunjuk. Makin cepat kamu menjawab benar, makin banyak XP-nya: {SPEED_XP_RANGE.max} XP
+            sampai 1.5 menit, lalu turun pelan sampai {SPEED_XP_RANGE.min} XP setelah 10 menit. Kamu pasti bisa!
+          </p>
         ) : !current?.hint ? (
           <p className="text-xs text-on-surface-variant">Soal ini tidak memiliki petunjuk tambahan.</p>
         ) : !hintAvailable ? (
@@ -379,7 +510,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
 
       <button
         type="button"
-        onClick={() => openConcept()}
+        onClick={openGlossary}
         className="w-full py-2.5 px-4 rounded-xl bg-surface-container-low hover:bg-surface-container text-on-surface-variant hover:text-primary text-xs font-semibold transition-colors flex items-center justify-between border border-outline-variant/60"
       >
         <span className="flex items-center gap-2">
@@ -428,20 +559,22 @@ export const PracticePage: React.FC<PracticePageProps> = ({
           <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-4">
             <button
               type="button"
-              onClick={() => openConcept(current?.conceptId)}
+              onClick={openGlossary}
               aria-label="Glosarium Istilah"
               className="hidden sm:inline-flex items-center gap-1.5 px-2.5 lg:px-3 py-1.5 rounded-lg border border-primary/30 bg-primary-fixed/30 text-primary text-xs font-semibold hover:bg-primary-fixed transition-colors"
             >
               <span className="material-symbols-outlined text-[16px]">menu_book</span>
               <span className="hidden lg:inline">Glosarium Istilah</span>
             </button>
-            <div
-              aria-label={`Streak ${user?.streakDays ?? 5} hari`}
-              className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
-            >
-              <span className="leading-none">🔥</span>
-              <span className="leading-none">{user?.streakDays ?? 5}</span>
-            </div>
+            {signedIn && (
+              <div
+                aria-label={`Streak ${user?.streakDays ?? 0} hari`}
+                className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-secondary-fixed/50 text-on-secondary-fixed-variant text-base sm:text-lg font-bold select-none shrink-0"
+              >
+                <span className="leading-none">🔥</span>
+                <span className="leading-none">{user?.streakDays ?? 0}</span>
+              </div>
+            )}
             <div
               aria-label={`Total ${user?.xp ?? 0} XP`}
               className="flex items-center gap-1.5 px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full bg-primary-fixed/40 text-primary text-base sm:text-lg font-bold select-none shrink-0"
@@ -509,7 +642,8 @@ export const PracticePage: React.FC<PracticePageProps> = ({
               const open = isTopicOpen(t);
               const active = t.id === topicId;
               const p = topicProgress[t.order] ?? { answered: 0, correct: 0 };
-              const done = p.answered >= QUESTIONS_PER_TOPIC;
+              const total = practiceQuestionsFor(t.order);
+              const done = p.answered >= total;
               return (
                 <li key={t.id}>
                   <button
@@ -517,7 +651,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                     onClick={() => chooseTopic(t)}
                     aria-pressed={active}
                     aria-label={`Topik ${t.order}: ${t.title}. ${
-                      open ? `${p.answered} dari ${QUESTIONS_PER_TOPIC} soal dijawab, ${p.correct} benar` : 'Terkunci'
+                      open ? `${p.answered} dari ${total} soal dijawab, ${p.correct} benar` : 'Terkunci'
                     }`}
                     title={t.title}
                     className={`w-full flex items-center gap-2.5 px-2 py-2 rounded-lg text-left transition-colors ${
@@ -554,7 +688,7 @@ export const PracticePage: React.FC<PracticePageProps> = ({
                     </span>
                     {open && (
                       <span className={`text-xs tabular-nums shrink-0 ${active ? 'text-primary font-semibold' : 'text-on-surface-variant'}`}>
-                        {p.answered}/{QUESTIONS_PER_TOPIC}
+                        {p.answered}/{total}
                       </span>
                     )}
                   </button>
@@ -565,395 +699,484 @@ export const PracticePage: React.FC<PracticePageProps> = ({
         </section>
 
         <div className="flex-1 min-w-0 w-full flex flex-col gap-6">
-          {/* Tier selector */}
+          {/* Practice picker: Latihan Harian (chapter questions) or one of the four difficulty tiers */}
           <section
-            aria-label="Pilih tingkat kesulitan"
-            className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-4 sm:p-5 card-calm-shadow"
+            aria-label="Pilih jenis latihan"
+            className="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl p-3.5 sm:p-4 card-calm-shadow space-y-3"
           >
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
-              <span className="text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Pilih tingkat kesulitan soal</span>
-              <span className="text-xs text-primary flex items-center gap-1 font-medium">
-                <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                  spa
-                </span>
-                <span>Bebas cemas: pilih tingkat sesuai kesiapanmu</span>
+            <button
+              type="button"
+              onClick={chooseDaily}
+              aria-pressed={isDaily}
+              aria-disabled={!dailyAvailable}
+              className={`w-full text-left rounded-xl px-3 py-2.5 sm:px-3.5 flex items-center gap-3 border-2 transition-all ${
+                isDaily
+                  ? 'border-secondary-container bg-secondary-fixed/60 shadow-sm -translate-y-0.5'
+                  : dailyAvailable
+                    ? 'border-transparent bg-linear-to-r from-secondary-fixed/60 to-surface-container-low hover:border-secondary-container hover:-translate-y-0.5'
+                    : 'border-dashed border-outline-variant bg-surface-container-low'
+              }`}
+            >
+              <span
+                className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                  dailyAvailable ? 'bg-secondary-container text-on-secondary-container' : 'bg-surface-container-high text-outline'
+                }`}
+              >
+                <span className="material-symbols-outlined" style={{ fontSize: 22 }}>{dailyAvailable ? 'event_available' : 'hourglass_top'}</span>
               </span>
+              <span className="flex-1 min-w-0">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className={`text-sm sm:text-base font-bold ${dailyAvailable ? 'text-on-surface' : 'text-on-surface-variant'}`}>Latihan Harian</span>
+                  <span className="px-2 py-0.5 rounded-full bg-surface-container-lowest/80 border border-outline-variant/60 text-[11px] font-semibold text-on-surface-variant">
+                    Soal dari materi
+                  </span>
+                </span>
+                <span className="block text-xs sm:text-sm text-on-surface-variant leading-snug mt-0.5">
+                  {dailyAvailable
+                    ? `${PRACTICE_DAILY_COUNT} soal baru setiap hari dari Latihan Soal bab ini, tanpa tingkat kesulitan.`
+                    : 'Belum tersedia untuk topik ini. Soal dari materinya sedang disiapkan.'}
+                </span>
+              </span>
+              {dailyAvailable && (
+                <span className="hidden sm:flex flex-col items-end gap-1 shrink-0">
+                  <span className="text-xs font-semibold text-on-secondary-fixed-variant tabular-nums">
+                    {dailyAnswered}/{DAILY_BANK_SIZE} dijawab
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded-md bg-secondary-container/60 text-on-secondary-container text-[11px] font-bold">+5 XP / soal</span>
+                </span>
+              )}
+            </button>
+
+            <div className="flex items-center gap-3">
+              <span className="h-px flex-1 bg-surface-container-high" />
+              <span className="text-xs text-on-surface-variant font-medium flex items-center gap-1">
+                <span className="material-symbols-outlined text-primary" style={{ fontSize: 16, fontVariationSettings: "'FILL' 1" }}>spa</span>
+                atau pilih tingkat kesulitan sesuai kesiapanmu
+              </span>
+              <span className="h-px flex-1 bg-surface-container-high" />
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5" role="group" aria-label="Tingkat kesulitan">
               {TIER_ORDER.map((t) => {
                 const st = statsFor(t);
+                const total = st.total || 10;
                 const locked = t === 'sangat_sulit' && !hardestUnlocked;
-                const active = t === tier;
+                const active = !isDaily && t === tier;
+                const look = TIER_LOOK[t];
+                const color = locked ? '#6e7a74' : look.color;
                 return (
                   <button
                     key={t}
                     type="button"
                     onClick={() => chooseTier(t)}
                     aria-pressed={active}
-                    className={`text-left rounded-lg p-3 flex flex-col gap-1 transition-all ${
-                      active
-                        ? 'border-2 border-primary bg-primary-fixed/20 shadow-xs'
-                        : locked
-                          ? 'border border-outline-variant/60 bg-surface-container-low'
-                          : 'border border-outline-variant bg-surface-container-lowest hover:border-primary'
+                    aria-label={`${TIER_LABEL[t]}: ${
+                      locked ? `terkunci, benar ${UNLOCK_HARDEST_AT}/10 di Sulit untuk membuka` : `${st.correct} dari ${total} benar. ${TIER_RULE[t]}`
                     }`}
+                    title={locked ? `Benar ${UNLOCK_HARDEST_AT}/10 di Sulit untuk membuka.` : TIER_RULE[t]}
+                    className={`relative overflow-hidden text-left rounded-xl px-2.5 pt-3 pb-2.5 flex items-center gap-2.5 border-2 transition-all ${
+                      active ? 'shadow-md -translate-y-0.5' : locked ? '' : 'hover:-translate-y-0.5 hover:shadow-sm'
+                    }`}
+                    style={{
+                      borderColor: active ? color : 'transparent',
+                      backgroundColor: active ? `color-mix(in srgb, ${color} 9%, white)` : 'var(--color-surface-container-low)',
+                    }}
                   >
-                    <span className="flex items-center justify-between gap-2">
-                      <span className={`text-sm font-semibold flex items-center gap-1.5 ${locked ? 'text-on-surface-variant' : 'text-on-surface'}`}>
-                        {locked ? (
-                          <span className="material-symbols-outlined text-[16px]">lock</span>
-                        ) : (
-                          <span className={`w-2.5 h-2.5 rounded-full ${TIER_DOT[t]}`} />
-                        )}
-                        <span>{TIER_LABEL[t]}</span>
+                    <span aria-hidden="true" className="absolute inset-x-0 top-0 h-1" style={{ backgroundColor: color, opacity: active ? 1 : 0.55 }} />
+                    <ProgressRing value={locked ? sulitStats.correct / UNLOCK_HARDEST_AT : st.correct / total} color={color}>
+                      <span className="material-symbols-outlined" style={{ fontSize: 19, color, fontVariationSettings: active ? "'FILL' 1" : undefined }}>
+                        {locked ? 'lock' : look.icon}
                       </span>
-                      <span className={`text-xs font-mono font-semibold ${active ? 'text-primary' : 'text-on-surface-variant'}`}>
-                        {locked ? `${sulitStats.correct}/${UNLOCK_HARDEST_AT}` : `${st.correct}/${st.total || 10}`}
+                    </ProgressRing>
+                    <span className="flex-1 min-w-0">
+                      <span className="flex items-center justify-between gap-1.5">
+                        <span className={`text-sm font-bold leading-tight ${locked ? 'text-on-surface-variant' : 'text-on-surface'}`}>{TIER_LABEL[t]}</span>
+                        <span className="flex items-end gap-0.5 h-3.5 shrink-0" aria-hidden="true">
+                          {[1, 2, 3, 4].map((bar) => (
+                            <span
+                              key={bar}
+                              className="w-1 rounded-sm"
+                              style={{
+                                height: `${2 + bar * 3}px`,
+                                backgroundColor: bar <= look.level ? color : 'var(--color-outline-variant)',
+                                opacity: bar <= look.level ? 1 : 0.5,
+                              }}
+                            />
+                          ))}
+                        </span>
+                      </span>
+                      <span className="mt-0.5 flex flex-wrap items-center justify-between gap-x-1.5 gap-y-0.5">
+                        <span className="text-xs font-semibold tabular-nums whitespace-nowrap" style={{ color }}>
+                          {locked ? `${sulitStats.correct}/${UNLOCK_HARDEST_AT} di Sulit` : `${st.correct}/${total} benar`}
+                        </span>
+                        <span
+                          className="px-1.5 py-px rounded-md text-[11px] font-bold whitespace-nowrap"
+                          style={{ color, backgroundColor: `color-mix(in srgb, ${color} 13%, transparent)` }}
+                        >
+                          +{t === 'sangat_sulit' ? `${SPEED_XP_RANGE.min}–${SPEED_XP_RANGE.max}` : TIER_XP[t]} XP
+                        </span>
                       </span>
                     </span>
-                    <span className="text-xs text-on-surface-variant leading-snug">
-                      {locked ? `Benar ${UNLOCK_HARDEST_AT}/10 di Sulit untuk membuka.` : TIER_RULE[t]}
-                    </span>
-                    <span className="text-xs text-primary font-medium">+{TIER_XP[t]} XP per soal benar</span>
                   </button>
                 );
               })}
             </div>
           </section>
 
-          {loadError ? (
-            <div role="alert" className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-8 text-center space-y-3">
-              <span aria-hidden="true" className="material-symbols-outlined text-[32px] text-outline">cloud_off</span>
-              <p className="text-sm font-semibold text-on-surface">Soal belum bisa dimuat</p>
-              <p className="text-sm text-on-surface-variant max-w-md mx-auto">{loadError}</p>
-              <button
-                type="button"
-                onClick={() => setReloadKey((k) => k + 1)}
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold"
-              >
-                <span aria-hidden="true" className="material-symbols-outlined text-[16px]">refresh</span>
-                <span>Coba lagi</span>
-              </button>
-            </div>
-          ) : !questions ? (
-            <div className="flex items-center justify-center py-20" role="status">
-              <span className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
-              <span className="sr-only">Memuat soal…</span>
-            </div>
-          ) : !current ? (
-            <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-8 text-center text-sm text-on-surface-variant">
-              Soal untuk topik ini belum tersedia.
-            </div>
+          {isDaily ? (
+            <DailyExercise topicId={topic.id} count={PRACTICE_DAILY_COUNT} userId={userId} onResult={handleDailyResult} />
           ) : (
-            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
-              <div className="xl:col-span-8 flex flex-col gap-6 w-full min-w-0">
-                {/* Progress rail */}
-                <div className="flex flex-wrap items-center justify-between gap-3 bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/40">
-                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                    {tierQuestions.map((q, i) => {
-                      const a = saved.answers[q.id];
-                      const isActive = i === index && !showSummary;
-                      return (
-                        <button
-                          key={q.id}
-                          type="button"
-                          onClick={() => goTo(i)}
-                          aria-label={`Soal ${i + 1}${a ? (a.correct ? ', benar' : ', belum tepat') : ''}`}
-                          aria-current={isActive ? 'step' : undefined}
-                          className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
-                            isActive ? 'ring-4 ring-primary-fixed/50 ' : ''
-                          }${
-                            a
-                              ? a.correct
-                                ? 'bg-primary text-on-primary'
-                                : 'bg-error-container text-on-error-container border border-error/40'
-                              : isActive
-                                ? 'bg-primary-container text-on-primary'
-                                : 'border border-outline-variant text-on-surface-variant hover:border-primary'
-                          }`}
-                        >
-                          {a ? <span className="material-symbols-outlined text-[16px]">{a.correct ? 'check' : 'close'}</span> : i + 1}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <span className="text-xs text-on-surface-variant font-medium flex items-center gap-1.5">
-                    <span className="material-symbols-outlined text-[16px]">timer</span>
-                    <span>
-                      {tierStats.answered}/{tierStats.total} dijawab • {tierStats.correct} benar
-                    </span>
-                  </span>
-                </div>
-
-                {showSummary ? (
-                  /* Tier summary */
-                  <article className="bg-surface-container-lowest border border-outline-variant/80 rounded-2xl p-6 sm:p-8 card-calm-shadow space-y-5 text-center">
-                    <span className="text-4xl" aria-hidden="true">
-                      {tierStats.correct >= 8 ? '🌟' : tierStats.correct >= 5 ? '👍' : '🌱'}
-                    </span>
-                    <h2 className="text-xl sm:text-2xl font-bold text-on-surface">
-                      {tierStats.correct} dari {tierStats.total} benar di tingkat {TIER_LABEL[tier]}
-                    </h2>
-                    <p className="text-sm text-on-surface-variant max-w-lg mx-auto leading-relaxed">
-                      {tierStats.correct >= 8
-                        ? 'Luar biasa! Pemahamanmu di tingkat ini sudah sangat kuat.'
-                        : tierStats.correct >= 5
-                          ? 'Bagus! Baca lagi pembahasan soal yang belum tepat, lalu coba ulangi.'
-                          : 'Tidak apa-apa. Salah adalah bagian dari belajar. Baca ulang materinya, lalu coba lagi dengan tenang.'}
-                    </p>
-                    {tier === 'sulit' && !adminUnlockAll && (
-                      <p className="text-sm font-semibold text-primary">
-                        {sulitStats.correct >= UNLOCK_HARDEST_AT
-                          ? 'Tantangan Sangat Sulit sudah terbuka!'
-                          : `Butuh ${UNLOCK_HARDEST_AT - sulitStats.correct} jawaban benar lagi untuk membuka Sangat Sulit.`}
-                      </p>
-                    )}
-                    <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-                      <button
-                        type="button"
-                        onClick={resetTier}
-                        className="px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface text-sm font-medium hover:bg-surface-container-low flex items-center gap-1.5"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">replay</span>
-                        <span>Ulangi Tingkat Ini</span>
-                      </button>
-                      {nextTier && (
-                        <button
-                          type="button"
-                          onClick={() => chooseTier(nextTier)}
-                          className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center gap-1.5"
-                        >
-                          <span>Lanjut ke {TIER_LABEL[nextTier]}</span>
-                          <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
-                        </button>
-                      )}
+            <>
+            {loadError ? (
+              <div role="alert" className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-8 text-center space-y-3">
+                <span aria-hidden="true" className="material-symbols-outlined text-[32px] text-outline">cloud_off</span>
+                <p className="text-sm font-semibold text-on-surface">Soal belum bisa dimuat</p>
+                <p className="text-sm text-on-surface-variant max-w-md mx-auto">{loadError}</p>
+                <button
+                  type="button"
+                  onClick={() => setReloadKey((k) => k + 1)}
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold"
+                >
+                  <span aria-hidden="true" className="material-symbols-outlined text-[16px]">refresh</span>
+                  <span>Coba lagi</span>
+                </button>
+              </div>
+            ) : !questions ? (
+              <div className="flex items-center justify-center py-20" role="status">
+                <span className="w-8 h-8 rounded-full border-4 border-primary/20 border-t-primary animate-spin" />
+                <span className="sr-only">Memuat soal…</span>
+              </div>
+            ) : !current ? (
+              <div className="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-8 text-center text-sm text-on-surface-variant">
+                Soal untuk topik ini belum tersedia.
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                <div className="xl:col-span-8 flex flex-col gap-6 w-full min-w-0">
+                  {/* Progress rail */}
+                  <div className="flex flex-wrap items-center justify-between gap-3 bg-surface-container-lowest p-3 rounded-xl border border-outline-variant/40">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      {tierQuestions.map((q, i) => {
+                        const a = saved.answers[q.id];
+                        const isActive = i === index && !showSummary;
+                        return (
+                          <button
+                            key={q.id}
+                            type="button"
+                            onClick={() => goTo(i)}
+                            aria-label={`Soal ${i + 1}${a ? (a.correct ? ', benar' : ', belum tepat') : ''}`}
+                            aria-current={isActive ? 'step' : undefined}
+                            className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+                              isActive ? 'ring-4 ring-primary-fixed/50 ' : ''
+                            }${
+                              a
+                                ? a.correct
+                                  ? 'bg-primary text-on-primary'
+                                  : 'bg-error-container text-on-error-container border border-error/40'
+                                : isActive
+                                  ? 'bg-primary-container text-on-primary'
+                                  : 'border border-outline-variant text-on-surface-variant hover:border-primary'
+                            }`}
+                          >
+                            {a ? <span className="material-symbols-outlined text-[16px]">{a.correct ? 'check' : 'close'}</span> : i + 1}
+                          </button>
+                        );
+                      })}
                     </div>
-                  </article>
-                ) : (
-                  /* Question card */
-                  <article
-                    ref={cardRef}
-                    style={heldCardHeight ? { minHeight: heldCardHeight } : undefined}
-                    className="bg-surface-container-lowest border border-outline-variant/80 rounded-2xl p-5 sm:p-8 card-calm-shadow flex flex-col gap-6 w-full"
-                  >
-                    <div className="flex flex-col gap-1.5 border-b border-surface-container-high pb-4">
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <span className="text-xs font-semibold text-primary uppercase tracking-wide">
-                          {topic.title} • {TIER_LABEL[tier]}
-                        </span>
-                        <span className="text-xs text-on-surface-variant font-code-formula">{current.id}</span>
-                      </div>
-                      <h2 className="text-lg sm:text-xl font-bold text-on-surface tracking-tight">
-                        Soal {index + 1} dari {tierQuestions.length}
-                      </h2>
-                    </div>
-
-                    <div className="bg-surface-bright p-4 sm:p-6 rounded-xl border border-outline-variant/50 space-y-3">
-                      <p className="text-base text-on-surface leading-relaxed whitespace-pre-line">
-                        <RichText text={current.prompt} />
-                      </p>
-                      {current.data && (
-                        <pre className="text-sm font-code-formula text-on-surface bg-surface-container-lowest border border-outline-variant/60 rounded-lg p-3 overflow-x-auto whitespace-pre">
-                          {current.data}
-                        </pre>
-                      )}
-                    </div>
-
-                    <div className="flex flex-col gap-3">
-                      <span id="answer-label" className="text-sm font-semibold text-on-surface">
-                        Pilih jawabanmu:
+                    <span className="text-xs text-on-surface-variant font-medium flex items-center gap-1.5">
+                      <span className="material-symbols-outlined text-[16px]">timer</span>
+                      <span>
+                        {tierStats.answered}/{tierStats.total} dijawab • {tierStats.correct} benar
                       </span>
-                      <div role="radiogroup" aria-labelledby="answer-label" className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
-                        {current.options.map((opt, i) => {
-                          const isSel = selected === i;
-                          const isAnswer = i === answerIndex;
-                          let tone = isSel
-                            ? 'border-2 border-primary bg-primary-fixed/20 ring-2 ring-primary/20'
-                            : 'border border-outline-variant bg-surface-container-lowest hover:border-primary hover:bg-surface-bright';
-                          if (checked) {
-                            tone = isAnswer
-                              ? 'border-2 border-primary bg-primary-fixed/30'
-                              : isSel
-                                ? 'border-2 border-error bg-error-container/50'
-                                : 'border border-outline-variant/60 bg-surface-container-lowest opacity-75';
-                          }
-                          return (
-                            <button
-                              key={i}
-                              type="button"
-                              role="radio"
-                              aria-checked={isSel}
-                              disabled={checked || checking}
-                              onClick={() => setSelected(i)}
-                              className={`flex items-start gap-3 p-4 rounded-xl text-left transition-all w-full disabled:cursor-default ${tone}`}
-                            >
-                              <span
-                                className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-semibold ${
-                                  checked && isAnswer
-                                    ? 'bg-primary text-on-primary'
-                                    : checked && isSel
-                                      ? 'bg-error text-white'
-                                      : isSel
-                                        ? 'bg-primary text-on-primary'
-                                        : 'border border-outline-variant text-on-surface-variant'
-                                }`}
-                              >
-                                {checked && isAnswer ? (
-                                  <span className="material-symbols-outlined text-[16px]">check</span>
-                                ) : checked && isSel ? (
-                                  <span className="material-symbols-outlined text-[16px]">close</span>
-                                ) : (
-                                  OPTION_LABELS[i]
-                                )}
-                              </span>
-                              <span className={`text-sm leading-relaxed ${isSel && !checked ? 'font-semibold text-primary' : 'text-on-surface'}`}>
-                                <RichText text={opt} />
-                              </span>
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                    </span>
+                  </div>
 
-                    {checked && currentSaved && (
-                      <div
-                        role="status"
-                        className={`rounded-xl p-4 sm:p-5 space-y-2 border ${
-                          currentSaved.correct ? 'bg-primary-fixed/20 border-primary-fixed-dim' : 'bg-secondary-fixed/30 border-secondary-fixed-dim'
-                        }`}
-                      >
-                        <p
-                          className={`text-sm font-bold flex items-center gap-2 ${
-                            currentSaved.correct ? 'text-primary' : 'text-on-secondary-fixed'
-                          }`}
-                        >
-                          <span className="material-symbols-outlined text-[20px]">{currentSaved.correct ? 'celebration' : 'psychology'}</span>
-                          <span>
-                            {currentSaved.correct
-                              ? `Tepat!${saved.xpAwarded.includes(current.id) ? ` +${TIER_XP[tier]} XP` : ''}`
-                              : answerIndex !== undefined
-                                ? `Belum tepat. Jawaban yang benar adalah ${OPTION_LABELS[answerIndex]}.`
-                                : 'Belum tepat.'}
-                          </span>
+                  {showSummary ? (
+                    /* Tier summary */
+                    <article className="bg-surface-container-lowest border border-outline-variant/80 rounded-2xl p-6 sm:p-8 card-calm-shadow space-y-5 text-center">
+                      <span className="text-4xl" aria-hidden="true">
+                        {tierStats.correct >= 8 ? '🌟' : tierStats.correct >= 5 ? '👍' : '🌱'}
+                      </span>
+                      <h2 className="text-xl sm:text-2xl font-bold text-on-surface">
+                        {tierStats.correct} dari {tierStats.total} benar di tingkat {TIER_LABEL[tier]}
+                      </h2>
+                      <p className="text-sm text-on-surface-variant max-w-lg mx-auto leading-relaxed">
+                        {tierStats.correct >= 8
+                          ? 'Luar biasa! Pemahamanmu di tingkat ini sudah sangat kuat.'
+                          : tierStats.correct >= 5
+                            ? 'Bagus! Baca lagi pembahasan soal yang belum tepat, lalu coba ulangi.'
+                            : 'Tidak apa-apa. Salah adalah bagian dari belajar. Baca ulang materinya, lalu coba lagi dengan tenang.'}
+                      </p>
+                      {tier === 'sulit' && !adminUnlockAll && (
+                        <p className="text-sm font-semibold text-primary">
+                          {sulitStats.correct >= UNLOCK_HARDEST_AT
+                            ? 'Tantangan Sangat Sulit sudah terbuka!'
+                            : `Butuh ${UNLOCK_HARDEST_AT - sulitStats.correct} jawaban benar lagi untuk membuka Sangat Sulit.`}
                         </p>
-                        {currentFeedback ? (
-                          <div className="text-sm text-on-surface leading-relaxed whitespace-pre-line">
-                            <span className="font-semibold">Pembahasan: </span>
-                            <RichText text={currentFeedback.explanation} />
-                          </div>
-                        ) : feedbackError ? (
-                          <p className="text-sm text-on-surface-variant flex flex-wrap items-center gap-2">
-                            <span>Pembahasan belum bisa dimuat.</span>
-                            <button
-                              type="button"
-                              onClick={() => setFeedbackRetry((n) => n + 1)}
-                              className="font-semibold text-primary underline underline-offset-2"
-                            >
-                              Coba lagi
-                            </button>
-                          </p>
-                        ) : (
-                          <p className="text-sm text-on-surface-variant">Memuat pembahasan…</p>
+                      )}
+                      <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+                        <button
+                          type="button"
+                          onClick={resetTier}
+                          className="px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface text-sm font-medium hover:bg-surface-container-low flex items-center gap-1.5"
+                        >
+                          <span className="material-symbols-outlined text-[16px]">replay</span>
+                          <span>Ulangi Tingkat Ini</span>
+                        </button>
+                        {nextTier && (
+                          <button
+                            type="button"
+                            onClick={() => chooseTier(nextTier)}
+                            className="px-5 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center gap-1.5"
+                          >
+                            <span>Lanjut ke {TIER_LABEL[nextTier]}</span>
+                            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                          </button>
                         )}
                       </div>
-                    )}
-
-                    {checkError && (
-                      <p role="alert" className="text-sm text-error flex items-start gap-1.5">
-                        <span aria-hidden="true" className="material-symbols-outlined text-[18px]">error</span>
-                        <span>{checkError}</span>
-                      </p>
-                    )}
-
-                    <div className="mt-auto flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-surface-container-high">
-                      <button
-                        type="button"
-                        onClick={() => goTo(index - 1)}
-                        disabled={index === 0}
-                        className="px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-surface-container disabled:opacity-40"
-                      >
-                        <span className="material-symbols-outlined text-[16px]">arrow_back</span>
-                        <span>Sebelumnya</span>
-                      </button>
-                      {!checked ? (
-                        <button
-                          type="button"
-                          onClick={checkAnswer}
-                          disabled={selected === null || checking}
-                          aria-busy={checking}
-                          className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
-                        >
-                          {checking ? (
-                            <span aria-hidden="true" className="w-4 h-4 rounded-full border-2 border-on-primary/30 border-t-on-primary animate-spin" />
+                    </article>
+                  ) : (
+                    /* Question card */
+                    <article
+                      ref={cardRef}
+                      style={heldCardHeight ? { minHeight: heldCardHeight } : undefined}
+                      className="bg-surface-container-lowest border border-outline-variant/80 rounded-2xl p-5 sm:p-8 card-calm-shadow flex flex-col gap-6 w-full"
+                    >
+                      <div className="flex flex-col gap-1.5 border-b border-surface-container-high pb-4">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="text-xs font-semibold text-primary uppercase tracking-wide">
+                            {topic.title} • {TIER_LABEL[tier]}
+                          </span>
+                          {speedTimed && elapsedSeconds !== null ? (
+                            <span
+                              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold tabular-nums"
+                              style={{ color: '#ba1a1a', backgroundColor: 'color-mix(in srgb, #ba1a1a 10%, transparent)' }}
+                              aria-label={`Waktu ${formatClock(elapsedSeconds)}, jawaban benar sekarang bernilai ${speedXp(elapsedSeconds)} XP`}
+                            >
+                              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>timer</span>
+                              {formatClock(elapsedSeconds)} · +{speedXp(elapsedSeconds)} XP
+                            </span>
                           ) : (
-                            <span className="material-symbols-outlined text-[16px]">fact_check</span>
+                            <span className="text-xs text-on-surface-variant font-code-formula">{current.id}</span>
                           )}
-                          <span>{checking ? 'Memeriksa…' : 'Cek Jawaban'}</span>
-                        </button>
-                      ) : (
+                        </div>
+                        <h2 className="text-lg sm:text-xl font-bold text-on-surface tracking-tight">
+                          Soal {index + 1} dari {tierQuestions.length}
+                        </h2>
+                      </div>
+
+                      <div className="bg-surface-bright p-4 sm:p-6 rounded-xl border border-outline-variant/50 space-y-3">
+                        <p className="text-base text-on-surface leading-relaxed whitespace-pre-line">
+                          <RichText text={current.prompt} />
+                        </p>
+                        {current.data && (
+                          <pre className="text-sm font-code-formula text-on-surface bg-surface-container-lowest border border-outline-variant/60 rounded-lg p-3 overflow-x-auto whitespace-pre">
+                            {current.data}
+                          </pre>
+                        )}
+                      </div>
+
+                      <div className="flex flex-col gap-3">
+                        <span id="answer-label" className="text-sm font-semibold text-on-surface">
+                          Pilih jawabanmu:
+                        </span>
+                        <div role="radiogroup" aria-labelledby="answer-label" className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
+                          {current.options.map((opt, i) => {
+                            const isSel = selected === i;
+                            const isAnswer = i === answerIndex;
+                            let tone = isSel
+                              ? 'border-2 border-primary bg-primary-fixed/20 ring-2 ring-primary/20'
+                              : 'border border-outline-variant bg-surface-container-lowest hover:border-primary hover:bg-surface-bright';
+                            if (checked) {
+                              tone = isAnswer
+                                ? 'border-2 border-primary bg-primary-fixed/30'
+                                : isSel
+                                  ? 'border-2 border-error bg-error-container/50'
+                                  : 'border border-outline-variant/60 bg-surface-container-lowest opacity-75';
+                            }
+                            return (
+                              <button
+                                key={i}
+                                type="button"
+                                role="radio"
+                                aria-checked={isSel}
+                                disabled={checked || checking}
+                                onClick={() => setSelected(i)}
+                                className={`flex items-start gap-3 p-4 rounded-xl text-left transition-all w-full disabled:cursor-default ${tone}`}
+                              >
+                                <span
+                                  className={`w-7 h-7 rounded-full shrink-0 flex items-center justify-center text-xs font-semibold ${
+                                    checked && isAnswer
+                                      ? 'bg-primary text-on-primary'
+                                      : checked && isSel
+                                        ? 'bg-error text-white'
+                                        : isSel
+                                          ? 'bg-primary text-on-primary'
+                                          : 'border border-outline-variant text-on-surface-variant'
+                                  }`}
+                                >
+                                  {checked && isAnswer ? (
+                                    <span className="material-symbols-outlined text-[16px]">check</span>
+                                  ) : checked && isSel ? (
+                                    <span className="material-symbols-outlined text-[16px]">close</span>
+                                  ) : (
+                                    OPTION_LABELS[i]
+                                  )}
+                                </span>
+                                <span className={`text-sm leading-relaxed ${isSel && !checked ? 'font-semibold text-primary' : 'text-on-surface'}`}>
+                                  <RichText text={opt} />
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {checked && currentSaved && (
+                        <div
+                          role="status"
+                          className={`rounded-xl p-4 sm:p-5 space-y-2 border ${
+                            currentSaved.correct ? 'bg-primary-fixed/20 border-primary-fixed-dim' : 'bg-secondary-fixed/30 border-secondary-fixed-dim'
+                          }`}
+                        >
+                          <p
+                            className={`text-sm font-bold flex items-center gap-2 ${
+                              currentSaved.correct ? 'text-primary' : 'text-on-secondary-fixed'
+                            }`}
+                          >
+                            <span className="material-symbols-outlined text-[20px]">{currentSaved.correct ? 'celebration' : 'psychology'}</span>
+                            <span>
+                              {currentSaved.correct
+                                ? `Tepat!${saved.xpAwarded.includes(current.id) ? ` +${xpGained[current.id] ?? TIER_XP[tier]} XP` : ''}`
+                                : answerIndex !== undefined
+                                  ? `Belum tepat. Jawaban yang benar adalah ${OPTION_LABELS[answerIndex]}.`
+                                  : 'Belum tepat.'}
+                            </span>
+                          </p>
+                          {currentFeedback ? (
+                            <div className="text-sm text-on-surface leading-relaxed whitespace-pre-line">
+                              <span className="font-semibold">Pembahasan: </span>
+                              <RichText text={currentFeedback.explanation} />
+                            </div>
+                          ) : feedbackError ? (
+                            <p className="text-sm text-on-surface-variant flex flex-wrap items-center gap-2">
+                              <span>Pembahasan belum bisa dimuat.</span>
+                              <button
+                                type="button"
+                                onClick={() => setFeedbackRetry((n) => n + 1)}
+                                className="font-semibold text-primary underline underline-offset-2"
+                              >
+                                Coba lagi
+                              </button>
+                            </p>
+                          ) : (
+                            <p className="text-sm text-on-surface-variant">Memuat pembahasan…</p>
+                          )}
+                        </div>
+                      )}
+
+                      {checkError && (
+                        <p role="alert" className="text-sm text-error flex items-start gap-1.5">
+                          <span aria-hidden="true" className="material-symbols-outlined text-[18px]">error</span>
+                          <span>{checkError}</span>
+                        </p>
+                      )}
+
+                      <div className="mt-auto flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-surface-container-high">
                         <button
                           type="button"
-                          onClick={next}
-                          className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center justify-center gap-2"
+                          onClick={() => goTo(index - 1)}
+                          disabled={index === 0}
+                          className="px-5 py-2.5 rounded-lg border border-outline-variant text-on-surface-variant text-sm font-medium flex items-center justify-center gap-1.5 hover:bg-surface-container disabled:opacity-40"
                         >
-                          <span>{tierStats.answered === tierStats.total ? 'Lihat Ringkasan' : 'Soal Berikutnya'}</span>
-                          <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+                          <span>Sebelumnya</span>
                         </button>
-                      )}
-                    </div>
-                  </article>
-                )}
+                        {!checked ? (
+                          <button
+                            type="button"
+                            onClick={checkAnswer}
+                            disabled={selected === null || checking}
+                            aria-busy={checking}
+                            className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center justify-center gap-2 disabled:opacity-40"
+                          >
+                            {checking ? (
+                              <span aria-hidden="true" className="w-4 h-4 rounded-full border-2 border-on-primary/30 border-t-on-primary animate-spin" />
+                            ) : (
+                              <span className="material-symbols-outlined text-[16px]">fact_check</span>
+                            )}
+                            <span>{checking ? 'Memeriksa…' : 'Cek Jawaban'}</span>
+                          </button>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={next}
+                            className="px-6 py-2.5 rounded-lg bg-primary hover:bg-primary-container text-on-primary text-sm font-semibold flex items-center justify-center gap-2"
+                          >
+                            <span>{tierStats.answered === tierStats.total ? 'Lihat Ringkasan' : 'Soal Berikutnya'}</span>
+                            <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
+                          </button>
+                        )}
+                      </div>
+                    </article>
+                  )}
 
-                {/* Mobile help */}
-                <div className="xl:hidden bg-surface-container-lowest border border-outline-variant/70 rounded-xl overflow-hidden card-calm-shadow">
-                  <button
-                    type="button"
-                    onClick={() => setMobileHelpOpen(!mobileHelpOpen)}
-                    aria-expanded={mobileHelpOpen}
-                    className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors"
-                  >
-                    <span className="flex items-center gap-2.5 text-on-surface font-semibold text-sm">
-                      <span className="material-symbols-outlined text-primary text-[20px]">help</span>
-                      <span>Panel Bantuan, Rumus &amp; Petunjuk</span>
-                    </span>
-                    <span className="material-symbols-outlined text-outline">{mobileHelpOpen ? 'expand_less' : 'expand_more'}</span>
-                  </button>
-                  {mobileHelpOpen && <div className="p-4 pt-0 border-t border-surface-container">{helpPanel}</div>}
-                </div>
-              </div>
-
-              {/* Desktop help */}
-              <aside className="hidden xl:flex xl:col-span-4 sticky top-24 flex-col gap-4">
-                <div className="bg-surface-container-lowest border border-outline-variant/70 rounded-2xl p-5 card-calm-shadow space-y-4">
-                  <div className="flex items-center gap-2 border-b border-surface-container pb-3">
-                    <div className="w-8 h-8 rounded-lg bg-primary-fixed text-primary flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[20px]">menu_book</span>
-                    </div>
-                    <div>
-                      <h2 className="text-sm font-bold text-on-surface">Panel Bantuan</h2>
-                      <span className="text-xs text-on-surface-variant">{TIER_RULE[tier]}</span>
-                    </div>
+                  {/* Mobile help */}
+                  <div className="xl:hidden bg-surface-container-lowest border border-outline-variant/70 rounded-xl overflow-hidden card-calm-shadow">
+                    <button
+                      type="button"
+                      onClick={() => setMobileHelpOpen(!mobileHelpOpen)}
+                      aria-expanded={mobileHelpOpen}
+                      className="w-full p-4 flex items-center justify-between text-left hover:bg-surface-container-low transition-colors"
+                    >
+                      <span className="flex items-center gap-2.5 text-on-surface font-semibold text-sm">
+                        <span className="material-symbols-outlined text-primary text-[20px]">help</span>
+                        <span>Panel Bantuan, Rumus &amp; Petunjuk</span>
+                      </span>
+                      <span className="material-symbols-outlined text-outline">{mobileHelpOpen ? 'expand_less' : 'expand_more'}</span>
+                    </button>
+                    {mobileHelpOpen && <div className="p-4 pt-0 border-t border-surface-container">{helpPanel}</div>}
                   </div>
-                  {helpPanel}
                 </div>
-                <div className="bg-surface-container-lowest/80 border border-outline-variant/50 rounded-xl p-4 text-center space-y-1">
-                  <span className="text-xs text-primary font-semibold flex items-center justify-center gap-1">
-                    <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-                      favorite
+
+                {/* Desktop help */}
+                <aside className="hidden xl:flex xl:col-span-4 sticky top-24 flex-col gap-4">
+                  <div className="bg-surface-container-lowest border border-outline-variant/70 rounded-2xl p-5 card-calm-shadow space-y-4">
+                    <div className="flex items-center gap-2 border-b border-surface-container pb-3">
+                      <div className="w-8 h-8 rounded-lg bg-primary-fixed text-primary flex items-center justify-center">
+                        <span className="material-symbols-outlined text-[20px]">menu_book</span>
+                      </div>
+                      <div>
+                        <h2 className="text-sm font-bold text-on-surface">Panel Bantuan</h2>
+                        <span className="text-xs text-on-surface-variant">{TIER_RULE[tier]}</span>
+                      </div>
+                    </div>
+                    {helpPanel}
+                  </div>
+                  <div className="bg-surface-container-lowest/80 border border-outline-variant/50 rounded-xl p-4 text-center space-y-1">
+                    <span className="text-xs text-primary font-semibold flex items-center justify-center gap-1">
+                      <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                        favorite
+                      </span>
+                      <span>Ritme Belajar Tenang</span>
                     </span>
-                    <span>Ritme Belajar Tenang</span>
-                  </span>
-                  <p className="text-xs text-on-surface-variant leading-snug">
-                    Salah langkah adalah bagian alami dari proses paham. Tidak ada pengurangan XP.
-                  </p>
-                </div>
-              </aside>
-            </div>
+                    <p className="text-xs text-on-surface-variant leading-snug">
+                      Salah langkah adalah bagian alami dari proses paham. Tidak ada pengurangan XP.
+                    </p>
+                  </div>
+                </aside>
+              </div>
+            )}
+            </>
           )}
         </div>
       </main>
 
-      <ConceptModal isOpen={conceptModalOpen} onClose={() => setConceptModalOpen(false)} initialConceptId={conceptModalId} />
+      {glossaryOpen && (
+        <Suspense fallback={null}>
+          <GlossaryModal isOpen onClose={() => setGlossaryOpen(false)} topicId={topicId} />
+        </Suspense>
+      )}
     </div>
   );
 };

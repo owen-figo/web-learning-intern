@@ -37,7 +37,7 @@ export async function signIn(email: string, nim: string): Promise<SignedInStuden
 }
 
 /** True when supabase-js has saved a session in this browser (its key is sb-<project ref>-auth-token). */
-function hasSavedSession(): boolean {
+export function hasSavedSession(): boolean {
   try {
     const ref = new URL(import.meta.env.VITE_SUPABASE_URL ?? '').hostname.split('.')[0];
     return window.localStorage.getItem(`sb-${ref}-auth-token`) !== null;
